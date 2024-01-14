@@ -300,7 +300,7 @@ public class InternetActions {
         line = line.substring(line.indexOf("</td><td>") + 9);
         String lastPlayeDate = line.substring(0,line.indexOf("</td><td>"));
         line = line.substring(line.indexOf("<a href='showlog.cgi?name=") + 26);
-        String id = line.substring(0,line.indexOf("'><img src='images/archive.gif"));
+        String id = line.substring(0, line.indexOf("' target='_parent'><img src='images/archive.gif"));
 
 //	    String id = line.substring(line.indexOf("<a href='showlog.cgi?name=")+1,line.indexOf("'><img src='images/archive.gif'"));
 //    	String id = line.substring(43, line.indexOf("'",43));
