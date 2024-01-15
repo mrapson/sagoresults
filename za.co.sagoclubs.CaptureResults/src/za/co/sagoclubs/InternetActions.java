@@ -114,10 +114,6 @@ public class InternetActions {
     	Player[] result = list.toArray(template);
     	return result;
 	}
-	
-    public static void executeUrl(String url) {
-    	openConnection(url);
-    }
 
     public static String openPage(String url) {
     	HttpURLConnection c = openConnection(url);
@@ -232,30 +228,6 @@ public class InternetActions {
         return list;
     }
 
-//    private class RawPlayerListAsyncTask extends AsyncTask<Void, Void, List<String>> {
-//
-//        protected List<String> doInBackground(Void... voidParam) {
-//            HttpURLConnection c = openConnection("http://rank.sagoclubs.co.za/sed_script");
-//            BufferedReader reader = null;
-//            ArrayList<String> list = new ArrayList<String>();
-//            try {
-//                reader = new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"), 8192);
-//                for (String line; (line = reader.readLine()) != null;) {
-//                    list.add(line.trim());
-//                }
-//            } catch (UnsupportedEncodingException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } finally {
-//                if (reader != null) try { reader.close(); } catch (IOException logOrIgnore) {}
-//                c.disconnect();
-//            }
-//            return list;
-//        }
-//
-//    }
-//
     private static List<Player> getRawPlayerRatingsList() {
         HttpURLConnection c = openUnsecuredConnection(Constants.PLAYER_RATINGS);
         BufferedReader reader = null;
@@ -263,11 +235,8 @@ public class InternetActions {
         try {
             reader = new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"), 8192);
             for (String line; (line = reader.readLine()) != null;) {
-            	if (line.contains("<a href='showlog.cgi?name=")) {
+				if (line.contains("<a href='/ranks/player_files/")) {
             		Player player = getPlayerFromRatingLine(line);
-//                	player.setRank(stripTD(reader.readLine().trim()));
-//                	player.setIndex(stripTD(reader.readLine().trim()));
-//                	player.setLastPlayedDate(stripTD(reader.readLine().trim()));
                 	list.add(player);
             	}
             }
@@ -282,14 +251,6 @@ public class InternetActions {
     	return list;
     }
     
-    private static String stripTD(String line) {
-    	String result = line.substring(4, line.indexOf("</td>"));
-    	return result;
-    }
-
-
-
-
     private static Player getPlayerFromRatingLine(String line) {
 	    line = line.substring(line.indexOf("</td><td>") + 9);
         String name = line.substring(0, line.indexOf("</td><td>"));
@@ -298,20 +259,14 @@ public class InternetActions {
         line = line.substring(line.indexOf("</td><td>") + 9);
         String index = line.substring(0, line.indexOf("</td><td>"));
         line = line.substring(line.indexOf("</td><td>") + 9);
-        String lastPlayeDate = line.substring(0,line.indexOf("</td><td>"));
-        line = line.substring(line.indexOf("<a href='showlog.cgi?name=") + 26);
-        String id = line.substring(0, line.indexOf("' target='_parent'><img src='images/archive.gif"));
-
-//	    String id = line.substring(line.indexOf("<a href='showlog.cgi?name=")+1,line.indexOf("'><img src='images/archive.gif'"));
-//    	String id = line.substring(43, line.indexOf("'",43));
-//    	int nameIndexStart = line.indexOf("<img src='/wp-content/archive.gif' alt='' /></a>", 43)+48;
-//        String name = line.substring(nameIndexStart, line.indexOf("</td>", nameIndexStart));
+        String lastPlayedDate = line.substring(0,line.indexOf("</td><td>"));
+        line = line.substring(line.indexOf("<a href='/ranks/player_files/") + 29);
+        String id = line.substring(0, line.indexOf(".html' target='_parent'><img src='images/archive.gif"));
 
     	Player result = new Player(id, name);
         result.setRank(rank);
         result.setIndex(index);
-        result.setLastPlayedDate(lastPlayeDate);
+        result.setLastPlayedDate(lastPlayedDate);
     	return result;
     }
-    
 }

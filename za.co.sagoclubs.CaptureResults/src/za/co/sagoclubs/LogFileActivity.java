@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import static za.co.sagoclubs.Constants.SHOWLOG;
 import static za.co.sagoclubs.Constants.TAG;
 
 public class LogFileActivity extends Activity {
@@ -17,7 +18,6 @@ public class LogFileActivity extends Activity {
 	private TextView txtOutput;
 	private ScrollView scrollView;
 	
-	//private Spinner spnPlayer;
 	private TextView txtPlayer;
 	private ProgressDialog dialog;
 	
@@ -45,7 +45,6 @@ public class LogFileActivity extends Activity {
     		dialog.show();
         	new LogFileTask().execute();
         }
-
 	}
 
 	@Override
@@ -82,8 +81,7 @@ public class LogFileActivity extends Activity {
 		protected String doInBackground(Void... v) {
 			setProgressBarIndeterminateVisibility(true);
 
-        	String result = InternetActions.getPreBlock("http://rank.sagoclubs.co.za/showlog.cgi?name="+Result.logfile.getId());
-        	//String result = InternetActions.getPreBlock(Constants.DATAFILES + Result.logfile.getId()+".recordsheet");
+			String result = InternetActions.getPreBlock(SHOWLOG + Result.logfile.getId() + ".html");
         	return result;
 	    }
 
@@ -102,5 +100,4 @@ public class LogFileActivity extends Activity {
             });
 	    }
 	}
-	
 }
