@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -234,12 +235,19 @@ public class InternetActions {
     	List<Player> list = new ArrayList<Player>();
         try {
             reader = new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"), 8192);
-            for (String line; (line = reader.readLine()) != null;) {
-				if (line.contains("<a href='/ranks/player_files/")) {
-            		Player player = getPlayerFromRatingLine(line);
-                	list.add(player);
-            	}
-            }
+			// Skip until the end of the first table row
+			for (String line; (line = reader.readLine()) != null;) {
+				if (line.contains("</tr>")) {
+					break;
+				}
+			}
+			// Find and parse Player rows
+			for (String line; (line = reader.readLine()) != null;) {
+				if (line.contains("<tr>")) {
+					Player player = getPlayerFromTableRow(reader);
+					list.add(player);
+				}
+			}
         } catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -250,23 +258,49 @@ public class InternetActions {
         }
     	return list;
     }
-    
-    private static Player getPlayerFromRatingLine(String line) {
-	    line = line.substring(line.indexOf("</td><td>") + 9);
-        String name = line.substring(0, line.indexOf("</td><td>"));
-        line = line.substring(line.indexOf("</td><td>") + 9);
-        String rank = line.substring(0, line.indexOf("</td><td>"));
-        line = line.substring(line.indexOf("</td><td>") + 9);
-        String index = line.substring(0, line.indexOf("</td><td>"));
-        line = line.substring(line.indexOf("</td><td>") + 9);
-        String lastPlayedDate = line.substring(0,line.indexOf("</td><td>"));
-        line = line.substring(line.indexOf("<a href='/ranks/player_files/") + 29);
-        String id = line.substring(0, line.indexOf(".html' target='_parent'><img src='images/archive.gif"));
 
-    	Player result = new Player(id, name);
-        result.setRank(rank);
-        result.setIndex(index);
-        result.setLastPlayedDate(lastPlayedDate);
-    	return result;
-    }
+	private static Player getPlayerFromTableRow(BufferedReader reader) throws IOException {
+		reader.readLine(); // Skip the position
+
+		String line = reader.readLine();
+		String name = line.substring(4, line.indexOf("</td>"));
+		Pattern namePattern = Pattern.compile("[^A-Za-z- ]");
+		if (namePattern.matcher(name).find()) {
+			throw new IOException("Name does not match expected pattern");
+		}
+
+		line = reader.readLine();
+		String rank = line.substring(4, line.indexOf("</td>"));
+		Pattern rankPattern = Pattern.compile("[^0-9kdp]");
+		if (rankPattern.matcher(rank).find()) {
+			throw new IOException("Rank does not match expected pattern");
+		}
+
+		line = reader.readLine();
+		String index = line.substring(4, line.indexOf("</td>"));
+		Pattern indexPattern = Pattern.compile("[^-0-9]");
+		if (indexPattern.matcher(index).find()) {
+			throw new IOException("Index does not match expected pattern");
+		}
+
+		line = reader.readLine();
+		String lastPlayedDate = line.substring(4, line.indexOf("</td>"));
+		Pattern datePattern = Pattern.compile("[^0-9/]");
+		if (datePattern.matcher(lastPlayedDate).find()) {
+			throw new IOException("Date does not match expected pattern");
+		}
+
+		line = reader.readLine();
+		String id = line.substring(33, line.indexOf(".html"));
+		Pattern idPattern = Pattern.compile("[^a-z]");
+		if (idPattern.matcher(id).find()) {
+			throw new IOException("Id does not match expected pattern");
+		}
+
+		Player result = new Player(id, name);
+		result.setRank(rank);
+		result.setIndex(index);
+		result.setLastPlayedDate(lastPlayedDate);
+		return result;
+	}
 }
