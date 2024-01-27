@@ -9,7 +9,7 @@ public class Constants {
 	public static final String LOGGAME_CGI = "http://rank.sagoclubs.co.za:8080/loggame.cgi";
 	public static final String SED_SCRIPT = "http://rank.sagoclubs.co.za:8080/showsed_raw.cgi";
 
-	public static final String PLAYER_RATINGS = SAGA_WP_SITE + "ranks/ranks.html";
+	public static final String PLAYER_RATINGS = SAGA_WP_SITE + "ranks/ranks.json";
 	public static final String UNDO_CGI = "http://rank.sagoclubs.co.za:8080/undo.cgi";
 	// Complete showlog path with "handle.html"
 	public static final String SHOWLOG = SAGA_WP_SITE + "ranks/player_files/";

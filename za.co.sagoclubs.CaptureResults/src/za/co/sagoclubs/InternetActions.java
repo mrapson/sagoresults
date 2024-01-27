@@ -8,6 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +20,10 @@ import android.content.SharedPreferences;
 import android.util.Base64;
 import android.util.Log;
 import static za.co.sagoclubs.Constants.TAG;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class InternetActions {
 
@@ -232,25 +237,22 @@ public class InternetActions {
     private static List<Player> getRawPlayerRatingsList() {
         HttpURLConnection c = openUnsecuredConnection(Constants.PLAYER_RATINGS);
         BufferedReader reader = null;
-    	List<Player> list = new ArrayList<Player>();
+        List<Player> list = new ArrayList<>();
         try {
-            reader = new BufferedReader(new InputStreamReader(c.getInputStream(), "UTF-8"), 8192);
-			// Skip until the end of the first table row
+            reader = new BufferedReader(new InputStreamReader(c.getInputStream(), StandardCharsets.UTF_8), 8192);
+			StringBuilder jsonStringBuilder = new StringBuilder();
 			for (String line; (line = reader.readLine()) != null;) {
-				if (line.contains("</tr>")) {
-					break;
-				}
+				jsonStringBuilder.append(line);
 			}
-			// Find and parse Player rows
-			for (String line; (line = reader.readLine()) != null;) {
-				if (line.contains("<tr>")) {
-					Player player = getPlayerFromTableRow(reader);
+			JSONObject json = new JSONObject(jsonStringBuilder.toString());
+			if (json.has("players")) {
+				JSONArray playerArray = json.getJSONArray("players");
+				for (int i = 0; i < playerArray.length(); i++) {
+					Player player = getPlayerFromJsonRow(playerArray.getJSONObject(i));
 					list.add(player);
 				}
 			}
-        } catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+        } catch (JSONException | IOException e) {
 			e.printStackTrace();
 		} finally {
             if (reader != null) try { reader.close(); } catch (IOException logOrIgnore) {}
@@ -259,39 +261,32 @@ public class InternetActions {
     	return list;
     }
 
-	private static Player getPlayerFromTableRow(BufferedReader reader) throws IOException {
-		reader.readLine(); // Skip the position
-
-		String line = reader.readLine();
-		String name = line.substring(4, line.indexOf("</td>"));
+	private static Player getPlayerFromJsonRow(JSONObject row) throws JSONException, IOException {
+		String name = row.getString("name");
 		Pattern namePattern = Pattern.compile("[^A-Za-z- ]");
 		if (namePattern.matcher(name).find()) {
 			throw new IOException("Name does not match expected pattern");
 		}
 
-		line = reader.readLine();
-		String rank = line.substring(4, line.indexOf("</td>"));
+		String rank = row.getString("rank");
 		Pattern rankPattern = Pattern.compile("[^0-9kdp]");
 		if (rankPattern.matcher(rank).find()) {
 			throw new IOException("Rank does not match expected pattern");
 		}
 
-		line = reader.readLine();
-		String index = line.substring(4, line.indexOf("</td>"));
+		String index = row.getString("index");
 		Pattern indexPattern = Pattern.compile("[^-0-9]");
 		if (indexPattern.matcher(index).find()) {
 			throw new IOException("Index does not match expected pattern");
 		}
 
-		line = reader.readLine();
-		String lastPlayedDate = line.substring(4, line.indexOf("</td>"));
+		String lastPlayedDate = row.getString("date");
 		Pattern datePattern = Pattern.compile("[^0-9/]");
 		if (datePattern.matcher(lastPlayedDate).find()) {
 			throw new IOException("Date does not match expected pattern");
 		}
 
-		line = reader.readLine();
-		String id = line.substring(33, line.indexOf(".html"));
+		String id = row.getString("id");
 		Pattern idPattern = Pattern.compile("[^a-z]");
 		if (idPattern.matcher(id).find()) {
 			throw new IOException("Id does not match expected pattern");
