@@ -15,22 +15,24 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.Authentic
 import com.amazonaws.regions.Regions;
 
 public class Cognito {
-	private String poolID = "us-east-2_lQ07vxzvD";
-	private String clientID = "6pqaqv2diseq4dq1pt3o72mcn6";
-	private String clientSecret = null;
-	private Regions awsRegion = Regions.US_EAST_2;
-	private CognitoUserPool userPool;
-	private Context appContext;
-	private String userPassword;
+	private final CognitoUserPool userPool;
+	private final Context appContext;
+
+	private final UserData userData;
 
 	public Cognito(Context context){
 		appContext = context;
-		userPool = new CognitoUserPool(context, this.poolID, this.clientID, this.clientSecret, this.awsRegion);
+		String poolID = "us-east-2_lQ07vxzvD";
+		String clientID = "6pqaqv2diseq4dq1pt3o72mcn6";
+		Regions awsRegion = Regions.US_EAST_2;
+		String clientSecret = null;
+
+		userPool = new CognitoUserPool(context, poolID, clientID, clientSecret, awsRegion);
+		userData = UserData.getInstance();
 	}
 
-	public void userLogin(String userId, String password){
-		CognitoUser cognitoUser =  userPool.getUser(userId);
-		this.userPassword = password;
+	public void userLogin(){
+		CognitoUser cognitoUser =  userPool.getUser(userData.getUsername());
 		cognitoUser.getSessionInBackground(authenticationHandler);
 	}
 
@@ -50,7 +52,7 @@ public class Cognito {
 		@Override
 		public void getAuthenticationDetails(AuthenticationContinuation authenticationContinuation, String userId) {
 			// The API needs user sign-in credentials to continue
-			AuthenticationDetails authenticationDetails = new AuthenticationDetails(userId, userPassword, null);
+			AuthenticationDetails authenticationDetails = new AuthenticationDetails(userId, userData.getPassword(), null);
 			// Pass the user sign-in credentials to the continuation
 			authenticationContinuation.setAuthenticationDetails(authenticationDetails);
 			// Allow the sign-in to continue

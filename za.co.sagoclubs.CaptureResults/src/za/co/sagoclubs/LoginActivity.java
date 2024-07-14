@@ -23,14 +23,31 @@ public class LoginActivity extends Activity {
 		btnLogin = findViewById(R.id.btnLogin);
 		txtForgetPass= findViewById(R.id.txtForgotPass);
 
+		loadUserData();
+
 		btnLogin.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
+				String username = etUsername.getText().toString().trim();
+				String password = etPassword.getText().toString();
+
+				setUserData(username, password);
+
 				Cognito authentication = new Cognito(getApplicationContext());
-				authentication.userLogin(
-						etUsername.getText().toString().trim(),
-						etPassword.getText().toString());
+				authentication.userLogin();
 			}
 		});
+	}
+
+	private void loadUserData() {
+		UserData userData = UserData.getInstance();
+		etUsername.setText(userData.getUsername());
+		etPassword.setText(userData.getPassword());
+	}
+
+	private void setUserData(String username, String password) {
+		UserData userData = UserData.getInstance();
+		userData.setUsername(username);
+		userData.setPassword(password);
 	}
 }
