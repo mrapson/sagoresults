@@ -43,8 +43,8 @@ public class Cognito {
 
 		@Override
 		public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {
+			// Sign-in was successful, cognitoUserSession will contain tokens for the user
 			Toast.makeText(appContext, "Sign in success", Toast.LENGTH_LONG).show();
-
 		}
 
 		@Override
@@ -59,10 +59,8 @@ public class Cognito {
 
 		@Override
 		public void getMFACode(MultiFactorAuthenticationContinuation multiFactorAuthenticationContinuation) {
-			// Multi-factor authentication is required; get the verification code from user
-			//multiFactorAuthenticationContinuation.setMfaCode(mfaVerificationCode);
-			// Allow the sign-in process to continue
-			//multiFactorAuthenticationContinuation.continueTask();
+			// Not used. See the link below for an implementation example.
+			// https://aws.amazon.com/blogs/mobile/using-android-sdk-with-amazon-cognito-your-user-pools/
 		}
 
 		@Override
