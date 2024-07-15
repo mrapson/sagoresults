@@ -10,8 +10,11 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import static za.co.sagoclubs.Constants.SHOWLOG;
+import static za.co.sagoclubs.Constants.SHOWLOG_DIRECT;
 import static za.co.sagoclubs.Constants.TAG;
+import static za.co.sagoclubs.InternetActions.openApiGatewayConnection;
+
+import java.net.HttpURLConnection;
 
 public class LogFileActivity extends Activity {
 
@@ -81,7 +84,9 @@ public class LogFileActivity extends Activity {
 		protected String doInBackground(Void... v) {
 			setProgressBarIndeterminateVisibility(true);
 
-			String result = InternetActions.getPreBlock(SHOWLOG + Result.logfile.getId() + ".html");
+			String url = SHOWLOG_DIRECT + "?name=" + Result.logfile.getId();
+			HttpURLConnection c = openApiGatewayConnection(url);
+			String result = InternetActions.getPreBlock(c);
         	return result;
 	    }
 

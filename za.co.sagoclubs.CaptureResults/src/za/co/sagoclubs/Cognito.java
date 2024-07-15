@@ -46,6 +46,7 @@ public class Cognito {
 		@Override
 		public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {
 			// Sign-in was successful, cognitoUserSession will contain tokens for the user
+			userData.setIdToken(userSession.getIdToken());
 			Toast.makeText(appContext, "Sign in success", Toast.LENGTH_LONG).show();
 		}
 

@@ -63,8 +63,9 @@ public class SelectPlayerActivity extends Activity {
 
     private void showAll() {
         lsvSelectPlayer = (ListView)findViewById(R.id.lsvSelectPlayer);
-        PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, InternetActions.getPlayerArray());        
-        lsvSelectPlayer.setAdapter(adapter);
+        //temp PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, InternetActions.getPlayerArray());
+		PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, InternetActions.getTempPlayerArray());
+		lsvSelectPlayer.setAdapter(adapter);
         lsvSelectPlayer.setFastScrollEnabled(true);
     }
     

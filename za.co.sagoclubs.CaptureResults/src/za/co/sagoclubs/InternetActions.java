@@ -21,6 +21,8 @@ import android.util.Base64;
 import android.util.Log;
 import static za.co.sagoclubs.Constants.TAG;
 
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.tokens.CognitoIdToken;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,6 +44,15 @@ public class InternetActions {
         Log.d(TAG, "Set password to " + pw);
 		InternetActions.password = pw;		
 		playerData = null;
+	}
+
+	public static Player[] getTempPlayerArray() {
+		ArrayList<Player> list = new ArrayList<Player>();
+		list.add(new Player("testone", "Test One"));
+		list.add(new Player("testtwo", "Test Two"));
+		Player[] template = new Player[]{};
+		Player[] result = list.toArray(template);
+		return result;
 	}
 
 	public static Player[] getPlayerArray() {
@@ -152,9 +163,13 @@ public class InternetActions {
         return result;
     }
 
-    public static String getPreBlock(String url) {
+	public static String getPreBlock(String url) {
 		Log.d(TAG, "opening " + url);
-    	HttpURLConnection c = openConnection(url);
+		HttpURLConnection c = openConnection(url);
+		return getPreBlock(c);
+	}
+
+	public static String getPreBlock(HttpURLConnection c) {
         BufferedReader reader = null;
         String result= "";
         StringBuffer work = new StringBuffer(); 
@@ -199,6 +214,25 @@ public class InternetActions {
 		}
 		return c;
     }
+
+	public static HttpURLConnection openApiGatewayConnection(String url) {
+		CognitoIdToken idToken = UserData.getInstance().getIdToken();
+		// TODO handle idToken null
+		HttpURLConnection c = null;
+		try {
+			URL u = new URL(url);
+			c = (HttpURLConnection) u.openConnection();
+			Log.d(TAG, "openConnection: url=" + url + ", idToken expiry=" + idToken.getExpiration());
+			String bearerAuth = "Bearer " + UserData.getInstance().getIdToken().getJWTToken();
+			c.setRequestProperty ("Authorization", bearerAuth);
+			c.connect();
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return c;
+	}
     
     private static HttpURLConnection openUnsecuredConnection(String url) {
         HttpURLConnection c = null;

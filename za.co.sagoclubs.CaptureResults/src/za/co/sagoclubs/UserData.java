@@ -1,10 +1,14 @@
 package za.co.sagoclubs;
 
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.tokens.CognitoIdToken;
+
 public class UserData {
 	private static volatile UserData INSTANCE = null;
 
 	private static String username = "";
 	private static String password = "";
+	private static CognitoIdToken idToken = null;
 
 	private UserData() {}
 
@@ -35,4 +39,11 @@ public class UserData {
 		return password;
 	}
 
+	public void setIdToken(CognitoIdToken idToken) {
+		UserData.idToken = idToken;
+	}
+
+	public CognitoIdToken getIdToken() {
+		return idToken;
+	}
 }
