@@ -6,6 +6,9 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.tokens.CognitoIdTo
 public class UserData {
 	private static volatile UserData INSTANCE = null;
 
+	public final static String GUEST_USER = "guest";
+	public final static String GUEST_PASS = "guest";
+
 	private static String username = "";
 	private static String password = "";
 	private static CognitoIdToken idToken = null;
@@ -45,5 +48,9 @@ public class UserData {
 
 	public CognitoIdToken getIdToken() {
 		return idToken;
+	}
+
+	public boolean isGuestUser() {
+		return GUEST_USER.equals(username);
 	}
 }

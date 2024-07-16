@@ -88,7 +88,7 @@ public class CaptureDetailActivity extends Activity {
 		btnPrevious.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				SharedPreferences preferences = getSharedPreferences("SETTINGS", 0);
+				SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
 				String notes = preferences.getString("notes", "");
 				if (notes.length()>0) {
 					txtNotes.setText(notes);
@@ -146,7 +146,7 @@ public class CaptureDetailActivity extends Activity {
 		Result.handicap = String.valueOf(spinnerHandicap.getSelectedItemPosition()+1);
 		Result.notes = txtNotes.getText().toString();
 		if (Result.notes.length()>0) {
-			SharedPreferences preferences = getSharedPreferences("SETTINGS", 0);
+			SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
 			Editor editor = preferences.edit();
 			editor.putString("notes", Result.notes);
 			editor.commit();

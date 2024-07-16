@@ -60,14 +60,14 @@ public class SelectFavouritePlayersActivity extends Activity {
 				}
 			}
 		}
-		SharedPreferences preferences = getSharedPreferences("SETTINGS", 0);
+		SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
 		Editor editor = preferences.edit();
 		editor.putString("favourite_players", save);
 		editor.commit();
 	}
 	
 	private void loadSelection() {
-		SharedPreferences preferences = getSharedPreferences("SETTINGS", 0);
+		SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
 		String save = preferences.getString("favourite_players", "");
 		List<String> items = Arrays.asList(save.split(","));
 		int count = lsvSelectFavouritePlayers.getAdapter().getCount();

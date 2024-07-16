@@ -27,7 +27,7 @@ public class SelectWhitePlayerActivity extends Activity {
         lsvSelectWhitePlayer = (ListView)findViewById(R.id.lsvSelectWhitePlayer);
         chkFavourites = (CheckBox)findViewById(R.id.chkFavourites);
         
-		SharedPreferences preferences = getSharedPreferences("SETTINGS", 0);
+		SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
 		boolean showFavourites = preferences.getBoolean("show_favourites", false);
 		chkFavourites.setChecked(showFavourites);
 		chooseWhatToShow(showFavourites);
@@ -46,7 +46,7 @@ public class SelectWhitePlayerActivity extends Activity {
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
 				chooseWhatToShow(isChecked);
-				SharedPreferences preferences = getSharedPreferences("SETTINGS", 0);
+				SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
 				Editor editor = preferences.edit();
 				editor.putBoolean("show_favourites", isChecked);
 				editor.commit();
@@ -72,7 +72,7 @@ public class SelectWhitePlayerActivity extends Activity {
     
     private void showFavourites() {
         lsvSelectWhitePlayer = (ListView)findViewById(R.id.lsvSelectWhitePlayer);
-		SharedPreferences preferences = getSharedPreferences("SETTINGS", 0);
+		SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
         PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, InternetActions.getFavouritePlayers(preferences));        
         lsvSelectWhitePlayer.setAdapter(adapter);
         lsvSelectWhitePlayer.setFastScrollEnabled(true);

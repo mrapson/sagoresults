@@ -16,16 +16,14 @@ public class MainActivity extends Activity {
 	private Button btnDisplayLogFile;
 	private Button btnPlayerRatings;
 	private boolean onCreateCalled = false;
+	private UserData userData = UserData.getInstance();
 
 	@Override
 	public void onResume() {
 		super.onResume();
 		if (onCreateCalled) {
-			SharedPreferences preferences = getSharedPreferences("SETTINGS", 0);
-			btnDisplayLogFile.setVisibility((preferences.getString("username", "").equals("guest"))?View.INVISIBLE:View.VISIBLE);
-			btnCaptureResult.setVisibility((preferences.getString("username", "").equals("guest"))?View.INVISIBLE:View.VISIBLE);
-//			btnCaptureResult.setEnabled(!(preferences.getString("username", "").equals("guest")));
-//			btnDisplayLogFile.setEnabled(!(preferences.getString("username", "").equals("guest")));
+			btnDisplayLogFile.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
+			btnCaptureResult.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
 		}
 	}
 	
@@ -44,22 +42,22 @@ public class MainActivity extends Activity {
         
         Result.setResultState(ResultState.Complete);
         
-		SharedPreferences preferences = getSharedPreferences("SETTINGS", 0);
-		InternetActions.setUsername(preferences.getString("username", ""));
-		InternetActions.setPassword(preferences.getString("password", ""));
-		
+		SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
+		userData.setUsername(preferences.getString("username", ""));
+		userData.setPassword(preferences.getString("password", ""));
+		InternetActions.forcePlayerArrayReload();
+
         btnSettings = (Button) findViewById(R.id.btnSettings);
 		btnSettings.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-                // Intent myIntent = new Intent(v.getContext(), SettingsActivity.class);
-				Intent myIntent = new Intent(v.getContext(), LoginActivity.class);
+                Intent myIntent = new Intent(v.getContext(), SettingsActivity.class);
                 startActivityForResult(myIntent, 0);
 			}
 		});
 
         btnDisplayLogFile = (Button) findViewById(R.id.btnDisplayLogFile);
-		btnDisplayLogFile.setVisibility((preferences.getString("username", "").equals("guest"))?View.INVISIBLE:View.VISIBLE);
+		btnDisplayLogFile.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
 		btnDisplayLogFile.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -69,7 +67,7 @@ public class MainActivity extends Activity {
 		});
 
 		btnCaptureResult = (Button) findViewById(R.id.btnCaptureResult);
-		btnCaptureResult.setVisibility((preferences.getString("username", "").equals("guest"))?View.INVISIBLE:View.VISIBLE);
+		btnCaptureResult.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
 		btnCaptureResult.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -99,5 +97,4 @@ public class MainActivity extends Activity {
 		
 		onCreateCalled = true;
     }
-    
 }

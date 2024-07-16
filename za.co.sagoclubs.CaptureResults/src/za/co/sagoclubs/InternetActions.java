@@ -31,19 +31,11 @@ public class InternetActions {
 
 	private static Player[] playerData = null;
 	private static Player[] playerRatingData = null;
-	private static String username="";
-	private static String password="";
-	
-	public static void setUsername(String name) {
-        Log.d(TAG, "Set username to " +name);
-		InternetActions.username = name;
-		playerData = null;
-	}
-	
-	public static void setPassword(String pw) {
-        Log.d(TAG, "Set password to " + pw);
-		InternetActions.password = pw;		
-		playerData = null;
+
+	public static void forcePlayerArrayReload() {
+		Log.d(TAG, "Clearing playerData to force reload");
+		//playerData = null;
+		playerData = getTempPlayerArray();
 	}
 
 	public static Player[] getTempPlayerArray() {
@@ -51,11 +43,11 @@ public class InternetActions {
 		list.add(new Player("testone", "Test One"));
 		list.add(new Player("testtwo", "Test Two"));
 		Player[] template = new Player[]{};
-		Player[] result = list.toArray(template);
-		return result;
+		return list.toArray(template);
 	}
 
 	public static Player[] getPlayerArray() {
+		// TODO: check whether playerData can become stale
     	if (playerData!=null) {
     		return playerData;
     	}
@@ -199,6 +191,10 @@ public class InternetActions {
     }
     
     private static HttpURLConnection openConnection(String url) {
+		UserData userData = UserData.getInstance();
+		String username = userData.getUsername();
+		String password = userData.getUsername();
+
         HttpURLConnection c = null;
 		try {
 			URL u = new URL(url);

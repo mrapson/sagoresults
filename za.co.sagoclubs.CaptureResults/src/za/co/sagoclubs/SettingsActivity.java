@@ -24,7 +24,8 @@ public class SettingsActivity extends Activity {
 	private TextView txtPassword;
 	private Button btnSelectFavouritePlayers;
 	private boolean changed;
-	
+	private UserData userData = UserData.getInstance();
+
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +37,7 @@ public class SettingsActivity extends Activity {
         loadSettings();
         
         btnSelectFavouritePlayers = (Button) findViewById(R.id.btnSelectFavouritePlayers);
-		btnSelectFavouritePlayers.setVisibility(txtUsername.getText().toString().equals("guest")?View.INVISIBLE:View.VISIBLE);
+		btnSelectFavouritePlayers.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
 		btnSelectFavouritePlayers.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -91,20 +92,24 @@ public class SettingsActivity extends Activity {
 	
 	private void saveSettings() {
 		if (changed) {
-			SharedPreferences preferences = getSharedPreferences("SETTINGS", 0);
+			SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
 			Editor editor = preferences.edit();
 			editor.putString("username", txtUsername.getText().toString().trim());
 			editor.putString("password", txtPassword.getText().toString().trim());
 			editor.commit();
-			InternetActions.setUsername(preferences.getString("username", "guest"));
-			InternetActions.setPassword(preferences.getString("password", "guest"));
+			userData.setUsername(preferences.getString("username", UserData.GUEST_USER));
+			userData.setPassword(preferences.getString("password", UserData.GUEST_PASS));
+			InternetActions.forcePlayerArrayReload();
+
+			Cognito authentication = new Cognito(getApplicationContext());
+			authentication.userLogin();
 		}
 	}
 	
 	private void loadSettings() {
-		SharedPreferences preferences = getSharedPreferences("SETTINGS", 0);
-		txtUsername.setText(preferences.getString("username", "guest"));
-		txtPassword.setText(preferences.getString("password", "guest"));
+		SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
+		txtUsername.setText(preferences.getString("username", UserData.GUEST_USER));
+		txtPassword.setText(preferences.getString("password", UserData.GUEST_PASS));
 	}
 	
 }

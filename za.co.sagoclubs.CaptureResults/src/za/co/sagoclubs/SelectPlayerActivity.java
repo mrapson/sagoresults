@@ -25,7 +25,7 @@ public class SelectPlayerActivity extends Activity {
         lsvSelectPlayer = (ListView)findViewById(R.id.lsvSelectPlayer);
         chkFavourites = (CheckBox)findViewById(R.id.chkFavourites);
         
-		SharedPreferences preferences = getSharedPreferences("SETTINGS", 0);
+		SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
 		boolean showFavourites = preferences.getBoolean("show_favourites", false);
 		chkFavourites.setChecked(showFavourites);
 		chooseWhatToShow(showFavourites);
@@ -44,7 +44,7 @@ public class SelectPlayerActivity extends Activity {
 			public void onCheckedChanged(CompoundButton buttonView,
 					boolean isChecked) {
 				chooseWhatToShow(isChecked);
-				SharedPreferences preferences = getSharedPreferences("SETTINGS", 0);
+				SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
 				Editor editor = preferences.edit();
 				editor.putBoolean("show_favourites", isChecked);
 				editor.commit();
@@ -63,15 +63,14 @@ public class SelectPlayerActivity extends Activity {
 
     private void showAll() {
         lsvSelectPlayer = (ListView)findViewById(R.id.lsvSelectPlayer);
-        //temp PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, InternetActions.getPlayerArray());
-		PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, InternetActions.getTempPlayerArray());
+        PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, InternetActions.getPlayerArray());
 		lsvSelectPlayer.setAdapter(adapter);
         lsvSelectPlayer.setFastScrollEnabled(true);
     }
     
     private void showFavourites() {
         lsvSelectPlayer = (ListView)findViewById(R.id.lsvSelectPlayer);
-		SharedPreferences preferences = getSharedPreferences("SETTINGS", 0);
+		SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
         PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, InternetActions.getFavouritePlayers(preferences));        
         lsvSelectPlayer.setAdapter(adapter);
         lsvSelectPlayer.setFastScrollEnabled(true);
