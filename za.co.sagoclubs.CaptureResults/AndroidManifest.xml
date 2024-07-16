@@ -70,13 +70,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
-            android:exported="false" >
-            <intent-filter>
-                <action android:name="android.intent.action.EDIT" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name="SelectFavouritePlayersActivity"
             android:exported="false" >
             <intent-filter>

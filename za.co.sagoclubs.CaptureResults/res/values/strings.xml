@@ -34,9 +34,7 @@
     <string name="player_ratings">Player Ratings</string>
     <string name="sort_by_name">Name</string>
     <string name="sort_by_rank">Rank</string>
-    <string name="login">Login</string>
-    <string name="forgot_pass">Forgot password?</string>
-    
+
     <string-array name="weightlist">  
         <item>Free (0)</item>  
         <item>Internet (0.5)</item>  
