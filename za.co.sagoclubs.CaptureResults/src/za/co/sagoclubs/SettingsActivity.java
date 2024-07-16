@@ -7,14 +7,9 @@ import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import static za.co.sagoclubs.Constants.TAG;
 
@@ -24,58 +19,44 @@ public class SettingsActivity extends Activity {
 	private TextView txtPassword;
 	private Button btnSelectFavouritePlayers;
 	private boolean changed;
-	private UserData userData = UserData.getInstance();
+	private final UserData userData = UserData.getInstance();
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.settings);
         
-        txtUsername = (TextView)findViewById(R.id.txtUsername);
-        txtPassword = (TextView)findViewById(R.id.txtPassword);
+        txtUsername = findViewById(R.id.txtUsername);
+        txtPassword = findViewById(R.id.txtPassword);
 
         loadSettings();
         
-        btnSelectFavouritePlayers = (Button) findViewById(R.id.btnSelectFavouritePlayers);
+        btnSelectFavouritePlayers = findViewById(R.id.btnSelectFavouritePlayers);
 		btnSelectFavouritePlayers.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
-		btnSelectFavouritePlayers.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-                Intent myIntent = new Intent(v.getContext(), SelectFavouritePlayersActivity.class);
-                startActivityForResult(myIntent, 0);
-			}
+		btnSelectFavouritePlayers.setOnClickListener(v -> {
+			Intent myIntent = new Intent(v.getContext(), SelectFavouritePlayersActivity.class);
+			startActivityForResult(myIntent, 0);
 		});
 
-		txtUsername.setOnKeyListener(new OnKeyListener() {
-
-			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {
-				Log.d(TAG, "SettingsActivity.txtUsername.OnClick");
-				changed = true;
-				return false;
-			}
-			
+		txtUsername.setOnKeyListener((v, keyCode, event) -> {
+			Log.d(TAG, "SettingsActivity.txtUsername.OnClick");
+			changed = true;
+			return false;
 		});
 
-		CheckBox showPassword = (CheckBox) findViewById(R.id.chkShowPassword);
-		showPassword.setOnCheckedChangeListener(new OnCheckedChangeListener()
-		{
-			@Override
-			public void onCheckedChanged(CompoundButton arg0, boolean arg1) {
-				if(!arg1)
-					txtPassword.setTransformationMethod(new PasswordTransformationMethod());
-				else
-					txtPassword.setTransformationMethod(null);
-				txtPassword.refreshDrawableState();
-			}}
-		);
-		Button doneButton = (Button) findViewById(R.id.DoneButton);
-		doneButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-				changed = true;
-				saveSettings();
-			}
+		CheckBox showPassword = findViewById(R.id.chkShowPassword);
+		showPassword.setOnCheckedChangeListener((arg0, arg1) -> {
+			if(!arg1)
+				txtPassword.setTransformationMethod(new PasswordTransformationMethod());
+			else
+				txtPassword.setTransformationMethod(null);
+			txtPassword.refreshDrawableState();
+		});
+
+		Button doneButton = findViewById(R.id.DoneButton);
+		doneButton.setOnClickListener(arg0 -> {
+			changed = true;
+			saveSettings();
 		});
 	}
 
@@ -99,10 +80,12 @@ public class SettingsActivity extends Activity {
 			editor.commit();
 			userData.setUsername(preferences.getString("username", UserData.GUEST_USER));
 			userData.setPassword(preferences.getString("password", UserData.GUEST_PASS));
-			InternetActions.forcePlayerArrayReload();
 
 			Cognito authentication = new Cognito(getApplicationContext());
 			authentication.userLogin();
+
+			btnSelectFavouritePlayers.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
+			InternetActions.forcePlayerArrayReload();
 		}
 	}
 	
@@ -111,5 +94,4 @@ public class SettingsActivity extends Activity {
 		txtUsername.setText(preferences.getString("username", UserData.GUEST_USER));
 		txtPassword.setText(preferences.getString("password", UserData.GUEST_PASS));
 	}
-	
 }
