@@ -14,97 +14,95 @@ import android.widget.Toast;
 
 public class UndoActivity extends Activity {
 
-	private TextView txtOutput;
-	private Button btnNewResult;
-	private Button btnReturnToStart;
-	private ProgressDialog dialog;
-	
-	@Override
+    private TextView txtOutput;
+    private Button btnNewResult;
+    private Button btnReturnToStart;
+    private ProgressDialog dialog;
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.undo);
-        
-		dialog = new ProgressDialog(this);
 
-		btnReturnToStart = (Button)findViewById(R.id.btnReturnToStart);
-        btnNewResult = (Button)findViewById(R.id.btnNewResult);
-		txtOutput = (TextView)findViewById(R.id.txtOutput);
+        dialog = new ProgressDialog(this);
+
+        btnReturnToStart = findViewById(R.id.btnReturnToStart);
+        btnNewResult = findViewById(R.id.btnNewResult);
+        txtOutput = findViewById(R.id.txtOutput);
         txtOutput.setEnabled(false);
-        
+
         if (Result.resultState == ResultState.Confirm) {
             btnNewResult.setVisibility(View.INVISIBLE);
             btnReturnToStart.setVisibility(View.INVISIBLE);
-    		dialog.setMessage("Sending undo to server...");
-    		dialog.setIndeterminate(true);
-    		dialog.setCancelable(false);
-    		dialog.show();
-        	new UndoResultTask().execute();
+            dialog.setMessage("Sending undo to server...");
+            dialog.setIndeterminate(true);
+            dialog.setCancelable(false);
+            dialog.show();
+            new UndoResultTask().execute();
         }
-        
+
         btnNewResult.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-		        Result.setResultState(ResultState.Enter);
+            @Override
+            public void onClick(View v) {
+                Result.setResultState(ResultState.Enter);
                 Intent myIntent = new Intent(v.getContext(), SelectWhitePlayerActivity.class);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivityForResult(myIntent, 0);
-			}
-		});
+            }
+        });
 
         btnReturnToStart.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
                 Intent myIntent = new Intent(v.getContext(), MainActivity.class);
                 myIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivityForResult(myIntent, 0);
-			}
-		});
+            }
+        });
 
-        if(savedInstanceState!=null) {
+        if (savedInstanceState != null) {
             restoreProgress(savedInstanceState);
         }
+    }
 
-	}
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            Toast.makeText(this, "BACK not supported at this point", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event)  {
-	    if (keyCode == KeyEvent.KEYCODE_BACK) {
-	    	Toast.makeText(this, "BACK not supported at this point", Toast.LENGTH_SHORT).show();
-	        return true;
-	    } 
-	    return super.onKeyDown(keyCode, event);
-	}
-
-	@Override
+    @Override
     protected void onSaveInstanceState(Bundle saveState) {
         super.onSaveInstanceState(saveState);
-        saveState.putString("output",txtOutput.getText().toString());
+        saveState.putString("output", txtOutput.getText().toString());
     }
-	
-	private void restoreProgress(Bundle savedInstanceState) {
+
+    private void restoreProgress(Bundle savedInstanceState) {
         String output = savedInstanceState.getString("output");
-        if (output!=null) {
-	    	txtOutput.setText(output);
+        if (output != null) {
+            txtOutput.setText(output);
         }
-	}
+    }
 
-	private class UndoResultTask extends AsyncTask<Void, Void, String> {
-		protected String doInBackground(Void... v) {
-			setProgressBarIndeterminateVisibility(true);
+    private class UndoResultTask extends AsyncTask<Void, Void, String> {
+        protected String doInBackground(Void... v) {
+            setProgressBarIndeterminateVisibility(true);
 
-        	InternetActions.openPage(Result.constructUndoUri());
-        	String result = InternetActions.getPreBlock(Constants.REFRESH_HTML);
-        	return result;
-	    }
+            InternetActions.openPage(Result.constructUndoUri());
+            String result = InternetActions.getPreBlock(Constants.REFRESH_HTML);
+            return result;
+        }
 
-	    protected void onPostExecute(String result) {
-	    	setProgressBarIndeterminateVisibility(false);
-	    	dialog.dismiss();
-        	txtOutput.setText(result);
-        	Result.setResultState(ResultState.Complete);
+        protected void onPostExecute(String result) {
+            setProgressBarIndeterminateVisibility(false);
+            dialog.dismiss();
+            txtOutput.setText(result);
+            Result.setResultState(ResultState.Complete);
             btnNewResult.setVisibility(View.VISIBLE);
             btnReturnToStart.setVisibility(View.VISIBLE);
-	    }
-	}
-	
+        }
+    }
 }
