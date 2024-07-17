@@ -39,8 +39,8 @@ public class MainActivity extends Activity {
         Result.setResultState(ResultState.Complete);
 
         SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
-        userData.setUsername(preferences.getString("username", ""));
-        userData.setPassword(preferences.getString("password", ""));
+        userData.setUsername(preferences.getString("username", UserData.GUEST_USER));
+        userData.setPassword(preferences.getString("password", UserData.GUEST_PASS));
         InternetActions.forcePlayerArrayReload();
 
         Button btnSettings = findViewById(R.id.btnSettings);
