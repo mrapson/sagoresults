@@ -66,9 +66,7 @@ public class CaptureDetailActivity extends Activity {
         Result.month = addLeadingZero(String.valueOf(c.get(Calendar.MONTH) + 1));
         Result.day = addLeadingZero(String.valueOf(c.get(Calendar.DAY_OF_MONTH)));
 
-        txtDate.setText(new StringBuilder()
-                .append(Result.day).append("-").append(Result.month).append("-")
-                .append(Result.year).append(" "));
+        txtDate.setText(new StringBuilder().append(Result.day).append("-").append(Result.month).append("-").append(Result.year).append(" "));
 
     }
 
@@ -89,10 +87,7 @@ public class CaptureDetailActivity extends Activity {
     public void addSpinnerHandicapOnItemSelectedListener() {
         spinnerHandicap.setOnItemSelectedListener(new OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parentView,
-                                       View selectedItemView,
-                                       int position,
-                                       long id) {
+            public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if (spinnerHandicap.getSelectedItemPosition() > 0) {
                     txtKomi.setText("0.5");
                 }
@@ -150,30 +145,21 @@ public class CaptureDetailActivity extends Activity {
 
     @Override
     protected Dialog onCreateDialog(int id) {
-		if (id == DATE_DIALOG_ID) {
-			return new DatePickerDialog(
-					this,
-					datePickerListener,
-					Integer.parseInt(Result.year),
-					Integer.parseInt(Result.month) - 1,
-					Integer.parseInt(Result.day));
-		}
+        if (id == DATE_DIALOG_ID) {
+            return new DatePickerDialog(this, datePickerListener, Integer.parseInt(Result.year), Integer.parseInt(Result.month) - 1, Integer.parseInt(Result.day));
+        }
 
         return null;
     }
 
-    private final DatePickerDialog.OnDateSetListener datePickerListener
-            = new DatePickerDialog.OnDateSetListener() {
+    private final DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
         // when dialog box is closed, below method will be called.
-        public void onDateSet(DatePicker view, int selectedYear,
-                              int selectedMonth, int selectedDay) {
+        public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
             Result.year = String.valueOf(selectedYear);
             Result.month = addLeadingZero(String.valueOf(selectedMonth + 1));
             Result.day = addLeadingZero(String.valueOf(selectedDay));
 
-            txtDate.setText(new StringBuilder()
-                    .append(Result.day).append("-").append(Result.month).append("-")
-                    .append(Result.year).append(" "));
+            txtDate.setText(new StringBuilder().append(Result.day).append("-").append(Result.month).append("-").append(Result.year).append(" "));
         }
     };
 }

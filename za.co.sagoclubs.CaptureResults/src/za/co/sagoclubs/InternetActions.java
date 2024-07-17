@@ -1,5 +1,18 @@
 package za.co.sagoclubs;
 
+import static za.co.sagoclubs.Constants.TAG;
+
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
+import android.util.Base64;
+import android.util.Log;
+
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.tokens.CognitoIdToken;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,19 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import android.app.AlertDialog;
-import android.content.SharedPreferences;
-import android.util.Base64;
-import android.util.Log;
-
-import static za.co.sagoclubs.Constants.TAG;
-
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.tokens.CognitoIdToken;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class InternetActions {
 
