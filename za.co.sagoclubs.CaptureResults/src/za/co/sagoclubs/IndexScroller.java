@@ -13,20 +13,22 @@ import android.widget.Adapter;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
 
+import androidx.annotation.NonNull;
+
 public class IndexScroller {
 
-	private float mIndexbarWidth;
-	private float mIndexbarMargin;
-	private float mPreviewPadding;
-	private float mDensity;
-	private float mScaledDensity;
+	private final float mIndexbarWidth;
+	private final float mIndexbarMargin;
+	private final float mPreviewPadding;
+	private final float mDensity;
+	private final float mScaledDensity;
 	private float mAlphaRate;
 	private int mState = STATE_HIDDEN;
 	private int mListViewWidth;
 	private int mListViewHeight;
 	private int mCurrentSection = -1;
 	private boolean mIsIndexing = false;
-	private ListView mListView = null;
+	private final ListView mListView;
 	private SectionIndexer mIndexer = null;
 	private String[] mSections = null;
 	private RectF mIndexbarRect;
@@ -138,13 +140,11 @@ public class IndexScroller {
 		return false;
 	}
 
-	public void onSizeChanged(int w, int h, int oldw, int oldh) {
+	public void onSizeChanged(int w, int h) {
 		mListViewWidth = w;
 		mListViewHeight = h;
-		mIndexbarRect = new RectF(w - mIndexbarMargin - mIndexbarWidth
-				, mIndexbarMargin
-				, w - mIndexbarMargin
-				, h - mIndexbarMargin);
+		mIndexbarRect = new RectF(w - mIndexbarMargin - mIndexbarWidth,	mIndexbarMargin,
+				w - mIndexbarMargin, h - mIndexbarMargin);
 	}
 
 	public void show() {
@@ -173,6 +173,7 @@ public class IndexScroller {
 		mState = state;
 		switch (mState) {
 		case STATE_HIDDEN:
+		case STATE_SHOWN:
 			// Cancel any fade effect
 			mHandler.removeMessages(0);
 			break;
@@ -180,10 +181,6 @@ public class IndexScroller {
 			// Start to fade in
 			mAlphaRate = 0;
 			fade(0);
-			break;
-		case STATE_SHOWN:
-			// Cancel any fade effect
-			mHandler.removeMessages(0);
 			break;
 		case STATE_HIDING:
 			// Start to fade out after three seconds
@@ -213,10 +210,9 @@ public class IndexScroller {
 		mHandler.sendEmptyMessageAtTime(0, SystemClock.uptimeMillis() + delay);
 	}
 
-	private Handler mHandler = new Handler() {
-
+	private final Handler mHandler = new Handler() {
 		@Override
-		public void handleMessage(Message msg) {
+		public void handleMessage(@NonNull Message msg) {
 			super.handleMessage(msg);
 
 			switch (mState) {
@@ -248,6 +244,5 @@ public class IndexScroller {
 				break;
 			}
 		}
-
 	};
 }

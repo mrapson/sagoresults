@@ -47,5 +47,4 @@ public class ContentAdapter extends ArrayAdapter<String> implements SectionIndex
 			sections[i] = String.valueOf(mSections.charAt(i));
 		return sections;
 	}
-	
 }    

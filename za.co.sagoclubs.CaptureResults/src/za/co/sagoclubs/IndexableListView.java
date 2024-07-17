@@ -8,8 +8,9 @@ import android.view.MotionEvent;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-public class IndexableListView extends ListView {
+import androidx.annotation.NonNull;
 
+public class IndexableListView extends ListView {
 	private boolean mIsFastScrollEnabled = false;
 	private IndexScroller mScroller = null;
 	private GestureDetector mGestureDetector = null;
@@ -61,16 +62,18 @@ public class IndexableListView extends ListView {
 			return true;
 
 		if (mGestureDetector == null) {
-			mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
-
-				@Override
-				public boolean onFling(MotionEvent e1, MotionEvent e2,
-						float velocityX, float velocityY) {
-					// If fling happens, index bar shows
-					mScroller.show();
-					return super.onFling(e1, e2, velocityX, velocityY);
+			mGestureDetector = new GestureDetector(
+					getContext(),
+					new GestureDetector.SimpleOnGestureListener() {
+						@Override
+						public boolean onFling(@NonNull MotionEvent e1,
+											   @NonNull MotionEvent e2,
+											   float velocityX,
+											   float velocityY) {
+							// If fling happens, index bar shows
+							mScroller.show();
+							return super.onFling(e1, e2, velocityX, velocityY);
 				}
-
 			});
 		}
 		mGestureDetector.onTouchEvent(ev);
@@ -94,7 +97,6 @@ public class IndexableListView extends ListView {
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {
 		super.onSizeChanged(w, h, oldw, oldh);
 		if (mScroller != null)
-			mScroller.onSizeChanged(w, h, oldw, oldh);
+			mScroller.onSizeChanged(w, h);
 	}
-
 }

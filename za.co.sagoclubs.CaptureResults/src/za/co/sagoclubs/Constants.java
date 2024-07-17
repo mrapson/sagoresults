@@ -15,5 +15,4 @@ public class Constants {
 	public static final String SHOWLOG = SAGA_WP_SITE + "ranks/player_files/";
 
 	public static final String SHOWLOG_DIRECT = "https://rank-test.sagoclubs.co.za/showlog.cgi";
-
 }
