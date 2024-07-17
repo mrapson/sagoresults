@@ -6,17 +6,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 
 public class MainActivity extends Activity {
-
-	private Button btnSettings;
 	private Button btnCaptureResult;
 	private Button btnDisplayLogFile;
-	private Button btnPlayerRatings;
 	private boolean onCreateCalled = false;
-	private UserData userData = UserData.getInstance();
+	private final UserData userData = UserData.getInstance();
 
 	@Override
 	public void onResume() {
@@ -47,48 +43,36 @@ public class MainActivity extends Activity {
 		userData.setPassword(preferences.getString("password", ""));
 		InternetActions.forcePlayerArrayReload();
 
-        btnSettings = (Button) findViewById(R.id.btnSettings);
-		btnSettings.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-                Intent myIntent = new Intent(v.getContext(), SettingsActivity.class);
-                startActivityForResult(myIntent, 0);
-			}
+		Button btnSettings = findViewById(R.id.btnSettings);
+		btnSettings.setOnClickListener(v -> {
+			Intent myIntent = new Intent(v.getContext(), SettingsActivity.class);
+			startActivityForResult(myIntent, 0);
 		});
 
-        btnDisplayLogFile = (Button) findViewById(R.id.btnDisplayLogFile);
+        btnDisplayLogFile = findViewById(R.id.btnDisplayLogFile);
 		btnDisplayLogFile.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
-		btnDisplayLogFile.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-                Intent myIntent = new Intent(v.getContext(), SelectPlayerActivity.class);
-                startActivityForResult(myIntent, 0);
-			}
+		btnDisplayLogFile.setOnClickListener(v -> {
+			Intent myIntent = new Intent(v.getContext(), SelectPlayerActivity.class);
+			startActivityForResult(myIntent, 0);
 		});
 
-		btnCaptureResult = (Button) findViewById(R.id.btnCaptureResult);
+		btnCaptureResult = findViewById(R.id.btnCaptureResult);
 		btnCaptureResult.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
-		btnCaptureResult.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-		        Result.setResultState(ResultState.Enter);
-                Intent myIntent = new Intent(v.getContext(), SelectWhitePlayerActivity.class);
-                startActivityForResult(myIntent, 0);
-			}
+		btnCaptureResult.setOnClickListener(v -> {
+			Result.setResultState(ResultState.Enter);
+			Intent myIntent = new Intent(v.getContext(), SelectWhitePlayerActivity.class);
+			startActivityForResult(myIntent, 0);
 		});
-		
-		btnPlayerRatings = (Button) findViewById(R.id.btnPlayerRatings);
+
+		Button btnPlayerRatings = findViewById(R.id.btnPlayerRatings);
 		btnPlayerRatings.setEnabled(true);
-		btnPlayerRatings.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-                Intent myIntent = new Intent(v.getContext(), PlayerRatingsActivity.class);
-                startActivityForResult(myIntent, 0);
-			}
+		btnPlayerRatings.setOnClickListener(v -> {
+			Intent myIntent = new Intent(v.getContext(), PlayerRatingsActivity.class);
+			startActivityForResult(myIntent, 0);
 		});
 
 		int width = btnCaptureResult.getWidth();
-		if (btnDisplayLogFile.getWidth()>width) {
+		if (btnDisplayLogFile.getWidth() > width) {
 			width = btnDisplayLogFile.getWidth();
 		}
 		btnCaptureResult.setWidth(width);

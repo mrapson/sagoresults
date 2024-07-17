@@ -1,6 +1,5 @@
 package za.co.sagoclubs;
 
-import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.tokens.CognitoIdToken;
 
 public class UserData {

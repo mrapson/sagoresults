@@ -30,8 +30,8 @@ public class SettingsActivity extends Activity {
         txtPassword = findViewById(R.id.txtPassword);
 
         loadSettings();
-        
-        btnSelectFavouritePlayers = findViewById(R.id.btnSelectFavouritePlayers);
+
+		btnSelectFavouritePlayers = findViewById(R.id.btnSelectFavouritePlayers);
 		btnSelectFavouritePlayers.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
 		btnSelectFavouritePlayers.setOnClickListener(v -> {
 			Intent myIntent = new Intent(v.getContext(), SelectFavouritePlayersActivity.class);

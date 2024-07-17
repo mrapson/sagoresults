@@ -1,29 +1,18 @@
 package za.co.sagoclubs;
 
-import java.util.Arrays;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.ScrollView;
-import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
 
 public class PlayerRatingsActivity extends Activity {
-
-	private ScrollView scrollView;
 	private ProgressDialog dialog;
 	private ListView listView;
 	private Button btnSortByRank;
@@ -35,32 +24,25 @@ public class PlayerRatingsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player_ratings);
 
-        btnSortByRank = (Button)findViewById(R.id.btnSortByRank);
-        btnSortByName = (Button)findViewById(R.id.btnSortByName);
-        scrollView = (ScrollView)findViewById(R.id.SCROLLER_ID);
-        listView = (ListView)findViewById(R.id.listView);
+        btnSortByRank = findViewById(R.id.btnSortByRank);
+        btnSortByName = findViewById(R.id.btnSortByName);
+        listView = findViewById(R.id.listView);
 
 		updateList();
 
-    	btnSortByName.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (preferredOrder==PlayerSortOrder.SORT_BY_RANK) {
-					preferredOrder=PlayerSortOrder.SORT_BY_NAME;
-					updateList();
-				}
+		btnSortByName.setOnClickListener(v -> {
+			if (preferredOrder == PlayerSortOrder.SORT_BY_RANK) {
+				preferredOrder = PlayerSortOrder.SORT_BY_NAME;
+				updateList();
 			}
-    	});
+		});
 
-    	btnSortByRank.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				if (preferredOrder==PlayerSortOrder.SORT_BY_NAME) {
-					preferredOrder=PlayerSortOrder.SORT_BY_RANK;
-					updateList();
-				}
+		btnSortByRank.setOnClickListener(v -> {
+			if (preferredOrder == PlayerSortOrder.SORT_BY_NAME) {
+				preferredOrder = PlayerSortOrder.SORT_BY_RANK;
+				updateList();
 			}
-    	});
+		});
 	}
 
 	private void updateList() {
@@ -86,8 +68,7 @@ public class PlayerRatingsActivity extends Activity {
 		protected Player[] doInBackground(Context... v) {
 			context = v[0];
 			setProgressBarIndeterminateVisibility(true);
-	    	Player[] players = InternetActions.getPlayerRatingsArray(PlayerSortOrder.SORT_BY_NAME);
-        	return players;
+			return InternetActions.getPlayerRatingsArray(PlayerSortOrder.SORT_BY_NAME);
 	    }
 
 		public OnItemClickListener playerItemClickListener = new OnItemClickListener() {
@@ -112,5 +93,4 @@ public class PlayerRatingsActivity extends Activity {
 	        
 	    }
 	}
-	
 }
