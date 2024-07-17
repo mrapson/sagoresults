@@ -1,6 +1,6 @@
 package za.co.sagoclubs;
 
-/**
+/*
  * This is an array adapter used to render the items on the player rating list view
  */
 
@@ -12,11 +12,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 public class PlayerRatingArrayAdapter extends ArrayAdapter<Player> {
 
     Context context;
     int layoutResourceId;
-    Player[] data = null;
+    Player[] data;
 
     public PlayerRatingArrayAdapter(Context context, int layoutResourceId, Player[] data) {
         super(context, layoutResourceId, data);
@@ -25,10 +27,11 @@ public class PlayerRatingArrayAdapter extends ArrayAdapter<Player> {
         this.data = data;
     }
 
+    @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View row = convertView;
-        PlayerHolder holder = null;
+        PlayerHolder holder;
 
         if (row == null) {
             LayoutInflater inflater = ((Activity) context).getLayoutInflater();
@@ -53,7 +56,5 @@ public class PlayerRatingArrayAdapter extends ArrayAdapter<Player> {
     static class PlayerHolder {
         TextView txtName;
         TextView txtRank;
-        TextView txtIndex;
     }
-
 }

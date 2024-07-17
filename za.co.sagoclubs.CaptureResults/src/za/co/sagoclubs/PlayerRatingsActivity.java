@@ -15,8 +15,6 @@ import android.widget.ListView;
 public class PlayerRatingsActivity extends Activity {
     private ProgressDialog dialog;
     private ListView listView;
-    private Button btnSortByRank;
-    private Button btnSortByName;
     private PlayerSortOrder preferredOrder = PlayerSortOrder.SORT_BY_RANK;
 
     @Override
@@ -24,8 +22,8 @@ public class PlayerRatingsActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player_ratings);
 
-        btnSortByRank = findViewById(R.id.btnSortByRank);
-        btnSortByName = findViewById(R.id.btnSortByName);
+        Button btnSortByRank = findViewById(R.id.btnSortByRank);
+        Button btnSortByName = findViewById(R.id.btnSortByName);
         listView = findViewById(R.id.listView);
 
         updateList();

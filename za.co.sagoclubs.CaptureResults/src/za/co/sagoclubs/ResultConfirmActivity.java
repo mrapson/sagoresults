@@ -10,11 +10,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 public class ResultConfirmActivity extends Activity {
     private TextView txtOutput;
@@ -51,32 +52,23 @@ public class ResultConfirmActivity extends Activity {
             new SaveResultTask().execute();
         }
 
-        btnUndo.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myIntent = new Intent(v.getContext(), UndoActivity.class);
-                startActivityForResult(myIntent, 0);
-            }
+        btnUndo.setOnClickListener(v -> {
+            Intent myIntent = new Intent(v.getContext(), UndoActivity.class);
+            startActivityForResult(myIntent, 0);
         });
 
-        btnNewResult.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Result.setResultState(ResultState.Enter);
-                Intent myIntent = new Intent(v.getContext(), SelectWhitePlayerActivity.class);
-                myIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(myIntent, 0);
-            }
+        btnNewResult.setOnClickListener(v -> {
+            Result.setResultState(ResultState.Enter);
+            Intent myIntent = new Intent(v.getContext(), SelectWhitePlayerActivity.class);
+            myIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivityForResult(myIntent, 0);
         });
 
 
-        btnReturnToStart.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myIntent = new Intent(v.getContext(), MainActivity.class);
-                myIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(myIntent, 0);
-            }
+        btnReturnToStart.setOnClickListener(v -> {
+            Intent myIntent = new Intent(v.getContext(), MainActivity.class);
+            myIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivityForResult(myIntent, 0);
         });
 
         if (savedInstanceState != null) {
@@ -85,12 +77,6 @@ public class ResultConfirmActivity extends Activity {
 
 
     }
-
-//	@Override
-//	public void onPause() {
-//		super.onPause();
-//		dialog.dismiss();
-//	}
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -102,7 +88,7 @@ public class ResultConfirmActivity extends Activity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle saveState) {
+    protected void onSaveInstanceState(@NonNull Bundle saveState) {
         super.onSaveInstanceState(saveState);
         saveState.putString("output", txtOutput.getText().toString());
     }
@@ -118,8 +104,7 @@ public class ResultConfirmActivity extends Activity {
         protected String doInBackground(Void... v) {
             setProgressBarIndeterminateVisibility(true);
             InternetActions.openPage(Result.constructResultUri());
-            String result = InternetActions.getPreBlock(Constants.REFRESH_HTML);
-            return result;
+            return InternetActions.getPreBlock(Constants.REFRESH_HTML);
         }
 
         protected void onPostExecute(String result) {
@@ -132,5 +117,4 @@ public class ResultConfirmActivity extends Activity {
             btnReturnToStart.setVisibility(View.VISIBLE);
         }
     }
-
 }

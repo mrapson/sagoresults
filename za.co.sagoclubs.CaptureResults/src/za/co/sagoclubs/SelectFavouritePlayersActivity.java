@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -15,7 +13,6 @@ import java.util.List;
 public class SelectFavouritePlayersActivity extends Activity {
 
     private ListView lsvSelectFavouritePlayers;
-    private Button btnSave;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -23,20 +20,16 @@ public class SelectFavouritePlayersActivity extends Activity {
         setContentView(R.layout.select_favourite_players);
 
         lsvSelectFavouritePlayers = findViewById(R.id.lsvSelectFavouritePlayers);
-        btnSave = findViewById(R.id.btnSave);
+        Button btnSave = findViewById(R.id.btnSave);
 
-        //PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, InternetActions.getPlayerArray());        
         PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.multi_select_list_item, InternetActions.getPlayerArray());
         lsvSelectFavouritePlayers.setAdapter(adapter);
         lsvSelectFavouritePlayers.setFastScrollEnabled(true);
         loadSelection();
 
-        btnSave.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveSelection();
-                finish();
-            }
+        btnSave.setOnClickListener(v -> {
+            saveSelection();
+            finish();
         });
     }
 
@@ -47,21 +40,21 @@ public class SelectFavouritePlayersActivity extends Activity {
     }
 
     private void saveSelection() {
-        String save = "";
+        StringBuilder save = new StringBuilder();
         int count = lsvSelectFavouritePlayers.getAdapter().getCount();
         for (int i = 0; i < count; i++) {
             if (lsvSelectFavouritePlayers.isItemChecked(i)) {
                 Player player = (Player) lsvSelectFavouritePlayers.getItemAtPosition(i);
                 if (save.length() > 0) {
-                    save += "," + player.getId();
+                    save.append(",").append(player.getId());
                 } else {
-                    save = player.getId();
+                    save = new StringBuilder(player.getId());
                 }
             }
         }
         SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
         Editor editor = preferences.edit();
-        editor.putString("favourite_players", save);
+        editor.putString("favourite_players", save.toString());
         editor.commit();
     }
 

@@ -10,7 +10,7 @@ public class PlayerArrayAdapter extends ArrayAdapter<Player> implements SectionI
 
     Context context;
     int layoutResourceId;
-    Player[] data = null;
+    Player[] data;
 
     public PlayerArrayAdapter(Context context, int layoutResourceId, Player[] data) {
         super(context, layoutResourceId, data);

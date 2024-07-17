@@ -37,6 +37,7 @@
     <string name="white_radio">White (%1$s)</string>
     <string name="black_radio">Black (%1$s)</string>
 
+
     <string-array name="weightlist">
         <item>Free (0)</item>
         <item>Internet (0.5)</item>

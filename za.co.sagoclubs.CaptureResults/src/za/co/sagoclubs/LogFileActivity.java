@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import java.net.HttpURLConnection;
 
 public class LogFileActivity extends Activity {
@@ -21,7 +23,6 @@ public class LogFileActivity extends Activity {
     private TextView txtOutput;
     private ScrollView scrollView;
 
-    private TextView txtPlayer;
     private ProgressDialog dialog;
 
     @Override
@@ -33,7 +34,7 @@ public class LogFileActivity extends Activity {
 
         txtOutput = findViewById(R.id.txtOutput);
         txtOutput.setEnabled(false);
-        txtPlayer = findViewById(R.id.txtPlayer);
+        TextView txtPlayer = findViewById(R.id.txtPlayer);
 
         scrollView = findViewById(R.id.SCROLLER_ID);
 
@@ -51,7 +52,7 @@ public class LogFileActivity extends Activity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle saveState) {
+    protected void onSaveInstanceState(@NonNull Bundle saveState) {
         super.onSaveInstanceState(saveState);
         saveState.putString("output", txtOutput.getText().toString());
     }
@@ -62,11 +63,7 @@ public class LogFileActivity extends Activity {
             txtOutput.setMovementMethod(new ScrollingMovementMethod());
             txtOutput.setText("");
             txtOutput.append(output);
-            scrollView.post(new Runnable() {
-                public void run() {
-                    scrollView.fullScroll(View.FOCUS_DOWN);
-                }
-            });
+            scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
         }
     }
 
@@ -84,8 +81,7 @@ public class LogFileActivity extends Activity {
 
             String url = SHOWLOG_DIRECT + "?name=" + Result.logfile.getId();
             HttpURLConnection c = openApiGatewayConnection(url);
-            String result = InternetActions.getPreBlock(c);
-            return result;
+            return InternetActions.getPreBlock(c);
         }
 
         protected void onPostExecute(String result) {
@@ -94,11 +90,7 @@ public class LogFileActivity extends Activity {
             txtOutput.setMovementMethod(new ScrollingMovementMethod());
             txtOutput.setText("");
             txtOutput.append(result);
-            scrollView.post(new Runnable() {
-                public void run() {
-                    scrollView.fullScroll(View.FOCUS_DOWN);
-                }
-            });
+            scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
         }
     }
 }

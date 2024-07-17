@@ -7,10 +7,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 
 public class UndoActivity extends Activity {
 
@@ -41,23 +42,17 @@ public class UndoActivity extends Activity {
             new UndoResultTask().execute();
         }
 
-        btnNewResult.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Result.setResultState(ResultState.Enter);
-                Intent myIntent = new Intent(v.getContext(), SelectWhitePlayerActivity.class);
-                myIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(myIntent, 0);
-            }
+        btnNewResult.setOnClickListener(v -> {
+            Result.setResultState(ResultState.Enter);
+            Intent myIntent = new Intent(v.getContext(), SelectWhitePlayerActivity.class);
+            myIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivityForResult(myIntent, 0);
         });
 
-        btnReturnToStart.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent myIntent = new Intent(v.getContext(), MainActivity.class);
-                myIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivityForResult(myIntent, 0);
-            }
+        btnReturnToStart.setOnClickListener(v -> {
+            Intent myIntent = new Intent(v.getContext(), MainActivity.class);
+            myIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivityForResult(myIntent, 0);
         });
 
         if (savedInstanceState != null) {
@@ -75,7 +70,7 @@ public class UndoActivity extends Activity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle saveState) {
+    protected void onSaveInstanceState(@NonNull Bundle saveState) {
         super.onSaveInstanceState(saveState);
         saveState.putString("output", txtOutput.getText().toString());
     }
@@ -92,8 +87,7 @@ public class UndoActivity extends Activity {
             setProgressBarIndeterminateVisibility(true);
 
             InternetActions.openPage(Result.constructUndoUri());
-            String result = InternetActions.getPreBlock(Constants.REFRESH_HTML);
-            return result;
+            return InternetActions.getPreBlock(Constants.REFRESH_HTML);
         }
 
         protected void onPostExecute(String result) {
