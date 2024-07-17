@@ -67,7 +67,6 @@ public class CaptureDetailActivity extends Activity {
         Result.day = addLeadingZero(String.valueOf(c.get(Calendar.DAY_OF_MONTH)));
 
         txtDate.setText(new StringBuilder().append(Result.day).append("-").append(Result.month).append("-").append(Result.year).append(" "));
-
     }
 
     public void addChangeButtonListener() {
