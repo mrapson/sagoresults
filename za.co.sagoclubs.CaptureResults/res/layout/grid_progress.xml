@@ -3,13 +3,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#ffffff"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#336699" >
-
+        android:background="#336699">
+
         <TextView
             android:id="@+id/txtUndoConfirmed"
             android:layout_width="wrap_content"
@@ -23,8 +23,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
-
+        android:layout_height="wrap_content">
+
         <TextView
             android:id="@+id/txtPlayer"
             android:layout_width="wrap_content"
@@ -36,10 +36,10 @@
 
     </LinearLayout>
 
-<ListView
-    android:id="@+id/listView1"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" >
-</ListView>
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </ListView>
 
 </LinearLayout>

@@ -3,13 +3,13 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="#ffffff"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#336699" >
-
+        android:background="#336699">
+
         <TextView
             android:id="@+id/txtSelectWhitePlayer"
             android:layout_width="wrap_content"
@@ -24,21 +24,21 @@
     <za.co.sagoclubs.IndexableListView
         android:id="@+id/lsvSelectFavouritePlayers"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:addStatesFromChildren="true"
         android:choiceMode="multipleChoice"
-        android:headerDividersEnabled="true" 
+        android:headerDividersEnabled="true"
         android:layout_weight="0.9">
     </za.co.sagoclubs.IndexableListView>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/btnSave"
-	        style="@style/ButtonText"
-			android:background="@drawable/green_button"
+            style="@style/ButtonText"
+            android:background="@drawable/green_button"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/save"

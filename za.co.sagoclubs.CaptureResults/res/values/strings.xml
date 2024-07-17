@@ -25,43 +25,42 @@
     <string name="select_white_player">Select White Player</string>
     <string name="select_black_player">Select Black Player</string>
     <string name="game_details">Game Details</string>
-    <string name="favourites">Favourites</string>  
-    <string name="return_to_start">Home</string>  
-    <string name="player_logfile">Player Logfile</string>  
-    <string name="player">Player</string>  
-    <string name="select_player">Select Player</string>  
-    <string name="display_log_file">Display Log File</string>  
+    <string name="favourites">Favourites</string>
+    <string name="return_to_start">Home</string>
+    <string name="player_logfile">Player Logfile</string>
+    <string name="player">Player</string>
+    <string name="select_player">Select Player</string>
+    <string name="display_log_file">Display Log File</string>
     <string name="player_ratings">Player Ratings</string>
     <string name="sort_by_name">Name</string>
     <string name="sort_by_rank">Rank</string>
     <string name="white_radio">White (%1$s)</string>
     <string name="black_radio">Black (%1$s)</string>
 
-    <string-array name="weightlist">  
-        <item>Free (0)</item>  
-        <item>Internet (0.5)</item>  
-        <item>Normal (1)</item>  
-        <item>Tournament (1.5)</item>  
-    </string-array>  
+    <string-array name="weightlist">
+        <item>Free (0)</item>
+        <item>Internet (0.5)</item>
+        <item>Normal (1)</item>
+        <item>Tournament (1.5)</item>
+    </string-array>
 
-    <string-array name="handicaplist">  
-        <item>1 (Even)</item>  
-        <item>2</item>  
-        <item>3</item>  
-        <item>4</item>  
-        <item>5</item>  
-        <item>6</item>  
-        <item>7</item>  
-        <item>8</item>  
-        <item>9</item>  
-    </string-array>  
-    
-    <string-array name="winnerlist">  
-        <item>White</item>  
-        <item>Black</item>  
-        <item>Draw</item>  
-    </string-array>  
-        <string name="south_african_go">South African Go</string>  
-    
-   
+    <string-array name="handicaplist">
+        <item>1 (Even)</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+
+    <string-array name="winnerlist">
+        <item>White</item>
+        <item>Black</item>
+        <item>Draw</item>
+    </string-array>
+    <string name="south_african_go">South African Go</string>
+
 </resources>
