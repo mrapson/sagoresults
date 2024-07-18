@@ -32,8 +32,8 @@
     <string name="select_player">Select Player</string>
     <string name="display_log_file">Display Log File</string>
     <string name="player_ratings">Player Ratings</string>
-    <string name="sort_by_name">Name</string>
-    <string name="sort_by_rank">Rank</string>
+    <string name="sort_by_name">By Name</string>
+    <string name="sort_by_rank">By Rank</string>
     <string name="white_radio">White (%1$s)</string>
     <string name="black_radio">Black (%1$s)</string>
 

@@ -19,23 +19,28 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold" />
 
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/btnSortByName"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name"
-            android:visibility="invisible" />
-
+            android:text="@string/sort_by_name"
+            android:minHeight="48dp"
+            android:visibility="visible" />
 
         <Button
             android:id="@+id/btnSortByRank"
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Rank"
-            android:visibility="invisible" />
+            android:minHeight="48dp"
+            android:text="@string/sort_by_rank"
+            android:visibility="visible" />
 
     </LinearLayout>
 
@@ -50,7 +55,6 @@
         android:layout_height="wrap_content"
         android:scrollbars="vertical"
         android:fillViewport="true">
-
 
     </ScrollView>
 

@@ -1,10 +1,7 @@
 package za.co.sagoclubs;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,8 +9,13 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 public class PlayerRatingsActivity extends Activity {
-    private ProgressDialog dialog;
     private ListView listView;
     private PlayerSortOrder preferredOrder = PlayerSortOrder.SORT_BY_RANK;
 
@@ -44,49 +46,47 @@ public class PlayerRatingsActivity extends Activity {
     }
 
     private void updateList() {
-        dialog = new ProgressDialog(this);
-        dialog.setMessage("Retrieving player ratings...");
-        dialog.setIndeterminate(true);
-        dialog.setCancelable(true);
-        dialog.show();
-        new PlayerRatingsTask().execute(this);
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Future<Player[]> future = executorService.submit(new PlayerRatingsThread(preferredOrder));
+
+        Player[] players;
+        try {
+            players = future.get();
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        PlayerRatingArrayAdapter adapter = new PlayerRatingArrayAdapter(this, R.layout.player_rating_list_item, players);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(playerItemClickListener);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (dialog != null) {
-            dialog.dismiss();
+    }
+
+    private static class PlayerRatingsThread implements Callable<Player[]> {
+        private final PlayerSortOrder sortOrder;
+
+        public PlayerRatingsThread(PlayerSortOrder sortOrder) {
+            this.sortOrder = sortOrder;
+        }
+
+        @Override
+        public Player[] call()
+        {
+            return InternetActions.getPlayerRatingsArray(sortOrder);
         }
     }
 
-    private class PlayerRatingsTask extends AsyncTask<Context, Void, Player[]> {
-        private Context context;
-
-        protected Player[] doInBackground(Context... v) {
-            context = v[0];
-            setProgressBarIndeterminateVisibility(true);
-            return InternetActions.getPlayerRatingsArray(PlayerSortOrder.SORT_BY_NAME);
+    public OnItemClickListener playerItemClickListener = new OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Player p = (Player) listView.getItemAtPosition(position);
+            Result.setLogFile(p);
+            Intent myIntent = new Intent(view.getContext(), LogFileActivity.class);
+            startActivityForResult(myIntent, 0);
         }
-
-        public OnItemClickListener playerItemClickListener = new OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Player p = (Player) listView.getItemAtPosition(position);
-                Result.setLogFile(p);
-                Intent myIntent = new Intent(view.getContext(), LogFileActivity.class);
-                startActivityForResult(myIntent, 0);
-            }
-        };
-
-        protected void onPostExecute(Player[] players) {
-            setProgressBarIndeterminateVisibility(false);
-            dialog.hide();
-            PlayerRatingArrayAdapter adapter = new PlayerRatingArrayAdapter(context, R.layout.player_rating_list_item, players);
-            listView.setAdapter(adapter);
-            listView.setOnItemClickListener(playerItemClickListener);
-
-        }
-    }
+    };
 }
