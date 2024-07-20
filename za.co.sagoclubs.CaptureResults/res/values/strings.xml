@@ -36,6 +36,7 @@
     <string name="sort_by_rank">By Rank</string>
     <string name="white_radio">White (%1$s)</string>
     <string name="black_radio">Black (%1$s)</string>
+    <string name="double_space_pad">&#160;&#160;</string>
 
 
     <string-array name="weightlist">
