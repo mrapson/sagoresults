@@ -48,7 +48,7 @@ public class PlayerRatingArrayAdapter extends ArrayAdapter<PlayerRating> {
 
         PlayerRating player = data[position];
         holder.txtName.setText(player.getName());
-        holder.txtRank.setText(player.getRank() + "(" + player.getIndex() + ")");
+        holder.txtRank.setText(player.getRatingString());
 
         return row;
     }

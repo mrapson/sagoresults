@@ -21,6 +21,10 @@ public class PlayerRating extends Player {
         return index;
     }
 
+    public String getRatingString() {
+        return rank + " (" + index + ")";
+    }
+
     public String getLastPlayedDate() {
         return lastPlayedDate;
     }
