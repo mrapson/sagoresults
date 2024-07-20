@@ -21,6 +21,7 @@ import java.net.HttpURLConnection;
 public class LogFileActivity extends Activity {
 
     private TextView txtOutput;
+    private TextView txtPlayer;
     private ScrollView scrollView;
 
     private ProgressDialog dialog;
@@ -34,7 +35,7 @@ public class LogFileActivity extends Activity {
 
         txtOutput = findViewById(R.id.txtOutput);
         txtOutput.setEnabled(false);
-        TextView txtPlayer = findViewById(R.id.txtPlayer);
+        txtPlayer = findViewById(R.id.txtPlayer);
 
         scrollView = findViewById(R.id.SCROLLER_ID);
 
@@ -55,6 +56,7 @@ public class LogFileActivity extends Activity {
     protected void onSaveInstanceState(@NonNull Bundle saveState) {
         super.onSaveInstanceState(saveState);
         saveState.putString("output", txtOutput.getText().toString());
+        saveState.putString("player", txtPlayer.getText().toString());
     }
 
     private void restoreProgress(Bundle savedInstanceState) {
@@ -64,6 +66,10 @@ public class LogFileActivity extends Activity {
             txtOutput.setText("");
             txtOutput.append(output);
             scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+        }
+        String player = savedInstanceState.getString("player");
+        if (player != null) {
+            txtPlayer.setText(player);
         }
     }
 
