@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 public class InternetActions {
 
     private static Player[] playerData = null;
-    private static PlayerRating[] playerRatingData = null;
+    private static List<PlayerRating> playerRatingData = null;
 
     public static void forcePlayerArrayReload() {
         Log.d(TAG, "Clearing playerData to force reload");
@@ -65,18 +65,16 @@ public class InternetActions {
         return playerData;
     }
 
-    public static Player[] getPlayerRatingsArray() {
-        return getPlayerRatingsArray(PlayerSortOrder.SORT_BY_NAME);
-    }
-
     public static PlayerRating[] getPlayerRatingsArray(PlayerSortOrder order) {
-        if (playerRatingData != null) {
-            return playerRatingData;
+        if (playerRatingData == null) {
+            playerRatingData = getRawPlayerRatingsList();
         }
-        List<PlayerRating> list = getRawPlayerRatingsList();
-        PlayerRating[] template = new PlayerRating[]{};
-        playerRatingData = list.toArray(template);
-        return playerRatingData;
+
+        return playerRatingData.stream()
+                .sorted(PlayerSortOrder.SORT_BY_NAME == order
+                        ? new PlayerSortByName()
+                        : new PlayerSortByRating())
+                .toArray(PlayerRating[]::new);
     }
 
     public static Player[] getFavouritePlayers(SharedPreferences preferences) {

@@ -2,7 +2,7 @@ package za.co.sagoclubs;
 
 import androidx.annotation.NonNull;
 
-public class Player implements Comparable<Player> {
+public class Player {
     @NonNull
     private final String id;
     @NonNull
@@ -26,10 +26,5 @@ public class Player implements Comparable<Player> {
     @NonNull
     public String toString() {
         return name;
-    }
-
-    @Override
-    public int compareTo(Player other) {
-        return this.name.compareTo(other.name);
     }
 }
