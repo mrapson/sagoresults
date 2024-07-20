@@ -14,13 +14,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-public class PlayerRatingArrayAdapter extends ArrayAdapter<Player> {
+public class PlayerRatingArrayAdapter extends ArrayAdapter<PlayerRating> {
 
     Context context;
     int layoutResourceId;
-    Player[] data;
+    PlayerRating[] data;
 
-    public PlayerRatingArrayAdapter(Context context, int layoutResourceId, Player[] data) {
+    public PlayerRatingArrayAdapter(Context context, int layoutResourceId, PlayerRating[] data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
@@ -46,7 +46,7 @@ public class PlayerRatingArrayAdapter extends ArrayAdapter<Player> {
             holder = (PlayerHolder) row.getTag();
         }
 
-        Player player = data[position];
+        PlayerRating player = data[position];
         holder.txtName.setText(player.getName());
         holder.txtRank.setText(player.getRank() + "(" + player.getIndex() + ")");
 

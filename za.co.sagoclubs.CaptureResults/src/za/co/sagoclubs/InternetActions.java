@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 public class InternetActions {
 
     private static Player[] playerData = null;
-    private static Player[] playerRatingData = null;
+    private static PlayerRating[] playerRatingData = null;
 
     public static void forcePlayerArrayReload() {
         Log.d(TAG, "Clearing playerData to force reload");
@@ -65,66 +65,16 @@ public class InternetActions {
         return playerData;
     }
 
-    private static List<Player> getTestPlayers() {
-        List<Player> list = new ArrayList<>();
-        Player p = new Player("victor", "Victor Chow");
-        p.setRank("7d");
-        p.setIndex("345");
-        list.add(p);
-        p = new Player("bengo", "Ben Gale");
-        p.setRank("3d");
-        p.setIndex("34");
-        list.add(p);
-        p = new Player("andrew", "Andrew Davies");
-        p.setRank("3d");
-        p.setIndex("622");
-        list.add(p);
-        p = new Player("sam", "Sam Scott");
-        p.setRank("2d");
-        p.setIndex("876");
-        list.add(p);
-        p = new Player("andre", "Andre Connell");
-        p.setRank("2d");
-        p.setIndex("-80");
-        list.add(p);
-        p = new Player("chris", "Chris Welsh");
-        p.setRank("1d");
-        p.setIndex("219");
-        list.add(p);
-        p = new Player("lloyd", "Lloyd Rubidge");
-        p.setRank("1k");
-        p.setIndex("-322");
-        list.add(p);
-        p = new Player("francois", "Francois van Niekerk");
-        p.setRank("4k");
-        p.setIndex("-33");
-        list.add(p);
-        p = new Player("paul", "Paul Steyn");
-        p.setRank("5k");
-        p.setIndex("0");
-        list.add(p);
-        p = new Player("stephen", "Stephen Martindale");
-        p.setRank("10k");
-        p.setIndex("909");
-        list.add(p);
-        p = new Player("rory", "Rory Shea");
-        p.setRank("15k");
-        p.setIndex("-995");
-        list.add(p);
-        return list;
-    }
-
     public static Player[] getPlayerRatingsArray() {
         return getPlayerRatingsArray(PlayerSortOrder.SORT_BY_NAME);
     }
 
-    public static Player[] getPlayerRatingsArray(PlayerSortOrder order) {
+    public static PlayerRating[] getPlayerRatingsArray(PlayerSortOrder order) {
         if (playerRatingData != null) {
             return playerRatingData;
         }
-//      List<Player> list = getTestPlayers();
-        List<Player> list = getRawPlayerRatingsList();
-        Player[] template = new Player[]{};
+        List<PlayerRating> list = getRawPlayerRatingsList();
+        PlayerRating[] template = new PlayerRating[]{};
         playerRatingData = list.toArray(template);
         return playerRatingData;
     }
@@ -276,10 +226,10 @@ public class InternetActions {
         return list;
     }
 
-    private static List<Player> getRawPlayerRatingsList() {
+    private static List<PlayerRating> getRawPlayerRatingsList() {
         HttpURLConnection c = openUnsecuredConnection(Constants.PLAYER_RATINGS);
         BufferedReader reader = null;
-        List<Player> list = new ArrayList<>();
+        List<PlayerRating> list = new ArrayList<>();
         try {
             reader = new BufferedReader(new InputStreamReader(c.getInputStream(), StandardCharsets.UTF_8), 8192);
             StringBuilder jsonStringBuilder = new StringBuilder();
@@ -290,8 +240,8 @@ public class InternetActions {
             if (json.has("players")) {
                 JSONArray playerArray = json.getJSONArray("players");
                 for (int i = 0; i < playerArray.length(); i++) {
-                    Player player = getPlayerFromJsonRow(playerArray.getJSONObject(i));
-                    list.add(player);
+                    PlayerRating playerRating = getPlayerFromJsonRow(playerArray.getJSONObject(i));
+                    list.add(playerRating);
                 }
             }
         } catch (JSONException | IOException e) {
@@ -306,7 +256,7 @@ public class InternetActions {
         return list;
     }
 
-    private static Player getPlayerFromJsonRow(JSONObject row) throws JSONException, IOException {
+    private static PlayerRating getPlayerFromJsonRow(JSONObject row) throws JSONException, IOException {
         String name = row.getString("name");
         Pattern namePattern = Pattern.compile("[^A-Za-z- ]");
         if (namePattern.matcher(name).find()) {
@@ -337,10 +287,6 @@ public class InternetActions {
             throw new IOException("Id does not match expected pattern");
         }
 
-        Player result = new Player(id, name);
-        result.setRank(rank);
-        result.setIndex(index);
-        result.setLastPlayedDate(lastPlayedDate);
-        return result;
+        return new PlayerRating(id, name, rank, index, lastPlayedDate);
     }
 }

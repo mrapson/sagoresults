@@ -47,16 +47,16 @@ public class PlayerRatingsActivity extends Activity {
 
     private void updateList() {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<Player[]> future = executorService.submit(new PlayerRatingsThread(preferredOrder));
+        Future<PlayerRating[]> future = executorService.submit(new PlayerRatingsThread(preferredOrder));
 
-        Player[] players;
+        PlayerRating[] playerRatings;
         try {
-            players = future.get();
+            playerRatings = future.get();
         } catch (ExecutionException | InterruptedException e) {
             throw new RuntimeException(e);
         }
 
-        PlayerRatingArrayAdapter adapter = new PlayerRatingArrayAdapter(this, R.layout.player_rating_list_item, players);
+        PlayerRatingArrayAdapter adapter = new PlayerRatingArrayAdapter(this, R.layout.player_rating_list_item, playerRatings);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(playerItemClickListener);
     }
@@ -66,7 +66,7 @@ public class PlayerRatingsActivity extends Activity {
         super.onPause();
     }
 
-    private static class PlayerRatingsThread implements Callable<Player[]> {
+    private static class PlayerRatingsThread implements Callable<PlayerRating[]> {
         private final PlayerSortOrder sortOrder;
 
         public PlayerRatingsThread(PlayerSortOrder sortOrder) {
@@ -74,7 +74,7 @@ public class PlayerRatingsActivity extends Activity {
         }
 
         @Override
-        public Player[] call()
+        public PlayerRating[] call()
         {
             return InternetActions.getPlayerRatingsArray(sortOrder);
         }
