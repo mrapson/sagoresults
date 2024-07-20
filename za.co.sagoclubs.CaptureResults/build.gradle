@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace 'za.co.sagoclubs'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "za.co.sagoclubs"
-        minSdk 24
-        targetSdk 33
+        minSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 

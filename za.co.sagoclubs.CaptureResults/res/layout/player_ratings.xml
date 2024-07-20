@@ -10,6 +10,10 @@
         android:layout_height="wrap_content"
         android:background="#336699">
 
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="0dp" />
+
         <TextView
             android:id="@+id/txtPlayerRatings"
             android:layout_width="wrap_content"
@@ -26,7 +30,8 @@
 
         <Button
             android:id="@+id/btnSortByName"
-            style="?android:attr/buttonStyleSmall"
+            style="@style/ButtonText"
+            android:background="@drawable/magenta_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sort_by_name"
@@ -35,7 +40,8 @@
 
         <Button
             android:id="@+id/btnSortByRank"
-            style="?android:attr/buttonStyleSmall"
+            style="@style/ButtonText"
+            android:background="@drawable/magenta_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="48dp"

@@ -66,16 +66,10 @@ public class PlayerRatingsActivity extends Activity {
         super.onPause();
     }
 
-    private static class PlayerRatingsThread implements Callable<PlayerRating[]> {
-        private final PlayerSortOrder sortOrder;
-
-        public PlayerRatingsThread(PlayerSortOrder sortOrder) {
-            this.sortOrder = sortOrder;
-        }
-
+    private record PlayerRatingsThread(PlayerSortOrder sortOrder)
+            implements Callable<PlayerRating[]> {
         @Override
-        public PlayerRating[] call()
-        {
+        public PlayerRating[] call() {
             return InternetActions.getPlayerRatingsArray(sortOrder);
         }
     }
