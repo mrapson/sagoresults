@@ -10,42 +10,45 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PlayerRatingsActivity extends Activity {
     private ListView listView;
-    private PlayerSortOrder preferredOrder = PlayerSortOrder.SORT_BY_RANK;
+    private TextView loadingStatusView;
+    private PlayerSortOrder currentSortOrder = null;
+    private final AtomicBoolean updateLock = new AtomicBoolean(false);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.player_ratings);
 
-        Button btnSortByRank = findViewById(R.id.btnSortByRank);
-        Button btnSortByName = findViewById(R.id.btnSortByName);
         listView = findViewById(R.id.listView);
+        loadingStatusView = findViewById(R.id.txtLoadingStatus);
 
-        updateList();
+        updateList(PlayerSortOrder.SORT_BY_RANK, "OnCreate");
 
-        btnSortByName.setOnClickListener(v -> {
-            if (preferredOrder == PlayerSortOrder.SORT_BY_RANK) {
-                preferredOrder = PlayerSortOrder.SORT_BY_NAME;
-                updateList();
-            }
-        });
-
-        btnSortByRank.setOnClickListener(v -> {
-            if (preferredOrder == PlayerSortOrder.SORT_BY_NAME) {
-                preferredOrder = PlayerSortOrder.SORT_BY_RANK;
-                updateList();
-            }
-        });
+        Button btnSortByName = findViewById(R.id.btnSortByName);
+        btnSortByName.setOnClickListener(v -> updateList(PlayerSortOrder.SORT_BY_NAME, "ByName"));
+        Button btnSortByRank = findViewById(R.id.btnSortByRank);
+        btnSortByRank.setOnClickListener(v -> updateList(PlayerSortOrder.SORT_BY_RANK, "ByRank"));
     }
 
-    private void updateList() {
+    private void updateList(PlayerSortOrder newSortOrder, String caller) {
+        if (updateLock.get() || newSortOrder == currentSortOrder) {
+            return;
+        }
+        updateLock.set(true);
+        currentSortOrder = newSortOrder;
+
+        loadingStatusView.setText(getString(R.string.loading_message) + caller);
+        loadingStatusView.setVisibility(View.VISIBLE);
+
         CompletableFuture
-                .supplyAsync(() -> InternetActions.getPlayerRatingsArray(preferredOrder))
+                .supplyAsync(() -> InternetActions.getPlayerRatingsArray(currentSortOrder))
                 .thenAccept(playerRatings -> {
                     Handler listViewUpdaterHandler = new Handler(Looper.getMainLooper());
                     listViewUpdaterHandler.post(() -> {
@@ -55,6 +58,8 @@ public class PlayerRatingsActivity extends Activity {
                                 playerRatings);
                         listView.setAdapter(adapter);
                         listView.setOnItemClickListener(playerItemClickListener);
+                        loadingStatusView.setVisibility(View.GONE);
+                        updateLock.set(false);
                     });
                 });
     }

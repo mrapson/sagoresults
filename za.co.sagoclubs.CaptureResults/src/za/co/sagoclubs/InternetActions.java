@@ -68,7 +68,7 @@ public class InternetActions {
 
     public static PlayerRating[] getPlayerRatingsArray(PlayerSortOrder order) {
         try {
-            sleep(2000);
+            sleep(10000);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
