@@ -3,7 +3,7 @@ package za.co.sagoclubs;
 public class Constants {
 
     // Override SAGA_WP_SITE with local IP address when testing locally
-    private static final String SAGA_WP_SITE = "http://sagoclubs.co.za/";
+    private static final String SAGA_WP_SITE = "https://sagoclubs.co.za/";
     public static final String TAG = "SAGO";
     public static final String REFRESH_HTML = "http://rank.sagoclubs.co.za:8080/refresh.html";
     public static final String LOGGAME_CGI = "http://rank.sagoclubs.co.za:8080/loggame.cgi";

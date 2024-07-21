@@ -99,7 +99,7 @@ public class InternetActions {
     }
 
     public static String openPage(String url) {
-        HttpURLConnection c = openConnection(url);
+        HttpURLConnection c = openAuthenticatedConnection(url);
         BufferedReader reader = null;
         StringBuilder result = new StringBuilder();
         try {
@@ -129,7 +129,7 @@ public class InternetActions {
 
     public static String getPreBlock(String url) {
         Log.d(TAG, "opening " + url);
-        HttpURLConnection c = openConnection(url);
+        HttpURLConnection c = openAuthenticatedConnection(url);
         return getPreBlock(c);
     }
 
@@ -162,7 +162,7 @@ public class InternetActions {
         return result;
     }
 
-    private static HttpURLConnection openConnection(String url) {
+    private static HttpURLConnection openAuthenticatedConnection(String url) {
         UserData userData = UserData.getInstance();
         String username = userData.getUsername();
         String password = userData.getUsername();
@@ -198,7 +198,7 @@ public class InternetActions {
         return c;
     }
 
-    private static HttpURLConnection openUnsecuredConnection(String url) {
+    private static HttpURLConnection openConnection(String url) {
         HttpURLConnection c = null;
         try {
             URL u = new URL(url);
@@ -211,7 +211,7 @@ public class InternetActions {
     }
 
     private static List<String> getRawPlayerList() {
-        HttpURLConnection c = openConnection(Constants.SED_SCRIPT);
+        HttpURLConnection c = openAuthenticatedConnection(Constants.SED_SCRIPT);
         BufferedReader reader = null;
         ArrayList<String> list = new ArrayList<>();
         try {
@@ -232,7 +232,7 @@ public class InternetActions {
     }
 
     private static List<PlayerRating> getRawPlayerRatingsList() {
-        HttpURLConnection c = openUnsecuredConnection(Constants.PLAYER_RATINGS);
+        HttpURLConnection c = openConnection(Constants.PLAYER_RATINGS);
         BufferedReader reader = null;
         List<PlayerRating> list = new ArrayList<>();
         try {
