@@ -1,5 +1,6 @@
 package za.co.sagoclubs;
 
+import static java.lang.Thread.sleep;
 import static za.co.sagoclubs.Constants.TAG;
 
 import android.app.AlertDialog;
@@ -66,6 +67,12 @@ public class InternetActions {
     }
 
     public static PlayerRating[] getPlayerRatingsArray(PlayerSortOrder order) {
+        try {
+            sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
         if (playerRatingData == null) {
             playerRatingData = getRawPlayerRatingsList();
         }

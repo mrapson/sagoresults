@@ -3,17 +3,15 @@ package za.co.sagoclubs;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 
 public class PlayerRatingsActivity extends Activity {
     private ListView listView;
@@ -46,32 +44,24 @@ public class PlayerRatingsActivity extends Activity {
     }
 
     private void updateList() {
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Future<PlayerRating[]> future = executorService.submit(new PlayerRatingsThread(preferredOrder));
-
-        PlayerRating[] playerRatings;
-        try {
-            playerRatings = future.get();
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
-        PlayerRatingArrayAdapter adapter = new PlayerRatingArrayAdapter(this, R.layout.player_rating_list_item, playerRatings);
-        listView.setAdapter(adapter);
-        listView.setOnItemClickListener(playerItemClickListener);
+        CompletableFuture
+                .supplyAsync(() -> InternetActions.getPlayerRatingsArray(preferredOrder))
+                .thenAccept(playerRatings -> {
+                    Handler listViewUpdaterHandler = new Handler(Looper.getMainLooper());
+                    listViewUpdaterHandler.post(() -> {
+                        PlayerRatingArrayAdapter adapter = new PlayerRatingArrayAdapter(
+                                this,
+                                R.layout.player_rating_list_item,
+                                playerRatings);
+                        listView.setAdapter(adapter);
+                        listView.setOnItemClickListener(playerItemClickListener);
+                    });
+                });
     }
 
     @Override
     public void onPause() {
         super.onPause();
-    }
-
-    private record PlayerRatingsThread(PlayerSortOrder sortOrder)
-            implements Callable<PlayerRating[]> {
-        @Override
-        public PlayerRating[] call() {
-            return InternetActions.getPlayerRatingsArray(sortOrder);
-        }
     }
 
     public OnItemClickListener playerItemClickListener = new OnItemClickListener() {
