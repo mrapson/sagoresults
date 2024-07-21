@@ -1,6 +1,8 @@
 package za.co.sagoclubs;
 
 import static java.lang.Thread.sleep;
+import static za.co.sagoclubs.Constants.SHOWLOG;
+import static za.co.sagoclubs.Constants.SHOWLOG_DIRECT;
 import static za.co.sagoclubs.Constants.TAG;
 
 import android.app.AlertDialog;
@@ -82,6 +84,18 @@ public class InternetActions {
                         ? new PlayerSortByName()
                         : new PlayerSortByRating())
                 .toArray(PlayerRating[]::new);
+    }
+
+    public static String getRatingsPlayerLog(String id) {
+        String url = SHOWLOG + id + ".html";
+        HttpURLConnection c = openConnection(url);
+        return InternetActions.getPreBlock(c);
+    }
+
+    public static String getPlayerLog(String id) {
+        String url = SHOWLOG_DIRECT + "?name=" + id;
+        HttpURLConnection c = openApiGatewayConnection(url);
+        return InternetActions.getPreBlock(c);
     }
 
     public static Player[] getFavouritePlayers(SharedPreferences preferences) {

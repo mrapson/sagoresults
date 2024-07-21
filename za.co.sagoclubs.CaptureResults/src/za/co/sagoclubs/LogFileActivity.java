@@ -1,9 +1,8 @@
 package za.co.sagoclubs;
 
-import static za.co.sagoclubs.Constants.SHOWLOG;
-import static za.co.sagoclubs.Constants.SHOWLOG_DIRECT;
 import static za.co.sagoclubs.Constants.TAG;
-import static za.co.sagoclubs.InternetActions.openApiGatewayConnection;
+import static za.co.sagoclubs.InternetActions.getPlayerLog;
+import static za.co.sagoclubs.InternetActions.getRatingsPlayerLog;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -17,8 +16,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-
-import java.net.HttpURLConnection;
 
 public class LogFileActivity extends Activity {
 
@@ -90,12 +87,9 @@ public class LogFileActivity extends Activity {
             ComponentName callingActivity = getCallingActivity();
             if (callingActivity != null
                     && PlayerRatingsActivity.class.getName().equals(callingActivity.getClassName())) {
-                String url = SHOWLOG + Result.logfile.getId() + ".html";
-                return InternetActions.getPreBlock(url);
+                return getRatingsPlayerLog(Result.logfile.getId());
             } else {
-                String url = SHOWLOG_DIRECT + "?name=" + Result.logfile.getId();
-                HttpURLConnection c = openApiGatewayConnection(url);
-                return InternetActions.getPreBlock(c);
+                return getPlayerLog(Result.logfile.getId());
             }
         }
 
