@@ -1,6 +1,5 @@
 package za.co.sagoclubs;
 
-import static java.lang.Thread.sleep;
 import static za.co.sagoclubs.Constants.SHOWLOG;
 import static za.co.sagoclubs.Constants.SHOWLOG_DIRECT;
 import static za.co.sagoclubs.Constants.TAG;
@@ -68,13 +67,8 @@ public class InternetActions {
         return playerData;
     }
 
-    public static PlayerRating[] getPlayerRatingsArray(PlayerSortOrder order) {
-        try {
-            sleep(10000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-
+    public static PlayerRating[] getPlayerRatingsArray(PlayerSortOrder order)
+            throws IOException, JSONException {
         if (playerRatingData == null) {
             playerRatingData = getRawPlayerRatingsList();
         }
@@ -87,9 +81,14 @@ public class InternetActions {
     }
 
     public static String getRatingsPlayerLog(String id) {
-        String url = SHOWLOG + id + ".html";
-        HttpURLConnection c = openConnection(url);
-        return InternetActions.getPreBlock(c);
+        try {
+            String url = SHOWLOG + id + ".html";
+            HttpURLConnection c = openConnection(url);
+            return InternetActions.getPreBlock(c);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Exception swallowed!";
+        }
     }
 
     public static String getPlayerLog(String id) {
@@ -134,7 +133,7 @@ public class InternetActions {
         } finally {
             if (reader != null) try {
                 reader.close();
-            } catch (IOException logOrIgnore) {
+            } catch (IOException ignored) {
             }
             c.disconnect();
         }
@@ -160,7 +159,7 @@ public class InternetActions {
         } finally {
             if (reader != null) try {
                 reader.close();
-            } catch (IOException logOrIgnore) {
+            } catch (IOException ignored) {
             }
             c.disconnect();
         }
@@ -212,15 +211,10 @@ public class InternetActions {
         return c;
     }
 
-    private static HttpURLConnection openConnection(String url) {
-        HttpURLConnection c = null;
-        try {
-            URL u = new URL(url);
-            c = (HttpURLConnection) u.openConnection();
-            c.connect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private static HttpURLConnection openConnection(String url) throws IOException {
+        URL u = new URL(url);
+        HttpURLConnection c = (HttpURLConnection) u.openConnection();
+        c.connect();
         return c;
     }
 
@@ -238,14 +232,14 @@ public class InternetActions {
         } finally {
             if (reader != null) try {
                 reader.close();
-            } catch (IOException logOrIgnore) {
+            } catch (IOException ignored) {
             }
             c.disconnect();
         }
         return list;
     }
 
-    private static List<PlayerRating> getRawPlayerRatingsList() {
+    private static List<PlayerRating> getRawPlayerRatingsList() throws IOException, JSONException {
         HttpURLConnection c = openConnection(Constants.PLAYER_RATINGS);
         BufferedReader reader = null;
         List<PlayerRating> list = new ArrayList<>();
@@ -263,12 +257,10 @@ public class InternetActions {
                     list.add(playerRating);
                 }
             }
-        } catch (JSONException | IOException e) {
-            e.printStackTrace();
         } finally {
             if (reader != null) try {
                 reader.close();
-            } catch (IOException logOrIgnore) {
+            } catch (IOException ignored) {
             }
             c.disconnect();
         }

@@ -14,7 +14,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import org.json.JSONException;
+
+import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PlayerRatingsActivity extends Activity {
@@ -72,7 +76,31 @@ public class PlayerRatingsActivity extends Activity {
         loadingStatusView.setVisibility(View.VISIBLE);
 
         CompletableFuture
-                .supplyAsync(() -> InternetActions.getPlayerRatingsArray(currentSortOrder))
+                .supplyAsync(() -> {
+                    try {
+                        return InternetActions.getPlayerRatingsArray(currentSortOrder);
+                    } catch (IOException | JSONException e) {
+                        throw new CompletionException(e);
+                    }
+                })
+                .handle((playerRatings, e) -> {
+                    Handler listViewUpdaterHandler = new Handler(Looper.getMainLooper());
+                    if (e != null) {
+                        String error_message = e.getCause() instanceof IOException
+                                ? getString(R.string.network_error_message)
+                                : getString(R.string.site_error_message);
+                        listViewUpdaterHandler.post(() -> {
+                            loadingStatusView.setText(error_message);
+                            updateLock.set(false);
+                        });
+                        return new PlayerRating[0];
+                    } else {
+                        listViewUpdaterHandler.post(() -> {
+                            loadingStatusView.setVisibility(View.GONE);
+                            updateLock.set(false);
+                        });
+                        return playerRatings;
+                    }})
                 .thenAccept(playerRatings -> {
                     Handler listViewUpdaterHandler = new Handler(Looper.getMainLooper());
                     listViewUpdaterHandler.post(() -> {
@@ -82,8 +110,6 @@ public class PlayerRatingsActivity extends Activity {
                                 playerRatings);
                         listView.setAdapter(adapter);
                         listView.setOnItemClickListener(playerItemClickListener);
-                        loadingStatusView.setVisibility(View.GONE);
-                        updateLock.set(false);
                     });
                 });
     }
