@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -29,7 +31,11 @@ public class PlayerRatingsActivity extends Activity {
         listView = findViewById(R.id.listView);
         loadingStatusView = findViewById(R.id.txtLoadingStatus);
 
-        updateList(PlayerSortOrder.SORT_BY_RANK, "OnCreate");
+        if (savedInstanceState == null) {
+            populateList(PlayerSortOrder.SORT_BY_RANK, "OnCreate");
+        } else {
+            restoreProgress(savedInstanceState);
+        }
 
         Button btnSortByName = findViewById(R.id.btnSortByName);
         btnSortByName.setOnClickListener(v -> updateList(PlayerSortOrder.SORT_BY_NAME, "ByName"));
@@ -37,10 +43,28 @@ public class PlayerRatingsActivity extends Activity {
         btnSortByRank.setOnClickListener(v -> updateList(PlayerSortOrder.SORT_BY_RANK, "ByRank"));
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle saveState) {
+        super.onSaveInstanceState(saveState);
+        saveState.putString("currentSortOrder", currentSortOrder.toString());
+    }
+
+    private void restoreProgress(Bundle savedInstanceState) {
+        String savedSortOrder = savedInstanceState.getString("currentSortOrder");
+        if (savedSortOrder != null) {
+            currentSortOrder = PlayerSortOrder.valueOf(savedSortOrder);
+        }
+        populateList(currentSortOrder, "Restore");
+    }
+
     private void updateList(PlayerSortOrder newSortOrder, String caller) {
         if (updateLock.get() || newSortOrder == currentSortOrder) {
             return;
         }
+        populateList(newSortOrder, caller);
+    }
+
+    private void populateList(PlayerSortOrder newSortOrder, String caller) {
         updateLock.set(true);
         currentSortOrder = newSortOrder;
 
