@@ -1,11 +1,13 @@
 package za.co.sagoclubs;
 
+import static za.co.sagoclubs.Constants.SHOWLOG;
 import static za.co.sagoclubs.Constants.SHOWLOG_DIRECT;
 import static za.co.sagoclubs.Constants.TAG;
 import static za.co.sagoclubs.InternetActions.openApiGatewayConnection;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -85,9 +87,16 @@ public class LogFileActivity extends Activity {
         protected String doInBackground(Void... v) {
             setProgressBarIndeterminateVisibility(true);
 
-            String url = SHOWLOG_DIRECT + "?name=" + Result.logfile.getId();
-            HttpURLConnection c = openApiGatewayConnection(url);
-            return InternetActions.getPreBlock(c);
+            ComponentName callingActivity = getCallingActivity();
+            if (callingActivity != null
+                    && PlayerRatingsActivity.class.getName().equals(callingActivity.getClassName())) {
+                String url = SHOWLOG + Result.logfile.getId() + ".html";
+                return InternetActions.getPreBlock(url);
+            } else {
+                String url = SHOWLOG_DIRECT + "?name=" + Result.logfile.getId();
+                HttpURLConnection c = openApiGatewayConnection(url);
+                return InternetActions.getPreBlock(c);
+            }
         }
 
         protected void onPostExecute(String result) {
