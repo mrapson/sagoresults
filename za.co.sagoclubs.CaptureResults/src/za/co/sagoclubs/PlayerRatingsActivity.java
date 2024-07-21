@@ -84,42 +84,32 @@ public class PlayerRatingsActivity extends Activity {
                     }
                 })
                 .handle((playerRatings, e) -> {
-                    Handler listViewUpdaterHandler = new Handler(Looper.getMainLooper());
-                    if (e != null) {
-                        String error_message = e.getCause() instanceof IOException
-                                ? getString(R.string.network_error_message)
-                                : getString(R.string.site_error_message);
-                        listViewUpdaterHandler.post(() -> {
-                            loadingStatusView.setText(error_message);
-                            updateLock.set(false);
-                        });
-                        return new PlayerRating[0];
-                    } else {
-                        listViewUpdaterHandler.post(() -> {
-                            loadingStatusView.setVisibility(View.GONE);
-                            updateLock.set(false);
-                        });
+                    if (e == null) {
+                        handleSuccess();
                         return playerRatings;
-                    }})
-                .thenAccept(playerRatings -> {
-                    Handler listViewUpdaterHandler = new Handler(Looper.getMainLooper());
-                    listViewUpdaterHandler.post(() -> {
-                        PlayerRatingArrayAdapter adapter = new PlayerRatingArrayAdapter(
-                                this,
-                                R.layout.player_rating_list_item,
-                                playerRatings);
-                        listView.setAdapter(adapter);
-                        listView.setOnItemClickListener(playerItemClickListener);
-                    });
-                });
+                    }
+                    String error_message = e.getCause() instanceof IOException
+                            ? getString(R.string.network_error_message)
+                            : getString(R.string.site_error_message);
+                    handleError(error_message);
+                    return new PlayerRating[0];
+                })
+                .thenAccept(this::setPlayerRatings);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+    private void setPlayerRatings(PlayerRating[] playerRatings) {
+        Handler listViewUpdaterHandler = new Handler(Looper.getMainLooper());
+        listViewUpdaterHandler.post(() -> {
+            PlayerRatingArrayAdapter adapter = new PlayerRatingArrayAdapter(
+                    this,
+                    R.layout.player_rating_list_item,
+                    playerRatings);
+            listView.setAdapter(adapter);
+            listView.setOnItemClickListener(playerItemClickListener);
+        });
     }
 
-    public OnItemClickListener playerItemClickListener = new OnItemClickListener() {
+    private final OnItemClickListener playerItemClickListener = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Player p = (Player) listView.getItemAtPosition(position);
@@ -128,4 +118,20 @@ public class PlayerRatingsActivity extends Activity {
             startActivityForResult(myIntent, 0);
         }
     };
+
+    private void handleError(String message) {
+        Handler listViewUpdaterHandler = new Handler(Looper.getMainLooper());
+        listViewUpdaterHandler.post(() -> {
+            loadingStatusView.setText(message);
+            updateLock.set(false);
+        });
+    }
+
+    private void handleSuccess() {
+        Handler listViewUpdaterHandler = new Handler(Looper.getMainLooper());
+        listViewUpdaterHandler.post(() -> {
+            loadingStatusView.setVisibility(View.GONE);
+            updateLock.set(false);
+        });
+    }
 }
