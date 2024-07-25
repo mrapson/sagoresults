@@ -1,7 +1,7 @@
 package za.co.sagoclubs;
 
 import static za.co.sagoclubs.Constants.SHOWLOG;
-import static za.co.sagoclubs.Constants.SHOWLOG_DIRECT;
+import static za.co.sagoclubs.Constants.SHOW_LOG_DIRECT;
 import static za.co.sagoclubs.Constants.TAG;
 
 import android.app.AlertDialog;
@@ -34,16 +34,7 @@ public class InternetActions {
 
     public static void forcePlayerArrayReload() {
         Log.d(TAG, "Clearing playerData to force reload");
-        //playerData = null;
-        playerData = getTempPlayerArray();
-    }
-
-    public static Player[] getTempPlayerArray() {
-        ArrayList<Player> list = new ArrayList<>();
-        list.add(new Player("testone", "Test One"));
-        list.add(new Player("testtwo", "Test Two"));
-        Player[] template = new Player[]{};
-        return list.toArray(template);
+        playerData = null;
     }
 
     public static Player[] getPlayerArray() {
@@ -51,19 +42,18 @@ public class InternetActions {
         if (playerData != null) {
             return playerData;
         }
-        ArrayList<Player> list = new ArrayList<>();
-        for (String item : getRawPlayerList()) {
-            if (item.startsWith("s/,")) {
-                String[] parts = item.split(",");
-                String id = parts[1];
-                String name = parts[3];
-                list.add(new Player(id, name));
-            }
+
+        List<Player> list;
+        try {
+            list = getRawPlayerList();
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+            list = new ArrayList<>();
         }
 
-        Player[] template = new Player[]{};
-        playerData = list.toArray(template);
-        Arrays.sort(playerData);
+        playerData = list.stream()
+                .sorted(new PlayerSortByName())
+                .toArray(Player[]::new);
         return playerData;
     }
 
@@ -92,7 +82,7 @@ public class InternetActions {
     }
 
     public static String getPlayerLog(String id) {
-        String url = SHOWLOG_DIRECT + "?name=" + id;
+        String url = SHOW_LOG_DIRECT + "?name=" + id;
         HttpURLConnection c = openApiGatewayConnection(url);
         return InternetActions.getPreBlock(c);
     }
@@ -218,17 +208,24 @@ public class InternetActions {
         return c;
     }
 
-    private static List<String> getRawPlayerList() {
-        HttpURLConnection c = openAuthenticatedConnection(Constants.SED_SCRIPT);
+    private static List<Player> getRawPlayerList() throws IOException, JSONException {
+        HttpURLConnection c = openApiGatewayConnection(Constants.SHOW_HANDLES);
         BufferedReader reader = null;
-        ArrayList<String> list = new ArrayList<>();
+        List<Player> list = new ArrayList<>();
         try {
             reader = new BufferedReader(new InputStreamReader(c.getInputStream(), StandardCharsets.UTF_8), 8192);
+            StringBuilder jsonStringBuilder = new StringBuilder();
             for (String line; (line = reader.readLine()) != null; ) {
-                list.add(line.trim());
+                jsonStringBuilder.append(line);
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            JSONObject json = new JSONObject(jsonStringBuilder.toString());
+            if (json.has("players")) {
+                JSONArray playerArray = json.getJSONArray("players");
+                for (int i = 0; i < playerArray.length(); i++) {
+                    Player player = getPlayerFromJsonRow(playerArray.getJSONObject(i));
+                    list.add(player);
+                }
+            }
         } finally {
             if (reader != null) try {
                 reader.close();
@@ -237,6 +234,24 @@ public class InternetActions {
             c.disconnect();
         }
         return list;
+    }
+
+    private static Player getPlayerFromJsonRow(JSONObject row) throws JSONException, IOException {
+        String id = row.getString("id");
+        Pattern idPattern = Pattern.compile("[^a-z]");
+        if (idPattern.matcher(id).find()) {
+            throw new IOException("Id does not match expected pattern");
+        }
+
+        String name = row.getString("name");
+        Pattern namePattern = Pattern.compile("[^A-Za-z- ]");
+        if (namePattern.matcher(name).find()) {
+            throw new IOException("Name does not match expected pattern");
+        }
+
+        boolean international = row.getBoolean("international");
+
+        return new Player(id, name, international);
     }
 
     private static List<PlayerRating> getRawPlayerRatingsList() throws IOException, JSONException {
@@ -253,7 +268,7 @@ public class InternetActions {
             if (json.has("players")) {
                 JSONArray playerArray = json.getJSONArray("players");
                 for (int i = 0; i < playerArray.length(); i++) {
-                    PlayerRating playerRating = getPlayerFromJsonRow(playerArray.getJSONObject(i));
+                    PlayerRating playerRating = getPlayerRatingFromJsonRow(playerArray.getJSONObject(i));
                     list.add(playerRating);
                 }
             }
@@ -267,7 +282,7 @@ public class InternetActions {
         return list;
     }
 
-    private static PlayerRating getPlayerFromJsonRow(JSONObject row) throws JSONException, IOException {
+    private static PlayerRating getPlayerRatingFromJsonRow(JSONObject row) throws JSONException, IOException {
         String name = row.getString("name");
         Pattern namePattern = Pattern.compile("[^A-Za-z- ]");
         if (namePattern.matcher(name).find()) {
