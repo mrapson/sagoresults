@@ -42,7 +42,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SelectPlayerActivity"
+            android:name=".SelectLogPlayerActivity"
             android:exported="false" >
             <intent-filter>
                 <action android:name="android.intent.action.EDIT" />

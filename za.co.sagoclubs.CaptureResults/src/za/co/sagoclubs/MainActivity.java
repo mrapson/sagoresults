@@ -52,7 +52,7 @@ public class MainActivity extends Activity {
         btnDisplayLogFile = findViewById(R.id.btnDisplayLogFile);
         btnDisplayLogFile.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
         btnDisplayLogFile.setOnClickListener(v -> {
-            Intent myIntent = new Intent(v.getContext(), SelectPlayerActivity.class);
+            Intent myIntent = new Intent(v.getContext(), SelectLogPlayerActivity.class);
             startActivityForResult(myIntent, 0);
         });
 

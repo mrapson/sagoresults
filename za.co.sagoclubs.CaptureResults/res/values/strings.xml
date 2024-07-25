@@ -26,6 +26,7 @@
     <string name="select_black_player">Select Black Player</string>
     <string name="game_details">Game Details</string>
     <string name="favourites">Favourites</string>
+    <string name="international">International</string>
     <string name="return_to_start">Home</string>
     <string name="player_logfile">Player Logfile</string>
     <string name="player">Player</string>

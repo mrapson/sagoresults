@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 public class InternetActions {
 
-    private static Player[] playerData = null;
+    private static List<Player> playerData = null;
     private static List<PlayerRating> playerRatingData = null;
 
     public static void forcePlayerArrayReload() {
@@ -37,23 +37,18 @@ public class InternetActions {
         playerData = null;
     }
 
-    public static Player[] getPlayerArray() {
+    public static List<Player> getPlayerList() {
         // TODO: check whether playerData can become stale
         if (playerData != null) {
             return playerData;
         }
 
-        List<Player> list;
         try {
-            list = getRawPlayerList();
+            playerData = getRawPlayerList();
         } catch (IOException | JSONException e) {
             e.printStackTrace();
-            list = new ArrayList<>();
+            playerData = new ArrayList<>();
         }
-
-        playerData = list.stream()
-                .sorted(new PlayerSortByName())
-                .toArray(Player[]::new);
         return playerData;
     }
 
@@ -87,10 +82,31 @@ public class InternetActions {
         return InternetActions.getPreBlock(c);
     }
 
+    public static Player[] getPlayerArray() {
+        return getAllPlayers();
+    }
+
+    public static Player[] getAllPlayers() {
+        List<Player> list = getPlayerList();
+
+        return list.stream()
+                .sorted(new PlayerSortByName())
+                .toArray(Player[]::new);
+    }
+
+    public static Player[] getLocalPlayers() {
+        List<Player> list = getPlayerList();
+
+        return list.stream()
+                .sorted(new PlayerSortByName())
+                .filter(player -> !player.isInternational())
+                .toArray(Player[]::new);
+    }
+
     public static Player[] getFavouritePlayers(SharedPreferences preferences) {
         String save = preferences.getString("favourite_players", "");
         List<String> items = Arrays.asList(save.split(","));
-        Player[] allPlayers = getPlayerArray();
+        List<Player> allPlayers = getPlayerList();
         List<Player> list = new ArrayList<>();
         for (Player player : allPlayers) {
             if (items.contains(player.getId())) {
@@ -191,9 +207,12 @@ public class InternetActions {
         try {
             URL u = new URL(url);
             c = (HttpURLConnection) u.openConnection();
-            Log.d(TAG, "openConnection: url=" + url + ", idToken expiry=" + idToken.getExpiration());
-            String bearerAuth = "Bearer " + UserData.getInstance().getIdToken().getJWTToken();
-            c.setRequestProperty("Authorization", bearerAuth);
+            Log.d(TAG, "openConnection: url=" + url);
+            if (idToken != null) {
+                Log.d(TAG, "idToken expiry=" + idToken.getExpiration());
+                String bearerAuth = "Bearer " + UserData.getInstance().getIdToken().getJWTToken();
+                c.setRequestProperty("Authorization", bearerAuth);
+            }
             c.connect();
         } catch (IOException e) {
             e.printStackTrace();
