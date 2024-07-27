@@ -74,8 +74,6 @@ public class ResultConfirmActivity extends Activity {
         if (savedInstanceState != null) {
             restoreProgress(savedInstanceState);
         }
-
-
     }
 
     @Override

@@ -1,7 +1,8 @@
 package za.co.sagoclubs;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 
 enum ResultState {
     Enter, Confirm, Undo, Complete
@@ -9,16 +10,14 @@ enum ResultState {
 
 public class Result {
 
-    public static Player white;
-    public static Player black;
-    public static String weight;
-    public static String result; // B, W
-    public static String komi;
-    public static String handicap; // minimum 1
-    public static String day;
-    public static String month;
-    public static String year;
-    public static String notes;
+    private static Player white;
+    private static Player black;
+    private static String weight;
+    private static String winner; // B, W
+    private static String komi;
+    private static int handicap;
+    private static LocalDate date;
+    private static String notes;
 
     public static ResultState resultState;
 
@@ -28,8 +27,16 @@ public class Result {
         Result.white = white;
     }
 
+    public static Player getWhite() {
+        return Result.white;
+    }
+
     public static void setBlack(Player black) {
         Result.black = black;
+    }
+
+    public static Player getBlack() {
+        return Result.black;
     }
 
     public static void setLogFile(Player log) {
@@ -40,12 +47,42 @@ public class Result {
         Result.komi = komi;
     }
 
+    public static void setHandicap(int handicap) {
+        Result.handicap = handicap;
+    }
+
     public static void setWeight(String weight) {
         Result.weight = weight;
     }
 
+    public static void setWinner(String winner) {
+        Result.winner = winner;
+    }
+
+    public static void setDate(LocalDate date) {
+        Result.date = date;
+    }
+
+    public static LocalDate getDate() {
+        return Result.date;
+    }
+
+    public static void setNotes(String notes) {
+        Result.notes = notes;
+    }
+
+    public static String getNotes() {
+        return Result.notes;
+    }
+
     public static void setResultState(ResultState r) {
         Result.resultState = r;
+    }
+
+    private static String handicapUriString() {
+        return Result.handicap != 0
+                ? Integer.toString(Result.handicap)
+                : "0";
     }
 
     public static String constructResultUri() {
@@ -53,17 +90,13 @@ public class Result {
         uri = uri + "whitename=" + Result.white.getId();
         uri = uri + "&blackname=" + Result.black.getId();
         uri = uri + "&GSF=" + Result.weight;
-        uri = uri + "&result=" + Result.result;
+        uri = uri + "&result=" + Result.winner;
         uri = uri + "&komi=" + Result.komi;
-        uri = uri + "&handicap=" + Result.handicap;
-        uri = uri + "&day=" + Result.day;
-        uri = uri + "&month=" + Result.month;
-        uri = uri + "&year=" + Result.year;
-        try {
-            uri = uri + "&notes=" + URLEncoder.encode(Result.notes, "utf-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        uri = uri + "&handicap=" + Result.handicapUriString();
+        uri = uri + "&day=" + Result.date.getDayOfMonth();
+        uri = uri + "&month=" + Result.date.getDayOfMonth() + 1;
+        uri = uri + "&year=" + Result.date.getYear();
+        uri = uri + "&notes=" + URLEncoder.encode(Result.notes, StandardCharsets.UTF_8);
         return uri;
     }
 

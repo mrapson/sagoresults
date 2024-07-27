@@ -14,7 +14,8 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 
-import java.util.Calendar;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class CaptureDetailActivity extends Activity {
     private static final int DATE_DIALOG_ID = 999;
@@ -28,6 +29,7 @@ public class CaptureDetailActivity extends Activity {
     private Button btnSaveResult;
     private Button btnPreviousNotes;
     private RadioButton radioWhite;
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 
     @Override
@@ -53,17 +55,14 @@ public class CaptureDetailActivity extends Activity {
 
         txtKomi.setText("6.5");
 
-        radioWhite.setText(getString(R.string.white_radio, Result.white.getName()));
-        radioBlack.setText(getString(R.string.black_radio, Result.black.getName()));
+        radioWhite.setText(getString(R.string.white_radio, Result.getWhite().getName()));
+        radioBlack.setText(getString(R.string.black_radio, Result.getBlack().getName()));
 
         spinnerWeight.setSelection(2);
 
-        final Calendar c = Calendar.getInstance();
-        Result.year = String.valueOf(c.get(Calendar.YEAR));
-        Result.month = addLeadingZero(String.valueOf(c.get(Calendar.MONTH) + 1));
-        Result.day = addLeadingZero(String.valueOf(c.get(Calendar.DAY_OF_MONTH)));
-
-        txtDate.setText(new StringBuilder().append(Result.day).append("-").append(Result.month).append("-").append(Result.year).append(" "));
+        final LocalDate date = LocalDate.now();
+        Result.setDate(date);
+        txtDate.setText(date.format(dateTimeFormatter));
     }
 
     public void addChangeButtonListener() {
@@ -108,43 +107,37 @@ public class CaptureDetailActivity extends Activity {
 
     private void saveResult() {
         if (radioWhite.isChecked()) {
-            Result.result = "W";
+            Result.setWinner("W");
         } else {
-            Result.result = "B";
+            Result.setWinner("B");
         }
 
-        Result.komi = txtKomi.getText().toString().trim();
+        Result.setKomi(txtKomi.getText().toString().strip());
 
-        Result.weight = switch (spinnerWeight.getSelectedItemPosition()) {
-            case 0 -> "0";
-            case 1 -> "0.5";
-            default -> "1.0";
-            case 3 -> "1.5";
-        };
+        Result.setWeight(
+                switch (spinnerWeight.getSelectedItemPosition()) {
+                    case 0 -> "0";
+                    case 1 -> "0.5";
+                    default -> "1.0";
+                    case 3 -> "1.5";
+                });
 
-         // Even games are  reported as handicap one
-        int handicap = spinnerHandicap.getSelectedItemPosition();
-        Result.handicap = String.valueOf(handicap == 0 ? 1 : handicap);
+        Result.setHandicap(spinnerHandicap.getSelectedItemPosition());
 
-        Result.notes = txtNotes.getText().toString();
-        if (Result.notes.length() > 0) {
+        Result.setNotes(txtNotes.getText().toString());
+        if (Result.getNotes().length() > 0) {
             getSharedPreferences("SETTINGS", MODE_PRIVATE).edit()
-                    .putString("notes", Result.notes)
+                    .putString("notes", Result.getNotes())
                     .apply();
         }
-    }
-
-    private String addLeadingZero(String input) {
-        if (input.length() == 1) {
-            return "0" + input;
-        }
-        return input;
     }
 
     @Override
     protected Dialog onCreateDialog(int id) {
         if (id == DATE_DIALOG_ID) {
-            return new DatePickerDialog(this, datePickerListener, Integer.parseInt(Result.year), Integer.parseInt(Result.month) - 1, Integer.parseInt(Result.day));
+            LocalDate date = Result.getDate();
+            return new DatePickerDialog(this, datePickerListener,
+                    date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
         }
 
         return null;
@@ -153,11 +146,9 @@ public class CaptureDetailActivity extends Activity {
     private final DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
         // when dialog box is closed, below method will be called.
         public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
-            Result.year = String.valueOf(selectedYear);
-            Result.month = addLeadingZero(String.valueOf(selectedMonth + 1));
-            Result.day = addLeadingZero(String.valueOf(selectedDay));
-
-            txtDate.setText(new StringBuilder().append(Result.day).append("-").append(Result.month).append("-").append(Result.year).append(" "));
+            LocalDate date = LocalDate.of(selectedYear, selectedMonth + 1, selectedDay);
+            Result.setDate(date);
+            txtDate.setText(date.format(dateTimeFormatter));
         }
     };
 }
