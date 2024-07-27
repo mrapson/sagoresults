@@ -68,6 +68,9 @@
         <item>White</item>
         <item>Black</item>
     </string-array>
+
+    <string name="game_notes_characters">0123456789 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_.?</string>
+
     <string name="south_african_go">South African Go</string>
 
 </resources>

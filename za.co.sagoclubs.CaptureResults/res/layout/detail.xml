@@ -28,23 +28,23 @@
 
 
         <TableRow
-            android:id="@+id/tableRow5"
+            android:id="@+id/tableRowWinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/TextView05"
+                android:id="@+id/TextViewWinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:focusable="false"
                 android:text="@string/winner_text_label"
-                android:textColor="#000000"
-                android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_gravity="center_vertical" />
+                android:textColor="#000000"
+                android:textStyle="bold" />
 
             <RadioGroup
-                android:id="@+id/RadioGroup01"
+                android:id="@+id/radioGroupWinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="visible">
@@ -55,36 +55,36 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
+                    android:minWidth="48dp"
                     android:textColor="#000000"
-                    android:textStyle="bold"
-                    android:minWidth="48dp" />
+                    android:textStyle="bold" />
 
 
                 <RadioButton
                     android:id="@+id/radioBlack"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:minWidth="48dp"
                     android:textColor="#000000"
-                    android:textStyle="bold"
-                    android:minWidth="48dp" />
+                    android:textStyle="bold" />
 
             </RadioGroup>
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow2"
+            android:id="@+id/tableRowHandicap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/TextView02"
+                android:id="@+id/TextViewHandicap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:text="@string/handicap_text_label"
-                android:textColor="#000000"
-                android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_gravity="center_vertical" />
+                android:textColor="#000000"
+                android:textStyle="bold" />
 
 
             <Spinner
@@ -100,21 +100,21 @@
 
 
         <TableRow
-            android:id="@+id/tableRow1"
+            android:id="@+id/tableRowKomi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/TextView01"
+                android:id="@+id/TextViewKomi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:focusable="false"
-                android:text="@string/komi_text_label"
-                android:textColor="#000000"
-                android:textStyle="bold"
-                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_gravity="center_vertical"
-                android:labelFor="@id/txtKomi" />
+                android:focusable="false"
+                android:labelFor="@id/txtKomi"
+                android:text="@string/komi_text_label"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000"
+                android:textStyle="bold" />
 
 
             <EditText
@@ -123,26 +123,26 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="numberSigned|numberDecimal"
-                android:importantForAutofill="no" />
+                android:importantForAutofill="no"
+                android:inputType="numberSigned|numberDecimal" />
 
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow4"
+            android:id="@+id/tableRowWeight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/TextView04"
+                android:id="@+id/TextViewWeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:drawingCacheQuality="high"
                 android:text="@string/weight_text_label"
-                android:textColor="#000000"
-                android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_gravity="center_vertical" />
+                android:textColor="#000000"
+                android:textStyle="bold" />
 
 
             <Spinner
@@ -157,26 +157,27 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow3"
+            android:id="@+id/tableRowNotes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/TextView03"
+                android:id="@+id/TextViewNotes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:focusable="false"
+                android:labelFor="@id/txtNotes"
                 android:text="@string/notes_text_label"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000"
-                android:textStyle="bold"
-                android:labelFor="@id/txtNotes"/>
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/txtNotes"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:digits="@string/game_notes_characters"
                 android:importantForAutofill="no"
                 android:inputType="textShortMessage">
 
@@ -187,25 +188,27 @@
                 android:id="@+id/btnPreviousNotes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
                 android:text="@string/previous_notes" />
 
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow6"
+            android:id="@+id/tableRowDate"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/TextView06"
+                android:id="@+id/TextViewDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:focusable="false"
+                android:labelFor="@id/txtDate"
                 android:text="@string/date_text_label"
-                android:textColor="#000000"
-                android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_gravity="center_vertical" />
+                android:textColor="#000000"
+                android:textStyle="bold" />
 
 
             <EditText
@@ -221,29 +224,21 @@
                 android:id="@+id/btnChangeDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/change_date"
-                android:minHeight="48dp" />
+                android:minHeight="48dp"
+                android:text="@string/change_date" />
 
         </TableRow>
 
     </TableLayout>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-        <Button
-            android:id="@+id/btnSaveResult"
-            style="@style/ButtonText"
-            android:background="@drawable/green_button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="@string/save_game"
-            android:textStyle="bold"
-            android:minHeight="48dp" />
-
-    </RelativeLayout>
+    <Button
+        android:id="@+id/btnSaveResult"
+        style="@style/ButtonText"
+        android:background="@drawable/green_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/save_game"
+        android:textStyle="bold"
+        android:minHeight="48dp" />
 
 </LinearLayout>
