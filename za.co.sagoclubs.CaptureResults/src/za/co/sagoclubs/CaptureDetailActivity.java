@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,9 +26,8 @@ public class CaptureDetailActivity extends Activity {
     private Spinner spinnerHandicap;
     private Button btnChangeDate;
     private Button btnSaveResult;
-    private Button btnPrevious;
+    private Button btnPreviousNotes;
     private RadioButton radioWhite;
-    private RadioButton radioBlack;
 
 
     @Override
@@ -40,12 +37,12 @@ public class CaptureDetailActivity extends Activity {
 
         btnChangeDate = findViewById(R.id.btnChangeDate);
         btnSaveResult = findViewById(R.id.btnSaveResult);
-        btnPrevious = findViewById(R.id.btnPrevious);
+        btnPreviousNotes = findViewById(R.id.btnPreviousNotes);
         txtKomi = findViewById(R.id.txtKomi);
         txtDate = findViewById(R.id.txtDate);
         txtNotes = findViewById(R.id.txtNotes);
         radioWhite = findViewById(R.id.radioWhite);
-        radioBlack = findViewById(R.id.radioBlack);
+        RadioButton radioBlack = findViewById(R.id.radioBlack);
         spinnerWeight = findViewById(R.id.spinnerWeight);
         spinnerHandicap = findViewById(R.id.spinnerHandicap);
 
@@ -74,9 +71,9 @@ public class CaptureDetailActivity extends Activity {
     }
 
     public void addPreviousButtonListener() {
-        btnPrevious.setOnClickListener(v -> {
-            SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
-            String notes = preferences.getString("notes", "");
+        btnPreviousNotes.setOnClickListener(v -> {
+            String notes = getSharedPreferences("SETTINGS", MODE_PRIVATE)
+                    .getString("notes", "");
             if (notes.length() > 0) {
                 txtNotes.setText(notes);
             }
@@ -89,6 +86,8 @@ public class CaptureDetailActivity extends Activity {
             public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
                 if (spinnerHandicap.getSelectedItemPosition() > 0) {
                     txtKomi.setText("0.5");
+                } else {
+                    txtKomi.setText("6.5");
                 }
             }
 
@@ -110,28 +109,28 @@ public class CaptureDetailActivity extends Activity {
     private void saveResult() {
         if (radioWhite.isChecked()) {
             Result.result = "W";
-        } else if (radioBlack.isChecked()) {
+        } else {
             Result.result = "B";
-        } else {
-            Result.result = "D";
         }
+
         Result.komi = txtKomi.getText().toString().trim();
-        if (spinnerWeight.getSelectedItemPosition() == 0) {
-            Result.weight = "0";
-        } else if (spinnerWeight.getSelectedItemPosition() == 1) {
-            Result.weight = "0.5";
-        } else if (spinnerWeight.getSelectedItemPosition() == 2) {
-            Result.weight = "1.0";
-        } else {
-            Result.weight = "1.5";
-        }
-        Result.handicap = String.valueOf(spinnerHandicap.getSelectedItemPosition() + 1);
+
+        Result.weight = switch (spinnerWeight.getSelectedItemPosition()) {
+            case 0 -> "0";
+            case 1 -> "0.5";
+            default -> "1.0";
+            case 3 -> "1.5";
+        };
+
+         // Even games are  reported as handicap one
+        int handicap = spinnerHandicap.getSelectedItemPosition();
+        Result.handicap = String.valueOf(handicap == 0 ? 1 : handicap);
+
         Result.notes = txtNotes.getText().toString();
         if (Result.notes.length() > 0) {
-            SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
-            Editor editor = preferences.edit();
-            editor.putString("notes", Result.notes);
-            editor.commit();
+            getSharedPreferences("SETTINGS", MODE_PRIVATE).edit()
+                    .putString("notes", Result.notes)
+                    .apply();
         }
     }
 

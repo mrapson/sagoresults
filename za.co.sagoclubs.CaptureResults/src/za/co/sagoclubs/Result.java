@@ -12,9 +12,9 @@ public class Result {
     public static Player white;
     public static Player black;
     public static String weight;
-    public static String result; //B, W, D
+    public static String result; // B, W
     public static String komi;
-    public static String handicap; //minimum 1
+    public static String handicap; // minimum 1
     public static String day;
     public static String month;
     public static String year;

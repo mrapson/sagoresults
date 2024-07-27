@@ -37,21 +37,23 @@
     <string name="sort_by_rank">By Rank</string>
     <string name="white_radio">White (%1$s)</string>
     <string name="black_radio">Black (%1$s)</string>
+    <string name="previous_notes">Load…</string>>
     <string name="double_space_pad">&#160;&#160;</string>
     <string name="loading_message">Loading…</string>
     <string name="network_error_message">Network error!</string>
     <string name="site_error_message">Site internal error!</string>
 
 
-    <string-array name="weightlist">
+    <string-array name="game_weight_list">
         <item>Free (0)</item>
         <item>Internet (0.5)</item>
         <item>Normal (1)</item>
         <item>Tournament (1.5)</item>
     </string-array>
 
-    <string-array name="handicaplist">
-        <item>1 (Even)</item>
+    <string-array name="game_handicap_list">
+        <item>Even</item>
+        <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
@@ -62,10 +64,9 @@
         <item>9</item>
     </string-array>
 
-    <string-array name="winnerlist">
+    <string-array name="game_winner_list">
         <item>White</item>
         <item>Black</item>
-        <item>Draw</item>
     </string-array>
     <string name="south_african_go">South African Go</string>
 

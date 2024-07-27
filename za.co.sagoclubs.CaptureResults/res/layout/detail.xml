@@ -43,46 +43,32 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:layout_gravity="center_vertical" />
 
-            <LinearLayout
+            <RadioGroup
+                android:id="@+id/RadioGroup01"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="visible">
 
-                <RadioGroup
-                    android:id="@+id/RadioGroup01"
+
+                <RadioButton
+                    android:id="@+id/radioWhite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="visible">
+                    android:checked="true"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:minWidth="48dp" />
 
 
-                    <RadioButton
-                        android:id="@+id/radioWhite"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:textColor="#000000"
-                        android:textStyle="bold"
-                        android:text="White" />
+                <RadioButton
+                    android:id="@+id/radioBlack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#000000"
+                    android:textStyle="bold"
+                    android:minWidth="48dp" />
 
-
-                    <RadioButton
-                        android:id="@+id/radioBlack"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#000000"
-                        android:textStyle="bold"
-                        android:text="Black" />
-
-
-                    <RadioButton
-                        android:id="@+id/radioDraw"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="#000000"
-                        android:textStyle="bold"
-                        android:text="Draw" />
-
-                </RadioGroup>
-            </LinearLayout>
+            </RadioGroup>
         </TableRow>
 
         <TableRow
@@ -107,7 +93,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:clipToPadding="false"
-                android:entries="@array/handicaplist"
+                android:entries="@array/game_handicap_list"
                 android:prompt="@string/handicap_prompt" />
 
         </TableRow>
@@ -127,7 +113,8 @@
                 android:textColor="#000000"
                 android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_gravity="center_vertical" />
+                android:layout_gravity="center_vertical"
+                android:labelFor="@id/txtKomi" />
 
 
             <EditText
@@ -136,7 +123,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:ems="10"
-                android:inputType="numberSigned|numberDecimal" />
+                android:inputType="numberSigned|numberDecimal"
+                android:importantForAutofill="no" />
 
         </TableRow>
 
@@ -163,7 +151,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:clipToPadding="false"
-                android:entries="@array/weightlist"
+                android:entries="@array/game_weight_list"
                 android:prompt="@string/game_weight_prompt" />
 
         </TableRow>
@@ -182,24 +170,24 @@
                 android:text="@string/notes_text_label"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:labelFor="@id/txtNotes"/>
 
             <EditText
                 android:id="@+id/txtNotes"
-                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:ems="10">
+                android:importantForAutofill="no"
+                android:inputType="textShortMessage">
 
                 <requestFocus />
             </EditText>
 
             <Button
-                android:id="@+id/btnPrevious"
+                android:id="@+id/btnPreviousNotes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="P" />
+                android:text="@string/previous_notes" />
 
         </TableRow>
 
@@ -233,7 +221,8 @@
                 android:id="@+id/btnChangeDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/change_date" />
+                android:text="@string/change_date"
+                android:minHeight="48dp" />
 
         </TableRow>
 
@@ -252,7 +241,8 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:text="@string/save_game"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:minHeight="48dp" />
 
     </RelativeLayout>
 
