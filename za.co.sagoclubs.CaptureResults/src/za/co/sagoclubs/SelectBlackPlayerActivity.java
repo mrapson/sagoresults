@@ -22,7 +22,7 @@ public class SelectBlackPlayerActivity extends Activity {
         SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
         boolean showFavourites = preferences.getBoolean("show_favourites", false);
         chkFavourites.setChecked(showFavourites);
-        chooseWhatToShow(showFavourites);
+        showPlayers(showFavourites);
 
         lsvSelectBlackPlayer.setOnItemClickListener((parent, view, position, id) -> {
             Player player = (Player) lsvSelectBlackPlayer.getItemAtPosition(position);
@@ -32,34 +32,27 @@ public class SelectBlackPlayerActivity extends Activity {
         });
 
         chkFavourites.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            chooseWhatToShow(isChecked);
+            showPlayers(isChecked);
             SharedPreferences preferences1 = getSharedPreferences("SETTINGS", MODE_PRIVATE);
             Editor editor = preferences1.edit();
             editor.putBoolean("show_favourites", isChecked);
-            editor.commit();
+            editor.apply();
         });
     }
 
-    private void chooseWhatToShow(boolean showFavourites) {
+    private void showPlayers(boolean showFavourites) {
+        lsvSelectBlackPlayer = findViewById(R.id.lsvSelectBlackPlayer);
+        PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, chooseWhatToShow(showFavourites));
+        lsvSelectBlackPlayer.setAdapter(adapter);
+        lsvSelectBlackPlayer.setFastScrollEnabled(true);
+    }
+
+    private Player[] chooseWhatToShow(boolean showFavourites) {
         if (showFavourites) {
-            showFavourites();
+            SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
+            return InternetActions.getFavouritePlayers(preferences);
         } else {
-            showAll();
+            return InternetActions.getLocalPlayers();
         }
-    }
-
-    private void showAll() {
-        lsvSelectBlackPlayer = findViewById(R.id.lsvSelectBlackPlayer);
-        PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, InternetActions.getPlayerArray());
-        lsvSelectBlackPlayer.setAdapter(adapter);
-        lsvSelectBlackPlayer.setFastScrollEnabled(true);
-    }
-
-    private void showFavourites() {
-        lsvSelectBlackPlayer = findViewById(R.id.lsvSelectBlackPlayer);
-        SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
-        PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, InternetActions.getFavouritePlayers(preferences));
-        lsvSelectBlackPlayer.setAdapter(adapter);
-        lsvSelectBlackPlayer.setFastScrollEnabled(true);
     }
 }

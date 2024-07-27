@@ -11,13 +11,24 @@
         android:background="#336699">
 
         <TextView
-            android:id="@+id/txtSelectWhitePlayer"
+            android:id="@+id/txtSelectFavouritePlayers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#336699"
             android:text="@string/select_favourite_players"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <CheckBox
+            android:id="@+id/chkInternational"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/international" />
 
     </LinearLayout>
 
@@ -42,6 +53,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="@string/save"
+            android:minHeight="48dp"
             android:textStyle="bold" />
 
     </LinearLayout>

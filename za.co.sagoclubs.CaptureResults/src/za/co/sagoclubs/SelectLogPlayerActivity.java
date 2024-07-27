@@ -12,23 +12,18 @@ public class SelectLogPlayerActivity extends Activity {
 
     private ListView lsvSelectPlayer;
 
-    private boolean showFavourites;
-    private boolean showInternational;
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_log_player);
 
         lsvSelectPlayer = findViewById(R.id.lsvSelectPlayer);
         CheckBox chkFavourites = findViewById(R.id.chkFavourites);
-        CheckBox chkInternational = findViewById(R.id.chkInternational);
 
         SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
-        showFavourites = preferences.getBoolean("show_favourites", false);
+        boolean showFavourites = preferences.getBoolean("show_favourites", false);
         chkFavourites.setChecked(showFavourites);
-        showInternational = preferences.getBoolean("show_international", false);
-        chkInternational.setChecked(showInternational);
-        chooseWhatToShow(showFavourites, showInternational);
+
+        showPlayers(showFavourites);
 
         lsvSelectPlayer.setOnItemClickListener((parent, view, position, id) -> {
             Player player = (Player) lsvSelectPlayer.getItemAtPosition(position);
@@ -38,50 +33,26 @@ public class SelectLogPlayerActivity extends Activity {
         });
 
         chkFavourites.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            chooseWhatToShow(isChecked, showInternational);
+            showPlayers(isChecked);
             Editor editor = getSharedPreferences("SETTINGS", MODE_PRIVATE).edit();
             editor.putBoolean("show_favourites", isChecked);
-            editor.commit();
-        });
-
-        // TODO deal with checkbox interaction
-        chkInternational.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            chooseWhatToShow(showFavourites, isChecked);
-            Editor editor = getSharedPreferences("SETTINGS", MODE_PRIVATE).edit();
-            editor.putBoolean("show_international", isChecked);
-            editor.commit();
+            editor.apply();
         });
     }
 
-    private void chooseWhatToShow(boolean showFavourites, boolean showInternational) {
+    private void showPlayers(boolean showFavourites) {
+        lsvSelectPlayer = findViewById(R.id.lsvSelectPlayer);
+        PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, chooseWhatToShow(showFavourites));
+        lsvSelectPlayer.setAdapter(adapter);
+        lsvSelectPlayer.setFastScrollEnabled(true);
+    }
+
+    private Player[] chooseWhatToShow(boolean showFavourites) {
         if (showFavourites) {
-            showFavourites();
-        } else if (showInternational) {
-            showAll();
+            SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
+            return InternetActions.getFavouritePlayers(preferences);
         } else {
-            showLocal();
+            return InternetActions.getLocalPlayers();
         }
-    }
-
-    private void showAll() {
-        lsvSelectPlayer = findViewById(R.id.lsvSelectPlayer);
-        PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, InternetActions.getAllPlayers());
-        lsvSelectPlayer.setAdapter(adapter);
-        lsvSelectPlayer.setFastScrollEnabled(true);
-    }
-
-    private void showLocal() {
-        lsvSelectPlayer = findViewById(R.id.lsvSelectPlayer);
-        PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, InternetActions.getLocalPlayers());
-        lsvSelectPlayer.setAdapter(adapter);
-        lsvSelectPlayer.setFastScrollEnabled(true);
-    }
-
-    private void showFavourites() {
-        lsvSelectPlayer = findViewById(R.id.lsvSelectPlayer);
-        SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
-        PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, InternetActions.getFavouritePlayers(preferences));
-        lsvSelectPlayer.setAdapter(adapter);
-        lsvSelectPlayer.setFastScrollEnabled(true);
     }
 }

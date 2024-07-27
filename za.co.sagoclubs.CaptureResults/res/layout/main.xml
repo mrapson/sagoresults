@@ -11,7 +11,7 @@
         android:background="#336699">
 
         <TextView
-            android:id="@+id/txtSelectWhitePlayer"
+            android:id="@+id/txtSelectFavouritePlayers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#336699"

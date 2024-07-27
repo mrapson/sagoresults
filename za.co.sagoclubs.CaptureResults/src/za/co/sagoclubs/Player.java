@@ -8,7 +8,7 @@ public class Player {
     private final String id;
     @NonNull
     private final String name;
-        @Nullable
+    @Nullable
     private final Boolean international;
 
     public Player(@NonNull String id, @NonNull String name) {
