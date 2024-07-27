@@ -25,7 +25,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class InternetActions {
 
@@ -104,12 +106,12 @@ public class InternetActions {
     }
 
     public static Player[] getFavouritePlayers(SharedPreferences preferences) {
-        String save = preferences.getString("favourite_players", "");
-        List<String> items = Arrays.asList(save.split(","));
+        Set<String> saved = Arrays.stream(preferences.getString("favourite_players", "")
+                .split(",")).collect(Collectors.toSet());
         List<Player> allPlayers = getPlayerList();
         List<Player> list = new ArrayList<>();
         for (Player player : allPlayers) {
-            if (items.contains(player.getId())) {
+            if (saved.contains(player.getId())) {
                 list.add(player);
             }
         }
@@ -252,6 +254,7 @@ public class InternetActions {
             }
             c.disconnect();
         }
+        list.sort(new PlayerSortByName());
         return list;
     }
 
