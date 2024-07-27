@@ -105,7 +105,8 @@ public class CaptureDetailActivity extends FragmentActivity
         btnSaveResult.setOnClickListener(v -> {
             saveResult();
             Intent myIntent = new Intent(v.getContext(), ResultConfirmActivity.class);
-            startActivityForResult(myIntent, 0);
+            startActivity(myIntent);
+            finish();
         });
     }
 
