@@ -1,8 +1,8 @@
 package za.co.sagoclubs;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -14,12 +14,16 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Spinner;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentActivity;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
-public class CaptureDetailActivity extends Activity {
-    private static final int DATE_DIALOG_ID = 999;
-
+public class CaptureDetailActivity extends FragmentActivity
+        implements DatePickerDialog.OnDateSetListener {
     private EditText txtDate;
     private EditText txtKomi;
     private EditText txtNotes;
@@ -29,8 +33,7 @@ public class CaptureDetailActivity extends Activity {
     private Button btnSaveResult;
     private Button btnPreviousNotes;
     private RadioButton radioWhite;
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,8 +51,8 @@ public class CaptureDetailActivity extends Activity {
         spinnerWeight = findViewById(R.id.spinnerWeight);
         spinnerHandicap = findViewById(R.id.spinnerHandicap);
 
-        addChangeButtonListener();
-        addPreviousButtonListener();
+        addChangeDateButtonListener();
+        addPreviousNotesButtonListener();
         addSaveResultButtonListener();
         addSpinnerHandicapOnItemSelectedListener();
 
@@ -65,11 +68,12 @@ public class CaptureDetailActivity extends Activity {
         txtDate.setText(date.format(dateTimeFormatter));
     }
 
-    public void addChangeButtonListener() {
-        btnChangeDate.setOnClickListener(v -> showDialog(DATE_DIALOG_ID));
+    public void addChangeDateButtonListener() {
+        btnChangeDate.setOnClickListener(v -> new DatePickerFragment()
+                .show(getSupportFragmentManager(), "datePicker"));
     }
 
-    public void addPreviousButtonListener() {
+    public void addPreviousNotesButtonListener() {
         btnPreviousNotes.setOnClickListener(v -> {
             String notes = getSharedPreferences("SETTINGS", MODE_PRIVATE)
                     .getString("notes", "");
@@ -132,23 +136,28 @@ public class CaptureDetailActivity extends Activity {
         }
     }
 
-    @Override
-    protected Dialog onCreateDialog(int id) {
-        if (id == DATE_DIALOG_ID) {
+    public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
+        LocalDate date = LocalDate.of(selectedYear, selectedMonth + 1, selectedDay);
+        Result.setDate(date);
+        txtDate.setText(date.format(dateTimeFormatter));
+    }
+
+    public static class DatePickerFragment extends DialogFragment {
+        private DatePickerDialog.OnDateSetListener dateListener;
+
+        @NonNull
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
             LocalDate date = Result.getDate();
-            return new DatePickerDialog(this, datePickerListener,
+            return new DatePickerDialog(requireContext(), dateListener,
                     date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
         }
 
-        return null;
-    }
+        @Override
+        public void onAttach(@NonNull Context context) {
+            super.onAttach(context);
 
-    private final DatePickerDialog.OnDateSetListener datePickerListener = new DatePickerDialog.OnDateSetListener() {
-        // when dialog box is closed, below method will be called.
-        public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
-            LocalDate date = LocalDate.of(selectedYear, selectedMonth + 1, selectedDay);
-            Result.setDate(date);
-            txtDate.setText(date.format(dateTimeFormatter));
+            dateListener = (DatePickerDialog.OnDateSetListener) getActivity();
         }
-    };
+    }
 }
