@@ -79,7 +79,7 @@ public class ResultConfirmActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Toast.makeText(this, "BACK not supported at this point", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "BACK is ambiguous. Home or Undo?", Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onKeyDown(keyCode, event);
