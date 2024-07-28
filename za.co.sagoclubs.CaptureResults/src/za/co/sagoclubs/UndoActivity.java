@@ -5,9 +5,11 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +18,7 @@ import androidx.annotation.NonNull;
 public class UndoActivity extends Activity {
 
     private TextView txtOutput;
+    private ScrollView scrollView;
     private Button btnNewResult;
     private Button btnReturnToStart;
     private ProgressDialog dialog;
@@ -27,10 +30,13 @@ public class UndoActivity extends Activity {
 
         dialog = new ProgressDialog(this);
 
-        btnReturnToStart = findViewById(R.id.btnReturnToStart);
-        btnNewResult = findViewById(R.id.btnNewResult);
         txtOutput = findViewById(R.id.txtOutput);
         txtOutput.setEnabled(false);
+
+        scrollView = findViewById(R.id.scrollerUndo);
+
+        btnReturnToStart = findViewById(R.id.btnReturnToStart);
+        btnNewResult = findViewById(R.id.btnNewResult);
 
         if (Result.resultState == ResultState.Confirm) {
             btnNewResult.setVisibility(View.INVISIBLE);
@@ -63,7 +69,7 @@ public class UndoActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Toast.makeText(this, "BACK not supported at this point", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "BACK is ambiguous. Home?", Toast.LENGTH_SHORT).show();
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -78,7 +84,9 @@ public class UndoActivity extends Activity {
     private void restoreProgress(Bundle savedInstanceState) {
         String output = savedInstanceState.getString("output");
         if (output != null) {
+            txtOutput.setMovementMethod(new ScrollingMovementMethod());
             txtOutput.setText(output);
+            scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
         }
     }
 
@@ -92,7 +100,11 @@ public class UndoActivity extends Activity {
         protected void onPostExecute(String result) {
             setProgressBarIndeterminateVisibility(false);
             dialog.dismiss();
+
+            txtOutput.setMovementMethod(new ScrollingMovementMethod());
             txtOutput.setText(result);
+            scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+
             Result.setResultState(ResultState.Complete);
             btnNewResult.setVisibility(View.VISIBLE);
             btnReturnToStart.setVisibility(View.VISIBLE);

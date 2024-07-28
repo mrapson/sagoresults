@@ -7,11 +7,13 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,6 +21,7 @@ import androidx.annotation.NonNull;
 
 public class ResultConfirmActivity extends Activity {
     private TextView txtOutput;
+    private ScrollView scrollView;
     private Button btnUndo;
     private Button btnNewResult;
     private Button btnReturnToStart;
@@ -37,6 +40,9 @@ public class ResultConfirmActivity extends Activity {
 
         txtOutput = findViewById(R.id.txtOutput);
         txtOutput.setEnabled(false);
+
+        scrollView = findViewById(R.id.scrollerConfirm);
+
         btnUndo = findViewById(R.id.btnUndo);
         btnNewResult = findViewById(R.id.btnNewResult);
         btnReturnToStart = findViewById(R.id.btnReturnToStart);
@@ -94,7 +100,9 @@ public class ResultConfirmActivity extends Activity {
     private void restoreProgress(Bundle savedInstanceState) {
         String output = savedInstanceState.getString("output");
         if (output != null) {
+            txtOutput.setMovementMethod(new ScrollingMovementMethod());
             txtOutput.setText(output);
+            scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
         }
     }
 
@@ -108,7 +116,11 @@ public class ResultConfirmActivity extends Activity {
         protected void onPostExecute(String result) {
             setProgressBarIndeterminateVisibility(false);
             dialog.dismiss();
+
+            txtOutput.setMovementMethod(new ScrollingMovementMethod());
             txtOutput.setText(result);
+            scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+
             Result.setResultState(ResultState.Confirm);
             btnUndo.setVisibility(View.VISIBLE);
             btnNewResult.setVisibility(View.VISIBLE);
