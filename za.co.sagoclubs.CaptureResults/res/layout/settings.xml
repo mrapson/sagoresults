@@ -31,19 +31,22 @@
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/lblUserame"
+                android:id="@+id/lblUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:labelFor="@id/txtUsername"
                 android:text="@string/user_name"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000"
-                android:textStyle="bold"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/txtUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ems="10">
+                android:autofillHints="username"
+                android:ems="10"
+                android:inputType="text">
 
                 <requestFocus />
             </EditText>
@@ -59,22 +62,24 @@
                 android:id="@+id/lblPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:labelFor="@+id/txtPassword"
                 android:text="@string/password"
+                android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="#000000"
-                android:textStyle="bold"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/txtPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:autofillHints="password"
                 android:ems="10"
                 android:inputType="textPassword" />
 
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRow3"
+            android:id="@+id/tableRowPassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
@@ -82,43 +87,46 @@
                 android:id="@+id/chkShowPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Show Password" />
+                android:text="@string/show_password" />
 
             <TextView
                 android:id="@+id/textViewShowPassword"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Show Password"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:text="@string/show_password"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="#000000" />
 
         </TableRow>
 
-        <TableRow
-            android:id="@+id/tableRow4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"></TableRow>
     </TableLayout>
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Do not change the default values of &quot;guest&quot;/&quot;guest&quot; unless you have been given an admin account by an SA Go administrator"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:text="@string/password_change_message"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#000000" />
 
     <Button
         android:id="@+id/btnSelectFavouritePlayers"
         style="@style/ButtonText"
-        android:background="@drawable/black_button"
+        android:background="@drawable/blue_button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:text="@string/select_favourite_players"
         android:textStyle="bold" />
 
     <Button
         android:id="@+id/DoneButton"
-        android:layout_width="wrap_content"
+        style="@style/ButtonText"
+        android:background="@drawable/green_button"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Save" />
+        android:minHeight="48dp"
+        android:text="@string/save"
+        android:textStyle="bold" />
 
 </LinearLayout>

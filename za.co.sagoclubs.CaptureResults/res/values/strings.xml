@@ -17,6 +17,7 @@
     <string name="settings">Settings</string>
     <string name="user_name">User Name</string>
     <string name="password">Password</string>
+    <string name="show_password">Show Password</string>
     <string name="undo">Undo</string>
     <string name="capture_another">Capture another?</string>
     <string name="result_confirmed">Confirm Result</string>
@@ -70,6 +71,8 @@
     </string-array>
 
     <string name="game_notes_characters">0123456789 abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_.?</string>
+
+    <string name="password_change_message">Do not change the default values of &quot;guest&quot;/&quot;guest&quot; unless you have been given an admin account by an SA Go administrator.</string>
 
     <string name="south_african_go">South African Go</string>
 
