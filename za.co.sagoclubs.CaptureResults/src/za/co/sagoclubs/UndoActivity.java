@@ -86,8 +86,7 @@ public class UndoActivity extends Activity {
         protected String doInBackground(Void... v) {
             setProgressBarIndeterminateVisibility(true);
 
-            InternetActions.openPage(Result.constructUndoUri());
-            return InternetActions.getPreBlock(Constants.REFRESH_HTML);
+            return InternetActions.undoResult(Result.constructUndoUriOptions());
         }
 
         protected void onPostExecute(String result) {

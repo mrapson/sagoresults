@@ -6,7 +6,6 @@ import static za.co.sagoclubs.Constants.TAG;
 
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
-import android.util.Base64;
 import android.util.Log;
 
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.tokens.CognitoIdToken;
@@ -71,7 +70,7 @@ public class InternetActions {
         try {
             String url = SHOWLOG + id + ".html";
             HttpURLConnection c = openConnection(url);
-            return InternetActions.getPreBlock(c);
+            return getPreBlock(c);
         } catch (IOException e) {
             e.printStackTrace();
             return "Exception swallowed!";
@@ -81,11 +80,7 @@ public class InternetActions {
     public static String getPlayerLog(String id) {
         String url = SHOW_LOG_DIRECT + "?name=" + id;
         HttpURLConnection c = openApiGatewayConnection(url);
-        return InternetActions.getPreBlock(c);
-    }
-
-    public static Player[] getPlayerArray() {
-        return getAllPlayers();
+        return getPreBlock(c);
     }
 
     public static Player[] getAllPlayers() {
@@ -120,7 +115,7 @@ public class InternetActions {
     }
 
     public static String openPage(String url) {
-        HttpURLConnection c = openAuthenticatedConnection(url);
+        HttpURLConnection c = openApiGatewayConnection(url);
         BufferedReader reader = null;
         StringBuilder result = new StringBuilder();
         try {
@@ -148,9 +143,19 @@ public class InternetActions {
         return result.toString();
     }
 
+    public static String confirmResult(String confirmOptions) {
+        openPage(Constants.LOGGAME_CGI + "?" + confirmOptions);
+        return getPreBlock(Constants.REFRESH_HTML);
+    }
+
+    public static String undoResult(String undoOptions) {
+        openPage(Constants.UNDO_CGI + "?" + undoOptions);
+        return getPreBlock(Constants.REFRESH_HTML);
+    }
+
     public static String getPreBlock(String url) {
         Log.d(TAG, "opening " + url);
-        HttpURLConnection c = openAuthenticatedConnection(url);
+        HttpURLConnection c = openApiGatewayConnection(url);
         return getPreBlock(c);
     }
 
@@ -181,25 +186,6 @@ public class InternetActions {
             }
         }
         return result;
-    }
-
-    private static HttpURLConnection openAuthenticatedConnection(String url) {
-        UserData userData = UserData.getInstance();
-        String username = userData.getUsername();
-        String password = userData.getUsername();
-
-        HttpURLConnection c = null;
-        try {
-            URL u = new URL(url);
-            c = (HttpURLConnection) u.openConnection();
-            Log.d(TAG, "openConnection: url=" + url + ", username=" + username + ", password=" + password);
-            String basicAuth = "Basic " + new String(Base64.encode((username + ":" + password).getBytes(), Base64.NO_WRAP));
-            c.setRequestProperty("Authorization", basicAuth);
-            c.connect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return c;
     }
 
     public static HttpURLConnection openApiGatewayConnection(String url) {

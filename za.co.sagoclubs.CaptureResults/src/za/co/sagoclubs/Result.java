@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 
 enum ResultState {
-    Enter, Confirm, Undo, Complete
+    Enter, Confirm, Complete
 }
 
 public class Result {
@@ -82,28 +82,23 @@ public class Result {
     private static String handicapUriString() {
         return Result.handicap != 0
                 ? Integer.toString(Result.handicap)
-                : "0";
+                : "1";
     }
 
-    public static String constructResultUri() {
-        String uri = Constants.LOGGAME_CGI + "?";
-        uri = uri + "whitename=" + Result.white.getId();
-        uri = uri + "&blackname=" + Result.black.getId();
-        uri = uri + "&GSF=" + Result.weight;
-        uri = uri + "&result=" + Result.winner;
-        uri = uri + "&komi=" + Result.komi;
-        uri = uri + "&handicap=" + Result.handicapUriString();
-        uri = uri + "&day=" + Result.date.getDayOfMonth();
-        uri = uri + "&month=" + Result.date.getDayOfMonth() + 1;
-        uri = uri + "&year=" + Result.date.getYear();
-        uri = uri + "&notes=" + URLEncoder.encode(Result.notes, StandardCharsets.UTF_8);
-        return uri;
+    public static String constructConfirmUriOptions() {
+        return "whitename=" + Result.white.getId()
+                + "&blackname=" + Result.black.getId()
+                + "&GSF=" + Result.weight
+                + "&result=" + Result.winner
+                + "&komi=" + Result.komi
+                + "&handicap=" + Result.handicapUriString()
+                + "&day=" + Result.date.getDayOfMonth()
+                + "&month=" + Result.date.getMonthValue()
+                + "&year=" + Result.date.getYear()
+                + "&notes=" + URLEncoder.encode(Result.notes, StandardCharsets.UTF_8);
     }
 
-    public static String constructUndoUri() {
-        String uri = Constants.UNDO_CGI + "?";
-        uri += "a=" + white.getId();
-        uri += "&b=" + black.getId();
-        return uri;
+    public static String constructUndoUriOptions() {
+        return "a=" + white.getId() + "&b=" + black.getId();
     }
 }

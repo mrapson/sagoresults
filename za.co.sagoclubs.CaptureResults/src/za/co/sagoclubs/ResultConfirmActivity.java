@@ -101,8 +101,8 @@ public class ResultConfirmActivity extends Activity {
     private class SaveResultTask extends AsyncTask<Void, Void, String> {
         protected String doInBackground(Void... v) {
             setProgressBarIndeterminateVisibility(true);
-            InternetActions.openPage(Result.constructResultUri());
-            return InternetActions.getPreBlock(Constants.REFRESH_HTML);
+
+            return InternetActions.confirmResult(Result.constructConfirmUriOptions());
         }
 
         protected void onPostExecute(String result) {
