@@ -75,6 +75,8 @@ public class PlayerRatingsActivity extends Activity {
         loadingStatusView.setText(getString(R.string.loading_message) + caller);
         loadingStatusView.setVisibility(View.VISIBLE);
 
+        // TODO redo without supplyAsync().
+        // Do it like LogFileActivity()
         CompletableFuture
                 .supplyAsync(() -> {
                     try {
