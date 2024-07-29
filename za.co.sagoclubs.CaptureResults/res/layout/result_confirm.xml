@@ -22,6 +22,19 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/txtLoadingStatus"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:paddingLeft="1dp"
+        android:paddingRight="1dp"
+        android:text="@string/loading_message"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#000000"
+        android:textStyle="italic"
+        android:visibility="gone" />
+
     <ScrollView
         android:id="@+id/scrollerConfirm"
         android:layout_width="fill_parent"
