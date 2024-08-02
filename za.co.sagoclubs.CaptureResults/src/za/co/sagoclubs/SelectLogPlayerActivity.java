@@ -27,7 +27,7 @@ public class SelectLogPlayerActivity extends Activity {
 
         lsvSelectPlayer.setOnItemClickListener((parent, view, position, id) -> {
             Player player = (Player) lsvSelectPlayer.getItemAtPosition(position);
-            Result.setLogFile(player);
+            Result.setLogPlayer(player);
             Intent myIntent = new Intent(view.getContext(), LogFileActivity.class);
             startActivityForResult(myIntent, 0);
         });

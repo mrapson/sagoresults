@@ -115,7 +115,7 @@ public class PlayerRatingsActivity extends Activity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             Player p = (Player) listView.getItemAtPosition(position);
-            Result.setLogFile(p);
+            Result.setLogPlayer(p);
             Intent myIntent = new Intent(view.getContext(), LogFileActivity.class);
             startActivityForResult(myIntent, 0);
         }

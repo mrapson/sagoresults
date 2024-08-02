@@ -44,7 +44,7 @@ public class LogFileActivity extends Activity {
             restoreProgress(savedInstanceState);
         } else {
             Log.d(TAG, "Calling server to get player logfile");
-            txtPlayer.setText(Result.logfile.getName());
+            txtPlayer.setText(Result.getLogPlayer().getName());
             loadingStatusView.setText(getString(R.string.loading_message));
             loadingStatusView.setVisibility(View.VISIBLE);
 
@@ -82,9 +82,9 @@ public class LogFileActivity extends Activity {
         return () -> {
             if (callingActivity != null
                     && PlayerRatingsActivity.class.getName().equals(callingActivity.getClassName())) {
-                completableFuture.complete(getRatingsPlayerLog(Result.logfile.getId()));
+                completableFuture.complete(getRatingsPlayerLog(Result.getLogPlayer().getId()));
             } else {
-                completableFuture.complete(getPlayerLog(Result.logfile.getId()));
+                completableFuture.complete(getPlayerLog(Result.getLogPlayer().getId()));
             }
         };
     }
