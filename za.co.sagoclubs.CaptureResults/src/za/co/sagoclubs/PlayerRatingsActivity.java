@@ -21,6 +21,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import za.co.sagoclubs.LogFileUseCase.Requester;
+
 public class PlayerRatingsActivity extends Activity {
     private ListView listView;
     private TextView loadingStatusView;
@@ -114,8 +116,9 @@ public class PlayerRatingsActivity extends Activity {
     private final OnItemClickListener playerItemClickListener = new OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Player p = (Player) listView.getItemAtPosition(position);
-            Result.setLogPlayer(p);
+            Player player = (Player) listView.getItemAtPosition(position);
+
+            LogFileUseCase.getInstance().prepareRequest(player, Requester.RatingsLookup);
             Intent myIntent = new Intent(view.getContext(), LogFileActivity.class);
             startActivityForResult(myIntent, 0);
         }

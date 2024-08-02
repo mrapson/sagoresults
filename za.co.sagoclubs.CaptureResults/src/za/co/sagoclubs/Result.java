@@ -21,8 +21,6 @@ public class Result {
 
     public static ResultState resultState;
 
-    public static Player logPlayer;
-
     public static void setWhite(Player white) {
         Result.white = white;
     }
@@ -37,14 +35,6 @@ public class Result {
 
     public static Player getBlack() {
         return Result.black;
-    }
-
-    public static void setLogPlayer(Player log) {
-        Result.logPlayer = log;
-    }
-
-    public static Player getLogPlayer() {
-        return Result.logPlayer;
     }
 
     public static void setKomi(String komi) {

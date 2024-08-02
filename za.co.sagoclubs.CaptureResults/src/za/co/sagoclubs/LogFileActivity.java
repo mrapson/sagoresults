@@ -1,11 +1,8 @@
 package za.co.sagoclubs;
 
 import static za.co.sagoclubs.Constants.TAG;
-import static za.co.sagoclubs.InternetActions.getPlayerLog;
-import static za.co.sagoclubs.InternetActions.getRatingsPlayerLog;
 
 import android.app.Activity;
-import android.content.ComponentName;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -44,13 +41,13 @@ public class LogFileActivity extends Activity {
             restoreProgress(savedInstanceState);
         } else {
             Log.d(TAG, "Calling server to get player logfile");
-            txtPlayer.setText(Result.getLogPlayer().getName());
+            txtPlayer.setText(LogFileUseCase.getInstance().getPlayer().getName());
             loadingStatusView.setText(getString(R.string.loading_message));
             loadingStatusView.setVisibility(View.VISIBLE);
 
             // TODO deal with thread running when we change views
             CompletableFuture<String> completableFuture = new CompletableFuture<>();
-            Runnable runnable = fetchLogfile(completableFuture, getCallingActivity());
+            Runnable runnable = fetchLogfile(completableFuture);
             completableFuture.whenComplete(this::onPostExecute);
             new Thread(runnable).start();
         }
@@ -77,15 +74,11 @@ public class LogFileActivity extends Activity {
         }
     }
 
-    private static Runnable fetchLogfile(CompletableFuture<String> completableFuture,
-                                         ComponentName callingActivity) {
+    private static Runnable fetchLogfile(CompletableFuture<String> completableFuture) {
         return () -> {
-            if (callingActivity != null
-                    && PlayerRatingsActivity.class.getName().equals(callingActivity.getClassName())) {
-                completableFuture.complete(getRatingsPlayerLog(Result.getLogPlayer().getId()));
-            } else {
-                completableFuture.complete(getPlayerLog(Result.getLogPlayer().getId()));
-            }
+            LogFileUseCase logFileUseCase = LogFileUseCase.getInstance();
+            logFileUseCase.fetchLogFile();
+            completableFuture.complete(logFileUseCase.getLogFile());
         };
     }
 
