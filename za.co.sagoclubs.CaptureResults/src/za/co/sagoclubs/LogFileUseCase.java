@@ -3,6 +3,8 @@ package za.co.sagoclubs;
 import static za.co.sagoclubs.InternetActions.getPlayerLog;
 import static za.co.sagoclubs.InternetActions.getRatingsPlayerLog;
 
+import androidx.lifecycle.MutableLiveData;
+
 public final class LogFileUseCase {
     enum Requester {
         None, RatingsLookup, HandleLookup
@@ -15,9 +17,9 @@ public final class LogFileUseCase {
     private static volatile LogFileUseCase INSTANCE = null;
 
     private static Player player;
-    private static String logFile = "";
+    private final static MutableLiveData<LogRecord> logRecord =
+            new MutableLiveData<>(new LogRecord("", Status.None));
     private static Requester requester = Requester.None;
-    private static Status status = Status.None;
 
     private LogFileUseCase() {
     }
@@ -36,8 +38,7 @@ public final class LogFileUseCase {
     public void prepareRequest(Player player, Requester requester) {
         LogFileUseCase.requester = requester;
         LogFileUseCase.player = player;
-        LogFileUseCase.logFile = "";
-        LogFileUseCase.status = Status.Prepared;
+        logRecord.postValue(new LogRecord("", Status.Prepared));
     }
 
     public Player getPlayer() {
@@ -46,21 +47,24 @@ public final class LogFileUseCase {
 
     public void fetchLogFile() {
         String id = player.getId();
-        LogFileUseCase.status = Status.Processing;
+        logRecord.postValue(new LogRecord("", Status.Processing));
+
         switch (requester) {
             case RatingsLookup -> {
-                LogFileUseCase.logFile = getRatingsPlayerLog(id);
-                LogFileUseCase.status = Status.Done;
+                String logFile = getRatingsPlayerLog(id);
+                logRecord.postValue(new LogRecord(logFile, Status.Done));
             }
             case HandleLookup -> {
-                LogFileUseCase.logFile = getPlayerLog(id);
-                LogFileUseCase.status = Status.Done;
+                String logFile = getPlayerLog(id);
+                logRecord.postValue(new LogRecord(logFile, Status.Done));
             }
-            case None -> LogFileUseCase.status = Status.Error;
+            case None -> logRecord.postValue(new LogRecord("", Status.Error));
         }
     }
 
-    public String getLogFile() {
-        return logFile;
+    public MutableLiveData<LogRecord> getLogRecord() {
+        return logRecord;
     }
+
+    public record LogRecord(String logFile, Status status) {}
 }

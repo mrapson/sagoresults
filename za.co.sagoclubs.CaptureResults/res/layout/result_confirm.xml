@@ -15,6 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#336699"
+            android:textColor="#ffffff"
             android:text="@string/result_confirmed"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold"
