@@ -28,6 +28,7 @@
         android:background="@drawable/magenta_button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:text="@string/player_ratings"
         android:textStyle="bold" />
 
@@ -37,6 +38,7 @@
         android:background="@drawable/green_button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:text="@string/capture_result"
         android:textStyle="bold" />
 
@@ -46,15 +48,17 @@
         android:background="@drawable/purple_button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:text="@string/display_log_file"
         android:textStyle="bold" />
 
     <Button
         android:id="@+id/btnSettings"
         style="@style/ButtonText"
+        android:background="@drawable/yellow_button"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/yellow_button"
+        android:minHeight="48dp"
         android:text="@string/settings"
         android:textStyle="bold" />
 
