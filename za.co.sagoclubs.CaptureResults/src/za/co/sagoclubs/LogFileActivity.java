@@ -37,47 +37,38 @@ public class LogFileActivity extends AppCompatActivity {
                         case Processing -> {
                             loadingStatusView.setText(getString(R.string.loading_message));
                             loadingStatusView.setVisibility(View.VISIBLE);
+                            txtPlayer.setText(logRecord.player().getName());
                             txtOutput.setText(logRecord.logFile());
                         }
                         case Error -> {
                             loadingStatusView.setText(getString(R.string.network_error_message));
                             loadingStatusView.setVisibility(View.VISIBLE);
+                            txtPlayer.setText(logRecord.player().getName());
                             txtOutput.setText(logRecord.logFile());
                         }
                         case Done -> {
+                            loadingStatusView.setVisibility(View.GONE);
+                            txtPlayer.setText(logRecord.player().getName());
                             txtOutput.setMovementMethod(new ScrollingMovementMethod());
                             txtOutput.setText(logRecord.logFile());
                             scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+                        }
+                        case Prepared -> {
                             loadingStatusView.setVisibility(View.GONE);
+                            txtOutput.setText("");
                         }
                         default -> {
                             loadingStatusView.setVisibility(View.GONE);
+                            txtPlayer.setText("");
                             txtOutput.setText("");
                         }
                     }
                 }
         );
 
-        if (savedInstanceState != null) {
-            restoreProgress(savedInstanceState);
-        } else {
+        if (savedInstanceState == null) {
             Log.d(TAG, "Calling server to get player logfile");
-            txtPlayer.setText(LogFileUseCase.getInstance().getPlayer().getName());
-
             LogFileUseCase.getInstance().fetchLogFile();
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle saveState) {
-        super.onSaveInstanceState(saveState);
-        saveState.putString("player", txtPlayer.getText().toString());
-    }
-
-    private void restoreProgress(Bundle savedInstanceState) {
-        String player = savedInstanceState.getString("player");
-        if (player != null) {
-            txtPlayer.setText(player);
         }
     }
 }

@@ -20,7 +20,7 @@ public final class LogFileUseCase {
 
     private static Player player;
     private final static MutableLiveData<LogRecord> logRecord =
-            new MutableLiveData<>(new LogRecord("", Status.None));
+            new MutableLiveData<>(new LogRecord(null, "", Status.None));
     private static Requester requester = Requester.None;
 
     private LogFileUseCase() {
@@ -40,7 +40,7 @@ public final class LogFileUseCase {
     public void prepareRequest(Player player, Requester requester) {
         LogFileUseCase.requester = requester;
         LogFileUseCase.player = player;
-        logRecord.postValue(new LogRecord("", Status.Prepared));
+        logRecord.postValue(new LogRecord(player, "", Status.Prepared));
     }
 
     public Player getPlayer() {
@@ -49,19 +49,20 @@ public final class LogFileUseCase {
 
     public void fetchLogFile() {
         String id = player.getId();
+        Player requestPlayer = player;
         ExecutorService executorService = RankApplication.getApp().getExecutorService();
-        logRecord.postValue(new LogRecord("", Status.Processing));
+        logRecord.postValue(new LogRecord(requestPlayer, "", Status.Processing));
 
         switch (requester) {
             case RatingsLookup -> executorService.execute(() -> {
                 String logFile = getRatingsPlayerLog(id);
-                logRecord.postValue(new LogRecord(logFile, Status.Done));
+                logRecord.postValue(new LogRecord(requestPlayer, logFile, Status.Done));
             });
             case HandleLookup -> executorService.execute(() -> {
                 String logFile = getPlayerLog(id);
-                logRecord.postValue(new LogRecord(logFile, Status.Done));
+                logRecord.postValue(new LogRecord(requestPlayer, logFile, Status.Done));
             });
-            case None -> logRecord.postValue(new LogRecord("", Status.Error));
+            case None -> logRecord.postValue(new LogRecord(requestPlayer, "", Status.Error));
         }
     }
 
@@ -69,5 +70,5 @@ public final class LogFileUseCase {
         return logRecord;
     }
 
-    public record LogRecord(String logFile, Status status) {}
+    public record LogRecord(Player player, String logFile, Status status) {}
 }
