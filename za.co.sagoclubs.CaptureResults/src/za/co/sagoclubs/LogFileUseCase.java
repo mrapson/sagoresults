@@ -5,6 +5,8 @@ import static za.co.sagoclubs.InternetActions.getRatingsPlayerLog;
 
 import androidx.lifecycle.MutableLiveData;
 
+import java.util.concurrent.ExecutorService;
+
 public final class LogFileUseCase {
     enum Requester {
         None, RatingsLookup, HandleLookup
@@ -47,17 +49,18 @@ public final class LogFileUseCase {
 
     public void fetchLogFile() {
         String id = player.getId();
+        ExecutorService executorService = RankApplication.getApp().getExecutorService();
         logRecord.postValue(new LogRecord("", Status.Processing));
 
         switch (requester) {
-            case RatingsLookup -> {
+            case RatingsLookup -> executorService.execute(() -> {
                 String logFile = getRatingsPlayerLog(id);
                 logRecord.postValue(new LogRecord(logFile, Status.Done));
-            }
-            case HandleLookup -> {
+            });
+            case HandleLookup -> executorService.execute(() -> {
                 String logFile = getPlayerLog(id);
                 logRecord.postValue(new LogRecord(logFile, Status.Done));
-            }
+            });
             case None -> logRecord.postValue(new LogRecord("", Status.Error));
         }
     }
