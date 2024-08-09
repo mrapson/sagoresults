@@ -2,6 +2,7 @@ package za.co.sagoclubs;
 
 import static za.co.sagoclubs.Constants.TAG;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,7 +20,7 @@ public class SettingsActivity extends Activity {
     private TextView txtUsername;
     private TextView txtPassword;
     private Button btnSelectFavouritePlayers;
-    private boolean changed;
+    private boolean changed = false;
     private final UserData userData = UserData.getInstance();
 
     @Override
@@ -47,8 +48,11 @@ public class SettingsActivity extends Activity {
 
         CheckBox showPassword = findViewById(R.id.chkShowPassword);
         showPassword.setOnCheckedChangeListener((arg0, arg1) -> {
-            if (!arg1) txtPassword.setTransformationMethod(new PasswordTransformationMethod());
-            else txtPassword.setTransformationMethod(null);
+            if (!arg1) {
+                txtPassword.setTransformationMethod(new PasswordTransformationMethod());
+            } else {
+                txtPassword.setTransformationMethod(null);
+            }
             txtPassword.refreshDrawableState();
         });
 
@@ -56,6 +60,7 @@ public class SettingsActivity extends Activity {
         doneButton.setOnClickListener(arg0 -> {
             changed = true;
             saveSettings();
+            changed = false;
         });
     }
 
@@ -70,6 +75,7 @@ public class SettingsActivity extends Activity {
         super.onPause();
     }
 
+    @SuppressLint("ApplySharedPref")
     private void saveSettings() {
         if (changed) {
             SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
@@ -80,8 +86,10 @@ public class SettingsActivity extends Activity {
             userData.setUsername(preferences.getString("username", UserData.GUEST_USER));
             userData.setPassword(preferences.getString("password", UserData.GUEST_PASS));
 
-            Cognito authentication = new Cognito(getApplicationContext());
-            authentication.userLogin();
+            if (!userData.isGuestUser()) {
+                Cognito authentication = new Cognito(getApplicationContext());
+                authentication.userLogin();
+            }
 
             btnSelectFavouritePlayers.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
             InternetActions.forcePlayerArrayReload();

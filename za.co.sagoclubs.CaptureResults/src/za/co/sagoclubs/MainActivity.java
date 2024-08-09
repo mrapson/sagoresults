@@ -2,25 +2,20 @@ package za.co.sagoclubs;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends Activity {
-    private Button btnCaptureResult;
-    private Button btnDisplayLogFile;
-    private boolean onCreateCalled = false;
     private final UserData userData = UserData.getInstance();
 
     @Override
     public void onResume() {
         super.onResume();
-        if (onCreateCalled) {
-            btnDisplayLogFile.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
-            btnCaptureResult.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
-        }
+        int visibility = userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE;
+        findViewById(R.id.btnDisplayLogFile).setVisibility(visibility);
+        findViewById(R.id.btnCaptureResult).setVisibility(visibility);
     }
 
     @Override
@@ -38,32 +33,6 @@ public class MainActivity extends Activity {
 
         Result.setResultState(ResultState.Complete);
 
-        SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
-        userData.setUsername(preferences.getString("username", UserData.GUEST_USER));
-        userData.setPassword(preferences.getString("password", UserData.GUEST_PASS));
-        InternetActions.forcePlayerArrayReload();
-
-        Button btnSettings = findViewById(R.id.btnSettings);
-        btnSettings.setOnClickListener(v -> {
-            Intent myIntent = new Intent(v.getContext(), SettingsActivity.class);
-            startActivityForResult(myIntent, 0);
-        });
-
-        btnDisplayLogFile = findViewById(R.id.btnDisplayLogFile);
-        btnDisplayLogFile.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
-        btnDisplayLogFile.setOnClickListener(v -> {
-            Intent myIntent = new Intent(v.getContext(), SelectLogPlayerActivity.class);
-            startActivityForResult(myIntent, 0);
-        });
-
-        btnCaptureResult = findViewById(R.id.btnCaptureResult);
-        btnCaptureResult.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
-        btnCaptureResult.setOnClickListener(v -> {
-            Result.setResultState(ResultState.Enter);
-            Intent myIntent = new Intent(v.getContext(), SelectWhitePlayerActivity.class);
-            startActivityForResult(myIntent, 0);
-        });
-
         Button btnPlayerRatings = findViewById(R.id.btnPlayerRatings);
         btnPlayerRatings.setEnabled(true);
         btnPlayerRatings.setOnClickListener(v -> {
@@ -71,14 +40,25 @@ public class MainActivity extends Activity {
             startActivityForResult(myIntent, 0);
         });
 
-        int width = btnCaptureResult.getWidth();
-        if (btnDisplayLogFile.getWidth() > width) {
-            width = btnDisplayLogFile.getWidth();
-        }
-        btnCaptureResult.setWidth(width);
-        btnDisplayLogFile.setWidth(width);
-        btnSettings.setWidth(width);
+        Button btnCaptureResult = findViewById(R.id.btnCaptureResult);
+        btnCaptureResult.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
+        btnCaptureResult.setOnClickListener(v -> {
+            Result.setResultState(ResultState.Enter);
+            Intent myIntent = new Intent(v.getContext(), SelectWhitePlayerActivity.class);
+            startActivityForResult(myIntent, 0);
+        });
 
-        onCreateCalled = true;
+        Button btnDisplayLogFile = findViewById(R.id.btnDisplayLogFile);
+        btnDisplayLogFile.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
+        btnDisplayLogFile.setOnClickListener(v -> {
+            Intent myIntent = new Intent(v.getContext(), SelectLogPlayerActivity.class);
+            startActivityForResult(myIntent, 0);
+        });
+
+        Button btnSettings = findViewById(R.id.btnSettings);
+        btnSettings.setOnClickListener(v -> {
+            Intent myIntent = new Intent(v.getContext(), SettingsActivity.class);
+            startActivityForResult(myIntent, 0);
+        });
     }
 }
