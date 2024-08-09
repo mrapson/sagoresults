@@ -46,7 +46,7 @@ public class Cognito {
         @Override
         public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {
             // Sign-in was successful, cognitoUserSession will contain tokens for the user
-            userData.setIdToken(userSession.getIdToken());
+            userData.setAuthorization(userSession);
             Toast.makeText(appContext, "Sign in success", Toast.LENGTH_LONG).show();
         }
 
@@ -69,6 +69,7 @@ public class Cognito {
         @Override
         public void onFailure(Exception exception) {
             // Sign-in failed, check exception for the cause
+            userData.setAuthorization(null);
             Toast.makeText(appContext, "Sign in Failure", Toast.LENGTH_LONG).show();
         }
     };

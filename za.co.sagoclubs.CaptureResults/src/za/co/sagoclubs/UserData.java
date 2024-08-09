@@ -1,6 +1,9 @@
 package za.co.sagoclubs;
 
+import com.amazonaws.mobileconnectors.cognitoidentityprovider.CognitoUserSession;
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.tokens.CognitoIdToken;
+
+import java.util.Date;
 
 public class UserData {
     private static volatile UserData INSTANCE = null;
@@ -11,6 +14,7 @@ public class UserData {
     private static String username = "";
     private static String password = "";
     private static CognitoIdToken idToken = null;
+    private static Date tokenExpiration = null;
 
     private UserData() {
     }
@@ -42,8 +46,24 @@ public class UserData {
         return password;
     }
 
-    public void setIdToken(CognitoIdToken idToken) {
-        UserData.idToken = idToken;
+    public void setAuthorization(CognitoUserSession userSession) {
+        if (userSession != null) {
+            UserData.idToken = userSession.getIdToken();
+            UserData.tokenExpiration = userSession.getAccessToken().getExpiration();
+        } else {
+            UserData.idToken = null;
+            UserData.tokenExpiration = null;
+        }
+    }
+
+    public boolean isAuthorized() {
+        if (UserData.idToken == null) {
+            return false;
+        }
+        if (UserData.tokenExpiration == null) {
+            return false;
+        }
+        return UserData.tokenExpiration.after(new Date());
     }
 
     public CognitoIdToken getIdToken() {
