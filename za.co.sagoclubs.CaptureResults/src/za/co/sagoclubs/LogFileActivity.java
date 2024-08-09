@@ -34,18 +34,8 @@ public class LogFileActivity extends AppCompatActivity {
 
         LogFileUseCase.getInstance().getLogRecord().observe(this, logRecord -> {
                     switch (logRecord.status()) {
-                        case Processing -> {
-                            loadingStatusView.setText(getString(R.string.loading_message));
-                            loadingStatusView.setVisibility(View.VISIBLE);
-                            txtPlayer.setText(logRecord.player().getName());
-                            txtOutput.setText(logRecord.logFile());
-                        }
-                        case Error -> {
-                            loadingStatusView.setText(getString(R.string.network_error_message));
-                            loadingStatusView.setVisibility(View.VISIBLE);
-                            txtPlayer.setText(logRecord.player().getName());
-                            txtOutput.setText(logRecord.logFile());
-                        }
+                        case Processing -> showStatus(logRecord,
+                                getString(R.string.loading_message));
                         case Done -> {
                             loadingStatusView.setVisibility(View.GONE);
                             txtPlayer.setText(logRecord.player().getName());
@@ -53,10 +43,12 @@ public class LogFileActivity extends AppCompatActivity {
                             txtOutput.setText(logRecord.logFile());
                             scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
                         }
-                        case Prepared -> {
-                            loadingStatusView.setVisibility(View.GONE);
-                            txtOutput.setText("");
-                        }
+                        case NetworkError -> showStatus(logRecord,
+                                getString(R.string.network_error_message));
+                        case PlayerError -> showStatus(logRecord,
+                                getString(R.string.player_error_message));
+                        case AuthorizationError -> showStatus(logRecord,
+                                getString(R.string.authorization_error_message));
                         default -> {
                             loadingStatusView.setVisibility(View.GONE);
                             txtPlayer.setText("");
@@ -70,5 +62,12 @@ public class LogFileActivity extends AppCompatActivity {
             Log.d(TAG, "Calling server to get player logfile");
             LogFileUseCase.getInstance().fetchLogFile();
         }
+    }
+
+    private void showStatus(LogFileUseCase.LogRecord logRecord, String message) {
+        loadingStatusView.setText(message);
+        loadingStatusView.setVisibility(View.VISIBLE);
+        txtPlayer.setText(logRecord.player().getName());
+        txtOutput.setText(logRecord.logFile());
     }
 }

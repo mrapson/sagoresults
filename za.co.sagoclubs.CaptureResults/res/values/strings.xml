@@ -41,7 +41,9 @@
     <string name="previous_notes">Load…</string>>
     <string name="double_space_pad">&#160;&#160;</string>
     <string name="loading_message">Loading…</string>
+    <string name="player_error_message">Player not found error!</string>
     <string name="network_error_message">Network error!</string>
+    <string name="authorization_error_message">Authorization error!</string>
     <string name="site_error_message">Site internal error!</string>
 
 

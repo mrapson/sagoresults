@@ -5,6 +5,7 @@ import static za.co.sagoclubs.InternetActions.getRatingsPlayerLog;
 
 import androidx.lifecycle.MutableLiveData;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 
 public final class LogFileUseCase {
@@ -13,7 +14,7 @@ public final class LogFileUseCase {
     }
 
     enum Status {
-        None, Prepared, Processing, Done, Error
+        None, Prepared, Processing, Done, PlayerError, AuthorizationError, NetworkError
     }
 
     private static volatile LogFileUseCase INSTANCE = null;
@@ -55,14 +56,28 @@ public final class LogFileUseCase {
 
         switch (requester) {
             case RatingsLookup -> executorService.execute(() -> {
-                String logFile = getRatingsPlayerLog(id);
-                logRecord.postValue(new LogRecord(requestPlayer, logFile, Status.Done));
+                try {
+                    String logFile = getRatingsPlayerLog(id);
+                    logRecord.postValue(new LogRecord(requestPlayer, logFile, Status.Done));
+                } catch (PlayerNotFoundException e) {
+                    logRecord.postValue(new LogRecord(requestPlayer, "", Status.PlayerError));
+                } catch (IOException e) {
+                    logRecord.postValue(new LogRecord(requestPlayer, "", Status.NetworkError));
+                }
             });
             case HandleLookup -> executorService.execute(() -> {
-                String logFile = getPlayerLog(id);
-                logRecord.postValue(new LogRecord(requestPlayer, logFile, Status.Done));
+                try {
+                    String logFile = getPlayerLog(id);
+                    logRecord.postValue(new LogRecord(requestPlayer, logFile, Status.Done));
+                }  catch (PlayerNotFoundException e) {
+                    logRecord.postValue(new LogRecord(requestPlayer, "", Status.PlayerError));
+                }  catch (InternetActions.AuthorizationException e) {
+                    logRecord.postValue(new LogRecord(requestPlayer, "", Status.AuthorizationError));
+                } catch (IOException e) {
+                    logRecord.postValue(new LogRecord(requestPlayer, "", Status.NetworkError));
+                }
             });
-            case None -> logRecord.postValue(new LogRecord(requestPlayer, "", Status.Error));
+            case None -> logRecord.postValue(new LogRecord(requestPlayer, "", Status.NetworkError));
         }
     }
 
@@ -71,4 +86,10 @@ public final class LogFileUseCase {
     }
 
     public record LogRecord(Player player, String logFile, Status status) {}
+
+    public static class PlayerNotFoundException extends IOException {
+        public PlayerNotFoundException(String id) {
+            super("No player found with handle " + id);
+        }
+    }
 }

@@ -13,6 +13,9 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.tokens.CognitoIdTo
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Connection;
+import org.jsoup.HttpStatusException;
+import org.jsoup.Jsoup;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -66,21 +69,40 @@ public class InternetActions {
                 .toArray(PlayerRating[]::new);
     }
 
-    public static String getRatingsPlayerLog(String id) {
+    public static String getRatingsPlayerLog(String id) throws IOException {
+        String url = SHOWLOG + id + ".html";
+        Log.d(TAG, "getPlayerLog: url=" + url);
         try {
-            String url = SHOWLOG + id + ".html";
-            HttpURLConnection c = openConnection(url);
-            return getPreBlock(c);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return "Exception swallowed!";
+            Connection connection = Jsoup.connect(url);
+            return connection.get().body().text();
+        } catch (HttpStatusException e) {
+            if (e.getStatusCode() == HttpURLConnection.HTTP_NOT_FOUND) {
+                throw new LogFileUseCase.PlayerNotFoundException(id);
+            }
+            throw new IOException(e);
         }
     }
 
-    public static String getPlayerLog(String id) {
+    public static String getPlayerLog(String id) throws IOException {
         String url = SHOW_LOG_DIRECT + "?name=" + id;
-        HttpURLConnection c = openApiGatewayConnection(url);
-        return getPreBlock(c);
+        Log.d(TAG, "getPlayerLog: url=" + url);
+        try {
+            Connection connection = Jsoup.connect(url);
+            setAuthorization(connection);
+            return connection.get().body().text();
+        } catch (HttpStatusException e) {
+            switch (e.getStatusCode()) {
+                case HttpURLConnection.HTTP_NOT_FOUND -> throw new LogFileUseCase.PlayerNotFoundException(id);
+                case HttpURLConnection.HTTP_UNAUTHORIZED -> throw new AuthorizationException("unauthorized response");
+                default -> throw new IOException(e);
+            }
+        }
+    }
+
+    private static void setAuthorization(Connection connection) {
+        CognitoIdToken idToken = UserData.getInstance().getIdToken();
+        String bearerToken = idToken.getJWTToken();
+        connection.header("Authorization", bearerToken);
     }
 
     public static Player[] getAllPlayers() {
@@ -322,5 +344,11 @@ public class InternetActions {
         }
 
         return new PlayerRating(id, name, rank, index, lastPlayedDate);
+    }
+
+    public static class AuthorizationException extends IOException {
+        public AuthorizationException(String message) {
+            super("Authorization exception: " + message);
+        }
     }
 }
