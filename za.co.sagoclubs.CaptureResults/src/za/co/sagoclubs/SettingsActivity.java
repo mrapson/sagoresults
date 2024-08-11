@@ -89,7 +89,7 @@ public class SettingsActivity extends Activity {
             if (!userData.isGuestUser()) {
                 RankApplication.getApp()
                         .getAuthentication()
-                        .backgroundLogin();
+                        .settingsLogin();
             }
 
             btnSelectFavouritePlayers.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);

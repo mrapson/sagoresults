@@ -31,18 +31,49 @@ public class Cognito {
         userData = UserData.getInstance();
     }
 
-    public void backgroundLogin() {
+    public void settingsLogin() {
         CognitoUser cognitoUser = userPool.getUser(userData.getUsername());
-        cognitoUser.getSessionInBackground(authenticationHandler);
+        cognitoUser.getSessionInBackground(new ToastAuthenticationHandler());
     }
 
-    // Callback handler for the sign-in process
-    AuthenticationHandler authenticationHandler = new AuthenticationHandler() {
-        @Override
-        public void authenticationChallenge(ChallengeContinuation continuation) {
+    public void startupLogin() {
+        CognitoUser cognitoUser = userPool.getUser(userData.getUsername());
+        cognitoUser.getSessionInBackground(new QuietAuthenticationHandler());
+    }
 
+    class QuietAuthenticationHandler implements AuthenticationHandler {
+        @Override
+        public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {
+            userData.setAuthorization(userSession);
         }
 
+        @Override
+        public void getAuthenticationDetails(AuthenticationContinuation authenticationContinuation,
+                                             String userId) {
+            // The API needs user sign-in credentials to continue
+            AuthenticationDetails authenticationDetails = new AuthenticationDetails(
+                    userId,
+                    userData.getPassword(),
+                    null);
+            // Pass the user sign-in credentials to the continuation
+            authenticationContinuation.setAuthenticationDetails(authenticationDetails);
+            // Allow the sign-in to continue
+            authenticationContinuation.continueTask();
+        }
+
+        @Override
+        public void getMFACode(MultiFactorAuthenticationContinuation continuation) {}
+
+        @Override
+        public void authenticationChallenge(ChallengeContinuation continuation) {}
+
+        @Override
+        public void onFailure(Exception exception) {
+            userData.setAuthorization(null);
+        }
+    }
+
+    class ToastAuthenticationHandler extends QuietAuthenticationHandler {
         @Override
         public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {
             // Sign-in was successful, cognitoUserSession will contain tokens for the user
@@ -51,26 +82,10 @@ public class Cognito {
         }
 
         @Override
-        public void getAuthenticationDetails(AuthenticationContinuation authenticationContinuation, String userId) {
-            // The API needs user sign-in credentials to continue
-            AuthenticationDetails authenticationDetails = new AuthenticationDetails(userId, userData.getPassword(), null);
-            // Pass the user sign-in credentials to the continuation
-            authenticationContinuation.setAuthenticationDetails(authenticationDetails);
-            // Allow the sign-in to continue
-            authenticationContinuation.continueTask();
-        }
-
-        @Override
-        public void getMFACode(MultiFactorAuthenticationContinuation multiFactorAuthenticationContinuation) {
-            // Not used. See the link below for an implementation example.
-            // https://aws.amazon.com/blogs/mobile/using-android-sdk-with-amazon-cognito-your-user-pools/
-        }
-
-        @Override
         public void onFailure(Exception exception) {
             // Sign-in failed, check exception for the cause
             userData.setAuthorization(null);
             Toast.makeText(appContext, "Sign in Failure", Toast.LENGTH_LONG).show();
         }
-    };
+    }
 }

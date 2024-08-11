@@ -27,7 +27,7 @@ public class RankApplication extends Application {
         userData.setPassword(preferences.getString("password", UserData.GUEST_PASS));
 
         if (!userData.isGuestUser()) {
-            authentication.backgroundLogin();
+            authentication.startupLogin();
         }
         InternetActions.forcePlayerArrayReload();
     }
