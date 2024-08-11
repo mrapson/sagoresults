@@ -33,7 +33,7 @@ public class InternetActions {
     public static PlayerRating[] getPlayerRatingsArray(PlayerSortOrder order)
             throws IOException, JSONException {
         if (playerRatingData == null) {
-            playerRatingData = getRawPlayerRatingsList();
+            playerRatingData = getPlayerRatingsList();
         }
 
         return playerRatingData.stream()
@@ -164,14 +164,6 @@ public class InternetActions {
         return c;
     }
 
-    private static HttpURLConnection openConnection(String url) throws IOException {
-        URL u = new URL(url);
-        HttpURLConnection c = (HttpURLConnection) u.openConnection();
-        c.connect();
-        return c;
-    }
-
-
     public static List<Player> getPlayerList() throws IOException, JSONException {
         List<Player> list = new ArrayList<>();
         try {
@@ -218,17 +210,15 @@ public class InternetActions {
         return new Player(id, name, international);
     }
 
-    private static List<PlayerRating> getRawPlayerRatingsList() throws IOException, JSONException {
-        HttpURLConnection c = openConnection(Constants.PLAYER_RATINGS);
-        BufferedReader reader = null;
+    private static List<PlayerRating> getPlayerRatingsList() throws IOException, JSONException {
         List<PlayerRating> list = new ArrayList<>();
         try {
-            reader = new BufferedReader(new InputStreamReader(c.getInputStream(), StandardCharsets.UTF_8), 8192);
-            StringBuilder jsonStringBuilder = new StringBuilder();
-            for (String line; (line = reader.readLine()) != null; ) {
-                jsonStringBuilder.append(line);
-            }
-            JSONObject json = new JSONObject(jsonStringBuilder.toString());
+            Connection connection = Jsoup.connect(Constants.PLAYER_RATINGS);
+            setAuthorization(connection);
+            connection.ignoreContentType(true);
+            String bodyText = connection.get().body().text();
+
+            JSONObject json = new JSONObject(bodyText);
             if (json.has("players")) {
                 JSONArray playerArray = json.getJSONArray("players");
                 for (int i = 0; i < playerArray.length(); i++) {
@@ -236,12 +226,12 @@ public class InternetActions {
                     list.add(playerRating);
                 }
             }
-        } finally {
-            if (reader != null) try {
-                reader.close();
-            } catch (IOException ignored) {
-            }
-            c.disconnect();
+        } catch (IOException e) {
+            Log.d(TAG, "getPlayerRatingsList IOException: " + e);
+            throw new IOException(e);
+        } catch (JSONException e) {
+            Log.d(TAG, "getPlayerRatingsList JSONException: " + e);
+            throw new JSONException(e);
         }
         return list;
     }
