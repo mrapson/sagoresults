@@ -194,17 +194,16 @@ public class InternetActions {
         return c;
     }
 
-    public static List<Player> getRawPlayerList() throws IOException, JSONException {
-        HttpURLConnection c = openApiGatewayConnection(Constants.SHOW_HANDLES);
-        BufferedReader reader = null;
+
+    public static List<Player> getPlayerList() throws IOException, JSONException {
         List<Player> list = new ArrayList<>();
         try {
-            reader = new BufferedReader(new InputStreamReader(c.getInputStream(), StandardCharsets.UTF_8), 8192);
-            StringBuilder jsonStringBuilder = new StringBuilder();
-            for (String line; (line = reader.readLine()) != null; ) {
-                jsonStringBuilder.append(line);
-            }
-            JSONObject json = new JSONObject(jsonStringBuilder.toString());
+            Connection connection = Jsoup.connect(Constants.SHOW_HANDLES);
+            setAuthorization(connection);
+            connection.ignoreContentType(true);
+            String bodyText = connection.get().body().text();
+
+            JSONObject json = new JSONObject(bodyText);
             if (json.has("players")) {
                 JSONArray playerArray = json.getJSONArray("players");
                 for (int i = 0; i < playerArray.length(); i++) {
@@ -212,13 +211,14 @@ public class InternetActions {
                     list.add(player);
                 }
             }
-        } finally {
-            if (reader != null) try {
-                reader.close();
-            } catch (IOException ignored) {
-            }
-            c.disconnect();
+        } catch (IOException e) {
+            Log.d(TAG, "getPlayerList IOException: " + e);
+            throw new IOException(e);
+        } catch (JSONException e) {
+            Log.d(TAG, "getPlayerList JSONException: " + e);
+            throw new JSONException(e);
         }
+
         list.sort(new PlayerSortByName());
         return list;
     }

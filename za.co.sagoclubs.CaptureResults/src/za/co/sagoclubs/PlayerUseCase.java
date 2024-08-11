@@ -1,6 +1,6 @@
 package za.co.sagoclubs;
 
-import static za.co.sagoclubs.InternetActions.getRawPlayerList;
+import static za.co.sagoclubs.InternetActions.getPlayerList;
 
 import android.content.SharedPreferences;
 
@@ -46,7 +46,7 @@ public final class PlayerUseCase {
         ExecutorService executorService = RankApplication.getApp().getExecutorService();
         executorService.execute(() -> {
             try {
-                List<Player> playerList = getRawPlayerList();
+                List<Player> playerList = getPlayerList();
                 playerData.postValue(playerList);
                 allPlayers.postValue(toAllPlayerArray(playerList));
                 localPlayers.postValue(toLocalPlayerArray(playerList));
