@@ -41,6 +41,11 @@ public class Cognito {
         cognitoUser.getSessionInBackground(new QuietAuthenticationHandler());
     }
 
+    public void actionLogin() {
+        CognitoUser cognitoUser = userPool.getUser(userData.getUsername());
+        cognitoUser.getSession(new QuietAuthenticationHandler());
+    }
+
     class QuietAuthenticationHandler implements AuthenticationHandler {
         @Override
         public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {

@@ -99,10 +99,24 @@ public class InternetActions {
         }
     }
 
-    private static void setAuthorization(Connection connection) {
+    private static void setAuthorization(Connection connection) throws IOException {
+        UserData userData = UserData.getInstance();
+        if (userData.isGuestUser()) {
+            throw new AuthorizationException("Authorization request for guest user!");
+        }
+
+        if (!userData.isAuthorized()) {
+            RankApplication.getApp()
+                    .getAuthentication()
+                    .actionLogin();
+        }
+
         CognitoIdToken idToken = UserData.getInstance().getIdToken();
-        String bearerToken = idToken.getJWTToken();
-        connection.header("Authorization", bearerToken);
+        if (idToken == null) {
+            throw new AuthorizationException("IdToken null after login attempt!");
+        }
+
+        connection.header("Authorization", idToken.getJWTToken());
     }
 
     public static Player[] getAllPlayers() {
