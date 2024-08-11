@@ -9,6 +9,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class IndexableListView extends ListView {
     private boolean mIsFastScrollEnabled = false;
@@ -61,7 +62,7 @@ public class IndexableListView extends ListView {
         if (mGestureDetector == null) {
             mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
                 @Override
-                public boolean onFling(@NonNull MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
+                public boolean onFling(@Nullable MotionEvent e1, @NonNull MotionEvent e2, float velocityX, float velocityY) {
                     // If fling happens, index bar shows
                     mScroller.show();
                     return super.onFling(e1, e2, velocityX, velocityY);

@@ -98,7 +98,7 @@ public class IndexScroller {
 
     public boolean onTouchEvent(MotionEvent ev) {
         switch (ev.getAction()) {
-            case MotionEvent.ACTION_DOWN:
+            case MotionEvent.ACTION_DOWN -> {
                 // If down event occurs inside index bar region, start indexing
                 if (mState != STATE_HIDDEN && contains(ev.getX(), ev.getY())) {
                     setState(STATE_SHOWN);
@@ -110,8 +110,8 @@ public class IndexScroller {
                     mListView.setSelection(mIndexer.getPositionForSection(mCurrentSection));
                     return true;
                 }
-                break;
-            case MotionEvent.ACTION_MOVE:
+            }
+            case MotionEvent.ACTION_MOVE -> {
                 if (mIsIndexing) {
                     // If this event moves inside index bar
                     if (contains(ev.getX(), ev.getY())) {
@@ -121,14 +121,14 @@ public class IndexScroller {
                     }
                     return true;
                 }
-                break;
-            case MotionEvent.ACTION_UP:
+            }
+            case MotionEvent.ACTION_UP -> {
                 if (mIsIndexing) {
                     mIsIndexing = false;
                     mCurrentSection = -1;
                 }
                 if (mState == STATE_SHOWN) setState(STATE_HIDING);
-                break;
+            }
         }
         return false;
     }
@@ -160,21 +160,19 @@ public class IndexScroller {
 
         mState = state;
         switch (mState) {
-            case STATE_HIDDEN:
-            case STATE_SHOWN:
+            case STATE_HIDDEN, STATE_SHOWN ->
                 // Cancel any fade effect
-                mHandler.removeMessages(0);
-                break;
-            case STATE_SHOWING:
+                    mHandler.removeMessages(0);
+            case STATE_SHOWING -> {
                 // Start to fade in
                 mAlphaRate = 0;
                 fade(0);
-                break;
-            case STATE_HIDING:
+            }
+            case STATE_HIDING -> {
                 // Start to fade out after three seconds
                 mAlphaRate = 1;
                 fade(3000);
-                break;
+            }
         }
     }
 
@@ -202,32 +200,29 @@ public class IndexScroller {
             super.handleMessage(msg);
 
             switch (mState) {
-                case STATE_SHOWING:
+                case STATE_SHOWING -> {
                     // Fade in effect
                     mAlphaRate += (1 - mAlphaRate) * 0.2;
                     if (mAlphaRate > 0.9) {
                         mAlphaRate = 1;
                         setState(STATE_SHOWN);
                     }
-
                     mListView.invalidate();
                     fade(10);
-                    break;
-                case STATE_SHOWN:
+                }
+                case STATE_SHOWN ->
                     // If no action, hide automatically
-                    setState(STATE_HIDING);
-                    break;
-                case STATE_HIDING:
+                        setState(STATE_HIDING);
+                case STATE_HIDING -> {
                     // Fade out effect
                     mAlphaRate -= mAlphaRate * 0.2;
                     if (mAlphaRate < 0.1) {
                         mAlphaRate = 0;
                         setState(STATE_HIDDEN);
                     }
-
                     mListView.invalidate();
                     fade(10);
-                    break;
+                }
             }
         }
     };
