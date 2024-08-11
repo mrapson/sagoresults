@@ -124,47 +124,24 @@ public class InternetActions {
 
     public static String confirmResult(String confirmOptions) {
         openPage(Constants.LOGGAME_CGI + "?" + confirmOptions);
-        return getPreBlock(Constants.REFRESH_HTML);
+        return getRefreshPage();
     }
 
     public static String undoResult(String undoOptions) {
         openPage(Constants.UNDO_CGI + "?" + undoOptions);
-        return getPreBlock(Constants.REFRESH_HTML);
+        return getRefreshPage();
     }
 
-    public static String getPreBlock(String url) {
-        Log.d(TAG, "opening " + url);
-        HttpURLConnection c = openApiGatewayConnection(url);
-        return getPreBlock(c);
-    }
-
-    public static String getPreBlock(HttpURLConnection c) {
-        BufferedReader reader = null;
-        StringBuilder work = new StringBuilder();
+    public static String getRefreshPage() {
         try {
-            reader = new BufferedReader(new InputStreamReader(c.getInputStream(), StandardCharsets.UTF_8), 8192);
-            for (String line; (line = reader.readLine()) != null; ) {
-                work.append(line).append("\n");
-            }
+            Connection connection = Jsoup.connect(Constants.REFRESH_HTML);
+            setAuthorization(connection);
+            return connection.get().body().text();
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) try {
-                reader.close();
-            } catch (IOException ignored) {
-            }
-            c.disconnect();
+            // TODO handle refresh exceptions better
+            Log.d(TAG, "getRefreshPage IOException: " + e);
+            return "Network exception while loading refresh.";
         }
-        String result = work.toString();
-        int index = result.toLowerCase().indexOf("<pre>");
-        if (index > 0) {
-            result = result.substring(index + 6);
-            index = result.toLowerCase().indexOf("</pre>");
-            if (index > 0) {
-                result = result.substring(0, index);
-            }
-        }
-        return result;
     }
 
     public static HttpURLConnection openApiGatewayConnection(String url) {
