@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 public class RankApplication extends Application {
     private final ExecutorService executorService = Executors.newFixedThreadPool(4);
     private final UserData userData = UserData.getInstance();
+    private Cognito authentication;
 
     private static RankApplication instance;
 
@@ -20,13 +21,13 @@ public class RankApplication extends Application {
         super.onCreate();
         instance = this;
 
+        authentication = new Cognito(getApplicationContext());
         SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
         userData.setUsername(preferences.getString("username", UserData.GUEST_USER));
         userData.setPassword(preferences.getString("password", UserData.GUEST_PASS));
 
         if (!userData.isGuestUser()) {
-            Cognito authentication = new Cognito(getApplicationContext());
-            authentication.userLogin();
+            authentication.backgroundLogin();
         }
         InternetActions.forcePlayerArrayReload();
     }
@@ -35,5 +36,9 @@ public class RankApplication extends Application {
 
     public ExecutorService getExecutorService() {
         return executorService;
+    }
+
+    public Cognito getAuthentication() {
+        return authentication;
     }
 }

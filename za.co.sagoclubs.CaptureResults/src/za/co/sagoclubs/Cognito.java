@@ -31,7 +31,7 @@ public class Cognito {
         userData = UserData.getInstance();
     }
 
-    public void userLogin() {
+    public void backgroundLogin() {
         CognitoUser cognitoUser = userPool.getUser(userData.getUsername());
         cognitoUser.getSessionInBackground(authenticationHandler);
     }

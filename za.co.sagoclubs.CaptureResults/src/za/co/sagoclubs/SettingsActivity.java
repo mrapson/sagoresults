@@ -87,8 +87,9 @@ public class SettingsActivity extends Activity {
             userData.setPassword(preferences.getString("password", UserData.GUEST_PASS));
 
             if (!userData.isGuestUser()) {
-                Cognito authentication = new Cognito(getApplicationContext());
-                authentication.userLogin();
+                RankApplication.getApp()
+                        .getAuthentication()
+                        .backgroundLogin();
             }
 
             btnSelectFavouritePlayers.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
