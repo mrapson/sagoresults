@@ -1,5 +1,7 @@
 package za.co.sagoclubs;
 
+import static za.co.sagoclubs.PlayerUseCase.playersForFavorites;
+
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,7 +12,6 @@ import android.widget.ListView;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SelectFavouritePlayersActivity extends Activity {
     private ListView lsvSelectFavouritePlayers;
@@ -70,28 +71,16 @@ public class SelectFavouritePlayersActivity extends Activity {
 
     private void showFavouriteOptions(boolean showInternational) {
         SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
-        Player[] currentFavourites = InternetActions.getFavouritePlayers(preferences);
+        Player[] currentFavourites = PlayerUseCase.getFavouritePlayers(preferences);
 
         PlayerArrayAdapter adapter = new PlayerArrayAdapter(
                 this,
                 R.layout.multi_select_list_item,
-                playersToShow(currentFavourites, showInternational));
+                playersForFavorites(currentFavourites, showInternational));
         lsvSelectFavouritePlayers.setAdapter(adapter);
         lsvSelectFavouritePlayers.setFastScrollEnabled(true);
 
         loadSelection(currentFavourites);
-    }
-
-    private Player[] playersToShow(Player[] currentFavorites, boolean showInternational) {
-        if (showInternational) {
-            return InternetActions.getAllPlayers();
-        } else {
-            return Stream.concat(Arrays.stream(InternetActions.getLocalPlayers()),
-                            Arrays.stream(currentFavorites))
-                    .distinct()
-                    .sorted(new PlayerSortByName())
-                    .toArray(Player[]::new);
-        }
     }
 
     private void loadSelection(Player[] currentFavorites) {

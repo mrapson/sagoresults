@@ -93,7 +93,6 @@ public class SettingsActivity extends Activity {
             }
 
             btnSelectFavouritePlayers.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
-            InternetActions.forcePlayerArrayReload();
         }
     }
 

@@ -29,7 +29,6 @@ public class RankApplication extends Application {
         if (!userData.isGuestUser()) {
             authentication.startupLogin();
         }
-        InternetActions.forcePlayerArrayReload();
     }
 
     public static RankApplication getApp() { return instance; }

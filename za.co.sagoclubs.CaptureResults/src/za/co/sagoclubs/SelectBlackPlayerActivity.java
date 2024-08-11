@@ -1,5 +1,7 @@
 package za.co.sagoclubs;
 
+import static za.co.sagoclubs.PlayerUseCase.playersToShow;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,17 +44,13 @@ public class SelectBlackPlayerActivity extends Activity {
 
     private void showPlayers(boolean showFavourites) {
         lsvSelectBlackPlayer = findViewById(R.id.lsvSelectBlackPlayer);
-        PlayerArrayAdapter adapter = new PlayerArrayAdapter(this, R.layout.list_item, chooseWhatToShow(showFavourites));
+        PlayerArrayAdapter adapter = new PlayerArrayAdapter(
+                this,
+                R.layout.list_item,
+                playersToShow(
+                        showFavourites,
+                        getSharedPreferences("SETTINGS", MODE_PRIVATE)));
         lsvSelectBlackPlayer.setAdapter(adapter);
         lsvSelectBlackPlayer.setFastScrollEnabled(true);
-    }
-
-    private Player[] chooseWhatToShow(boolean showFavourites) {
-        if (showFavourites) {
-            SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
-            return InternetActions.getFavouritePlayers(preferences);
-        } else {
-            return InternetActions.getLocalPlayers();
-        }
     }
 }

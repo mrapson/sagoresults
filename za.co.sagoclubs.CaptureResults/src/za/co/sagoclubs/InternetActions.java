@@ -5,7 +5,6 @@ import static za.co.sagoclubs.Constants.SHOW_LOG_DIRECT;
 import static za.co.sagoclubs.Constants.TAG;
 
 import android.app.AlertDialog;
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.tokens.CognitoIdToken;
@@ -25,36 +24,11 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class InternetActions {
-
-    private static List<Player> playerData = null;
     private static List<PlayerRating> playerRatingData = null;
-
-    public static void forcePlayerArrayReload() {
-        Log.d(TAG, "Clearing playerData to force reload");
-        playerData = null;
-    }
-
-    public static List<Player> getPlayerList() {
-        // TODO: check whether playerData can become stale
-        if (playerData != null) {
-            return playerData;
-        }
-
-        try {
-            playerData = getRawPlayerList();
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
-            playerData = new ArrayList<>();
-        }
-        return playerData;
-    }
 
     public static PlayerRating[] getPlayerRatingsArray(PlayerSortOrder order)
             throws IOException, JSONException {
@@ -117,37 +91,6 @@ public class InternetActions {
         }
 
         connection.header("Authorization", idToken.getJWTToken());
-    }
-
-    public static Player[] getAllPlayers() {
-        List<Player> list = getPlayerList();
-
-        return list.stream()
-                .sorted(new PlayerSortByName())
-                .toArray(Player[]::new);
-    }
-
-    public static Player[] getLocalPlayers() {
-        List<Player> list = getPlayerList();
-
-        return list.stream()
-                .sorted(new PlayerSortByName())
-                .filter(player -> !player.isInternational())
-                .toArray(Player[]::new);
-    }
-
-    public static Player[] getFavouritePlayers(SharedPreferences preferences) {
-        Set<String> saved = Arrays.stream(preferences.getString("favourite_players", "")
-                .split(",")).collect(Collectors.toSet());
-        List<Player> allPlayers = getPlayerList();
-        List<Player> list = new ArrayList<>();
-        for (Player player : allPlayers) {
-            if (saved.contains(player.getId())) {
-                list.add(player);
-            }
-        }
-        Player[] template = new Player[]{};
-        return list.toArray(template);
     }
 
     public static String openPage(String url) {
@@ -251,7 +194,7 @@ public class InternetActions {
         return c;
     }
 
-    private static List<Player> getRawPlayerList() throws IOException, JSONException {
+    public static List<Player> getRawPlayerList() throws IOException, JSONException {
         HttpURLConnection c = openApiGatewayConnection(Constants.SHOW_HANDLES);
         BufferedReader reader = null;
         List<Player> list = new ArrayList<>();

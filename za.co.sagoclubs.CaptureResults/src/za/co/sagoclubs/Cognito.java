@@ -33,12 +33,12 @@ public class Cognito {
 
     public void settingsLogin() {
         CognitoUser cognitoUser = userPool.getUser(userData.getUsername());
-        cognitoUser.getSessionInBackground(new ToastAuthenticationHandler());
+        cognitoUser.getSessionInBackground(new SettingsAuthenticationHandler());
     }
 
     public void startupLogin() {
         CognitoUser cognitoUser = userPool.getUser(userData.getUsername());
-        cognitoUser.getSessionInBackground(new QuietAuthenticationHandler());
+        cognitoUser.getSessionInBackground(new StartupAuthenticationHandler());
     }
 
     public void actionLogin() {
@@ -78,12 +78,22 @@ public class Cognito {
         }
     }
 
-    class ToastAuthenticationHandler extends QuietAuthenticationHandler {
+    class StartupAuthenticationHandler extends QuietAuthenticationHandler {
+        @Override
+        public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {
+            // Sign-in was successful, cognitoUserSession will contain tokens for the user
+            userData.setAuthorization(userSession);
+            PlayerUseCase.getInstance().updatePlayerData();
+        }
+    }
+
+    class SettingsAuthenticationHandler extends QuietAuthenticationHandler {
         @Override
         public void onSuccess(CognitoUserSession userSession, CognitoDevice newDevice) {
             // Sign-in was successful, cognitoUserSession will contain tokens for the user
             userData.setAuthorization(userSession);
             Toast.makeText(appContext, "Sign in success", Toast.LENGTH_LONG).show();
+            PlayerUseCase.getInstance().updatePlayerData();
         }
 
         @Override
