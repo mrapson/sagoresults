@@ -1,5 +1,6 @@
 package za.co.sagoclubs;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -54,6 +55,7 @@ public class IndexableListView extends ListView {
         if (mScroller != null) mScroller.draw(canvas);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         // Intercept ListView's touch event
@@ -86,8 +88,8 @@ public class IndexableListView extends ListView {
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-        super.onSizeChanged(w, h, oldw, oldh);
+    protected void onSizeChanged(int w, int h, int oldW, int oldH) {
+        super.onSizeChanged(w, h, oldW, oldH);
         if (mScroller != null) mScroller.onSizeChanged(w, h);
     }
 }
