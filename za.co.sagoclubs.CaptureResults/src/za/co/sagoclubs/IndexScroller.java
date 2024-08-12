@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.SystemClock;
 import android.view.MotionEvent;
@@ -75,10 +76,18 @@ public class IndexScroller {
 
                 float previewTextWidth = previewTextPaint.measureText(mSections[mCurrentSection]);
                 float previewSize = 2 * mPreviewPadding + previewTextPaint.descent() - previewTextPaint.ascent();
-                RectF previewRect = new RectF((mListViewWidth - previewSize) / 2, (mListViewHeight - previewSize) / 2, (mListViewWidth - previewSize) / 2 + previewSize, (mListViewHeight - previewSize) / 2 + previewSize);
+                RectF previewRect = new RectF(
+                        (mListViewWidth - previewSize) / 2,
+                        (mListViewHeight - previewSize) / 2,
+                        (mListViewWidth - previewSize) / 2 + previewSize,
+                        (mListViewHeight - previewSize) / 2 + previewSize);
 
                 canvas.drawRoundRect(previewRect, 5 * mDensity, 5 * mDensity, previewPaint);
-                canvas.drawText(mSections[mCurrentSection], previewRect.left + (previewSize - previewTextWidth) / 2 - 1, previewRect.top + mPreviewPadding - previewTextPaint.ascent() + 1, previewTextPaint);
+                canvas.drawText(
+                        mSections[mCurrentSection],
+                        previewRect.left + (previewSize - previewTextWidth) / 2 - 1,
+                        previewRect.top + mPreviewPadding - previewTextPaint.ascent() + 1,
+                        previewTextPaint);
             }
 
             Paint indexPaint = new Paint();
@@ -91,7 +100,11 @@ public class IndexScroller {
             float paddingTop = (sectionHeight - (indexPaint.descent() - indexPaint.ascent())) / 2;
             for (int i = 0; i < mSections.length; i++) {
                 float paddingLeft = (mIndexBarWidth - indexPaint.measureText(mSections[i])) / 2;
-                canvas.drawText(mSections[i], mIndexBarRect.left + paddingLeft, mIndexBarRect.top + mIndexBarMargin + sectionHeight * i + paddingTop - indexPaint.ascent(), indexPaint);
+                canvas.drawText(
+                        mSections[i],
+                        mIndexBarRect.left + paddingLeft,
+                        mIndexBarRect.top + mIndexBarMargin + sectionHeight * i + paddingTop - indexPaint.ascent(),
+                        indexPaint);
             }
         }
     }
@@ -136,7 +149,11 @@ public class IndexScroller {
     public void onSizeChanged(int w, int h) {
         mListViewWidth = w;
         mListViewHeight = h;
-        mIndexBarRect = new RectF(w - mIndexBarMargin - mIndexBarWidth, mIndexBarMargin, w - mIndexBarMargin, h - mIndexBarMargin);
+        mIndexBarRect = new RectF(
+                w - mIndexBarMargin - mIndexBarWidth,
+                mIndexBarMargin,
+                w - mIndexBarMargin,
+                h - mIndexBarMargin);
     }
 
     public void show() {
@@ -179,7 +196,9 @@ public class IndexScroller {
 
     private boolean contains(float x, float y) {
         // Determine if the point is in index bar region, which includes the right margin of the bar
-        return (x >= mIndexBarRect.left && y >= mIndexBarRect.top && y <= mIndexBarRect.top + mIndexBarRect.height());
+        return (x >= mIndexBarRect.left
+                && y >= mIndexBarRect.top
+                && y <= mIndexBarRect.top + mIndexBarRect.height());
     }
 
     private int getSectionByPoint(float y) {
@@ -195,7 +214,7 @@ public class IndexScroller {
         mHandler.sendEmptyMessageAtTime(0, SystemClock.uptimeMillis() + delay);
     }
 
-    private final Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(@NonNull Message msg) {
             super.handleMessage(msg);
