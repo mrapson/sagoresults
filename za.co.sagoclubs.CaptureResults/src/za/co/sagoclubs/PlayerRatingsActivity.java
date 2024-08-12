@@ -38,15 +38,15 @@ public class PlayerRatingsActivity extends Activity {
         loadingStatusView = findViewById(R.id.txtLoadingStatus);
 
         if (savedInstanceState == null) {
-            populateList(PlayerSortOrder.SORT_BY_RANK, "OnCreate");
+            populateList(PlayerSortOrder.SORT_BY_RANK);
         } else {
             restoreProgress(savedInstanceState);
         }
 
         Button btnSortByName = findViewById(R.id.btnSortByName);
-        btnSortByName.setOnClickListener(v -> updateList(PlayerSortOrder.SORT_BY_NAME, "ByName"));
+        btnSortByName.setOnClickListener(v -> updateList(PlayerSortOrder.SORT_BY_NAME));
         Button btnSortByRank = findViewById(R.id.btnSortByRank);
-        btnSortByRank.setOnClickListener(v -> updateList(PlayerSortOrder.SORT_BY_RANK, "ByRank"));
+        btnSortByRank.setOnClickListener(v -> updateList(PlayerSortOrder.SORT_BY_RANK));
     }
 
     @Override
@@ -60,21 +60,21 @@ public class PlayerRatingsActivity extends Activity {
         if (savedSortOrder != null) {
             currentSortOrder = PlayerSortOrder.valueOf(savedSortOrder);
         }
-        populateList(currentSortOrder, "Restore");
+        populateList(currentSortOrder);
     }
 
-    private void updateList(PlayerSortOrder newSortOrder, String caller) {
+    private void updateList(PlayerSortOrder newSortOrder) {
         if (updateLock.get() || newSortOrder == currentSortOrder) {
             return;
         }
-        populateList(newSortOrder, caller);
+        populateList(newSortOrder);
     }
 
-    private void populateList(PlayerSortOrder newSortOrder, String caller) {
+    private void populateList(PlayerSortOrder newSortOrder) {
         updateLock.set(true);
         currentSortOrder = newSortOrder;
 
-        loadingStatusView.setText(getString(R.string.loading_message) + caller);
+        loadingStatusView.setText(getString(R.string.loading_message));
         loadingStatusView.setVisibility(View.VISIBLE);
 
         // TODO redo without supplyAsync().

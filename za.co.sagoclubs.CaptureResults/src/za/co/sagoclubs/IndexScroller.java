@@ -17,8 +17,8 @@ import androidx.annotation.NonNull;
 
 public class IndexScroller {
 
-    private final float mIndexbarWidth;
-    private final float mIndexbarMargin;
+    private final float mIndexBarWidth;
+    private final float mIndexBarMargin;
     private final float mPreviewPadding;
     private final float mDensity;
     private final float mScaledDensity;
@@ -31,7 +31,7 @@ public class IndexScroller {
     private final ListView mListView;
     private SectionIndexer mIndexer = null;
     private String[] mSections = null;
-    private RectF mIndexbarRect;
+    private RectF mIndexBarRect;
 
     private static final int STATE_HIDDEN = 0;
     private static final int STATE_SHOWING = 1;
@@ -44,8 +44,8 @@ public class IndexScroller {
         mListView = lv;
         setAdapter(mListView.getAdapter());
 
-        mIndexbarWidth = 20 * mDensity;
-        mIndexbarMargin = 10 * mDensity;
+        mIndexBarWidth = 20 * mDensity;
+        mIndexBarMargin = 10 * mDensity;
         mPreviewPadding = 5 * mDensity;
     }
 
@@ -57,7 +57,7 @@ public class IndexScroller {
         indexbarPaint.setColor(Color.BLACK);
         indexbarPaint.setAlpha((int) (64 * mAlphaRate));
         indexbarPaint.setAntiAlias(true);
-        canvas.drawRoundRect(mIndexbarRect, 5 * mDensity, 5 * mDensity, indexbarPaint);
+        canvas.drawRoundRect(mIndexBarRect, 5 * mDensity, 5 * mDensity, indexbarPaint);
 
         if (mSections != null && mSections.length > 0) {
             // Preview is shown when mCurrentSection is set
@@ -87,11 +87,11 @@ public class IndexScroller {
             indexPaint.setAntiAlias(true);
             indexPaint.setTextSize(12 * mScaledDensity);
 
-            float sectionHeight = (mIndexbarRect.height() - 2 * mIndexbarMargin) / mSections.length;
+            float sectionHeight = (mIndexBarRect.height() - 2 * mIndexBarMargin) / mSections.length;
             float paddingTop = (sectionHeight - (indexPaint.descent() - indexPaint.ascent())) / 2;
             for (int i = 0; i < mSections.length; i++) {
-                float paddingLeft = (mIndexbarWidth - indexPaint.measureText(mSections[i])) / 2;
-                canvas.drawText(mSections[i], mIndexbarRect.left + paddingLeft, mIndexbarRect.top + mIndexbarMargin + sectionHeight * i + paddingTop - indexPaint.ascent(), indexPaint);
+                float paddingLeft = (mIndexBarWidth - indexPaint.measureText(mSections[i])) / 2;
+                canvas.drawText(mSections[i], mIndexBarRect.left + paddingLeft, mIndexBarRect.top + mIndexBarMargin + sectionHeight * i + paddingTop - indexPaint.ascent(), indexPaint);
             }
         }
     }
@@ -136,11 +136,12 @@ public class IndexScroller {
     public void onSizeChanged(int w, int h) {
         mListViewWidth = w;
         mListViewHeight = h;
-        mIndexbarRect = new RectF(w - mIndexbarMargin - mIndexbarWidth, mIndexbarMargin, w - mIndexbarMargin, h - mIndexbarMargin);
+        mIndexBarRect = new RectF(w - mIndexBarMargin - mIndexBarWidth, mIndexBarMargin, w - mIndexBarMargin, h - mIndexBarMargin);
     }
 
     public void show() {
         if (mState == STATE_HIDDEN) setState(STATE_SHOWING);
+
         else if (mState == STATE_HIDING) setState(STATE_HIDING);
     }
 
@@ -178,15 +179,15 @@ public class IndexScroller {
 
     private boolean contains(float x, float y) {
         // Determine if the point is in index bar region, which includes the right margin of the bar
-        return (x >= mIndexbarRect.left && y >= mIndexbarRect.top && y <= mIndexbarRect.top + mIndexbarRect.height());
+        return (x >= mIndexBarRect.left && y >= mIndexBarRect.top && y <= mIndexBarRect.top + mIndexBarRect.height());
     }
 
     private int getSectionByPoint(float y) {
         if (mSections == null || mSections.length == 0) return 0;
-        if (y < mIndexbarRect.top + mIndexbarMargin) return 0;
-        if (y >= mIndexbarRect.top + mIndexbarRect.height() - mIndexbarMargin)
+        if (y < mIndexBarRect.top + mIndexBarMargin) return 0;
+        if (y >= mIndexBarRect.top + mIndexBarRect.height() - mIndexBarMargin)
             return mSections.length - 1;
-        return (int) ((y - mIndexbarRect.top - mIndexbarMargin) / ((mIndexbarRect.height() - 2 * mIndexbarMargin) / mSections.length));
+        return (int) ((y - mIndexBarRect.top - mIndexBarMargin) / ((mIndexBarRect.height() - 2 * mIndexBarMargin) / mSections.length));
     }
 
     private void fade(long delay) {
