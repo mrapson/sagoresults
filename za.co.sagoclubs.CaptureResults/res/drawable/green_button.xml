@@ -34,5 +34,4 @@
                 android:bottom="10dp" />
         </shape>
     </item>
-
 </selector>
