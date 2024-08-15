@@ -21,12 +21,8 @@ import java.util.stream.Stream;
 public final class PlayerUseCase {
     private static volatile PlayerUseCase INSTANCE = null;
 
-    private final static MutableLiveData<List<Player>> playerData =
-            new MutableLiveData<>(List.of());
-    private final static MutableLiveData<Player[]> allPlayers =
-            new MutableLiveData<>(new Player[0]);
-    private final static MutableLiveData<Player[]> localPlayers =
-            new MutableLiveData<>(new Player[0]);
+    private final static PlayerData NO_DATA = new PlayerData(new Player[0], new Player[0]);
+    private final static MutableLiveData<PlayerData> playerData = new MutableLiveData<>(NO_DATA);
 
     private PlayerUseCase() {
     }
@@ -47,16 +43,57 @@ public final class PlayerUseCase {
         executorService.execute(() -> {
             try {
                 List<Player> playerList = getPlayerList();
-                playerData.postValue(playerList);
-                allPlayers.postValue(toAllPlayerArray(playerList));
-                localPlayers.postValue(toLocalPlayerArray(playerList));
+                Player[] allPlayers = toAllPlayerArray(playerList);
+                Player[] localPlayers = toLocalPlayerArray(playerList);
+                playerData.postValue(new PlayerData(allPlayers, localPlayers));
             } catch (IOException | JSONException e) {
-                playerData.postValue(List.of());
-                allPlayers.postValue(new Player[0]);
-                localPlayers.postValue(new Player[0]);
+                playerData.postValue(NO_DATA);
             }
         });
 
+    }
+
+    public MutableLiveData<PlayerData> getPlayerData() {
+        return playerData;
+    }
+
+    public static Player[] getFavouritePlayers(SharedPreferences preferences) {
+        PlayerData data = Objects.requireNonNullElse(playerData.getValue(), NO_DATA);
+
+        Set<String> saved = Arrays.stream(preferences.getString("favourite_players", "")
+                .split(",")).collect(Collectors.toSet());
+        List<Player> list = new ArrayList<>();
+        for (Player player : data.allPlayers) {
+            if (saved.contains(player.getId())) {
+                list.add(player);
+            }
+        }
+        Player[] template = new Player[]{};
+        return list.toArray(template);
+    }
+
+    public static Player[] playersForFavorites(Player[] currentFavorites,
+                                               boolean showInternational) {
+        PlayerData data = Objects.requireNonNullElse(playerData.getValue(), NO_DATA);
+        if (showInternational) {
+            return data.allPlayers;
+        } else {
+            return Stream.concat(
+                            Arrays.stream(data.localPlayers),
+                            Arrays.stream(currentFavorites))
+                    .distinct()
+                    .sorted(new PlayerSortByName())
+                    .toArray(Player[]::new);
+        }
+    }
+
+    public static Player[] playersToShow(boolean showFavourites, SharedPreferences preferences) {
+        if (showFavourites) {
+            return getFavouritePlayers(preferences);
+        } else {
+            PlayerData data = Objects.requireNonNullElse(playerData.getValue(), NO_DATA);
+            return data.localPlayers;
+        }
     }
 
     private static Player[] toAllPlayerArray(List<Player> playerData) {
@@ -72,47 +109,9 @@ public final class PlayerUseCase {
                 .toArray(Player[]::new);
     }
 
-    public static Player[] getFavouritePlayers(SharedPreferences preferences) {
-        List<Player> allPlayers = playerData.getValue();
-        if (allPlayers == null) {
-            return new Player[0];
-        }
-
-        Set<String> saved = Arrays.stream(preferences.getString("favourite_players", "")
-                .split(",")).collect(Collectors.toSet());
-        List<Player> list = new ArrayList<>();
-        for (Player player : allPlayers) {
-            if (saved.contains(player.getId())) {
-                list.add(player);
-            }
-        }
-        Player[] template = new Player[]{};
-        return list.toArray(template);
-    }
-
-    public static Player[] playersToShow(boolean showFavourites, SharedPreferences preferences) {
-        if (showFavourites) {
-            return getFavouritePlayers(preferences);
-        } else {
-            Player[] players = localPlayers.getValue();
-            return Objects.requireNonNullElseGet(players, () -> new Player[0]);
-        }
-    }
-
-    public static Player[] playersForFavorites(Player[] currentFavorites,
-                                               boolean showInternational) {
-        if (showInternational) {
-            return Objects.requireNonNullElseGet(allPlayers.getValue(), () -> new Player[0]);
-        } else {
-            return Stream.concat(
-                    Arrays.stream(
-                            Objects.requireNonNullElseGet(
-                                    localPlayers.getValue(),
-                                    () -> new Player[0])),
-                            Arrays.stream(currentFavorites))
-                    .distinct()
-                    .sorted(new PlayerSortByName())
-                    .toArray(Player[]::new);
+    public record PlayerData(Player[] allPlayers, Player[] localPlayers) {
+        public boolean hasData() {
+            return allPlayers != null && allPlayers.length > 0;
         }
     }
 }

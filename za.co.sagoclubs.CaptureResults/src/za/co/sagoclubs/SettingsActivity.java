@@ -3,10 +3,10 @@ package za.co.sagoclubs;
 import static za.co.sagoclubs.Constants.TAG;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -15,7 +15,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
-public class SettingsActivity extends Activity {
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
+
+public class SettingsActivity extends AppCompatActivity {
 
     private TextView txtUsername;
     private TextView txtPassword;
@@ -34,11 +38,9 @@ public class SettingsActivity extends Activity {
         loadSettings();
 
         btnSelectFavouritePlayers = findViewById(R.id.btnSelectFavouritePlayers);
-        btnSelectFavouritePlayers.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
-        btnSelectFavouritePlayers.setOnClickListener(v -> {
-            Intent myIntent = new Intent(v.getContext(), SelectFavouritePlayersActivity.class);
-            startActivityForResult(myIntent, 0);
-        });
+        PlayerUseCase.getInstance()
+                .getPlayerData()
+                .observe(this, this::setupSelectFavouritesButton);
 
         txtUsername.setOnKeyListener((v, keyCode, event) -> {
             Log.d(TAG, "SettingsActivity.txtUsername.OnClick");
@@ -92,7 +94,7 @@ public class SettingsActivity extends Activity {
                         .settingsLogin();
             }
 
-            btnSelectFavouritePlayers.setVisibility(userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE);
+            setupSelectFavouritesButton(PlayerUseCase.getInstance().getPlayerData().getValue());
         }
     }
 
@@ -100,5 +102,29 @@ public class SettingsActivity extends Activity {
         SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
         txtUsername.setText(preferences.getString("username", UserData.GUEST_USER));
         txtPassword.setText(preferences.getString("password", UserData.GUEST_PASS));
+    }
+
+    private void setupSelectFavouritesButton(@Nullable PlayerUseCase.PlayerData playerData) {
+        int showButton = userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE;
+        btnSelectFavouritePlayers.setVisibility(showButton);
+
+        if (playerData != null && playerData.hasData()) {
+            Drawable blueButton = AppCompatResources.getDrawable(
+                    this,
+                    R.drawable.blue_button);
+            btnSelectFavouritePlayers.setBackground(blueButton);
+
+            btnSelectFavouritePlayers.setOnClickListener(v -> {
+                Intent myIntent = new Intent(v.getContext(),
+                        SelectFavouritePlayersActivity.class);
+                startActivity(myIntent);
+            });
+        } else {
+            Drawable greyButton = AppCompatResources.getDrawable(
+                    this,
+                    R.drawable.grey_button);
+            btnSelectFavouritePlayers.setBackground(greyButton);
+            btnSelectFavouritePlayers.setClickable(false);
+        }
     }
 }
