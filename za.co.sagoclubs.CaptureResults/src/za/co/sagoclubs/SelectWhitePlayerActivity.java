@@ -1,9 +1,7 @@
 package za.co.sagoclubs;
 
-
 import static za.co.sagoclubs.PlayerUseCase.playersToShow;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -11,13 +9,13 @@ import android.os.Bundle;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
-public class SelectWhitePlayerActivity extends Activity {
+import androidx.appcompat.app.AppCompatActivity;
 
+public class SelectWhitePlayerActivity extends AppCompatActivity {
     private ListView lsvSelectWhitePlayer;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.select_white_player);
 
         lsvSelectWhitePlayer = findViewById(R.id.lsvSelectWhitePlayer);
@@ -26,19 +24,20 @@ public class SelectWhitePlayerActivity extends Activity {
         SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
         boolean showFavourites = preferences.getBoolean("show_favourites", false);
         chkFavourites.setChecked(showFavourites);
-        showPlayers(showFavourites);
+        PlayerUseCase.getInstance()
+                .getPlayerData()
+                .observe(this, (playerData) -> showPlayers(showFavourites));
 
         lsvSelectWhitePlayer.setOnItemClickListener((parent, view, position, id) -> {
             Player player = (Player) lsvSelectWhitePlayer.getItemAtPosition(position);
             Result.setWhite(player);
             Intent myIntent = new Intent(view.getContext(), SelectBlackPlayerActivity.class);
-            startActivityForResult(myIntent, 0);
+            startActivity(myIntent);
         });
 
         chkFavourites.setOnCheckedChangeListener((buttonView, isChecked) -> {
             showPlayers(isChecked);
-            SharedPreferences preferences1 = getSharedPreferences("SETTINGS", MODE_PRIVATE);
-            Editor editor = preferences1.edit();
+            Editor editor = getSharedPreferences("SETTINGS", MODE_PRIVATE).edit();
             editor.putBoolean("show_favourites", isChecked);
             editor.apply();
         });
@@ -56,4 +55,3 @@ public class SelectWhitePlayerActivity extends Activity {
         lsvSelectWhitePlayer.setFastScrollEnabled(true);
     }
 }
-

@@ -2,7 +2,6 @@ package za.co.sagoclubs;
 
 import static za.co.sagoclubs.PlayerUseCase.playersToShow;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -10,7 +9,9 @@ import android.os.Bundle;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
-public class SelectLogPlayerActivity extends Activity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class SelectLogPlayerActivity extends AppCompatActivity {
 
     private ListView lsvSelectPlayer;
 
@@ -24,14 +25,15 @@ public class SelectLogPlayerActivity extends Activity {
         SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
         boolean showFavourites = preferences.getBoolean("show_favourites", false);
         chkFavourites.setChecked(showFavourites);
-
-        showPlayers(showFavourites);
+        PlayerUseCase.getInstance()
+                .getPlayerData()
+                .observe(this, (playerData) -> showPlayers(showFavourites));
 
         lsvSelectPlayer.setOnItemClickListener((parent, view, position, id) -> {
             Player player = (Player) lsvSelectPlayer.getItemAtPosition(position);
             LogFileUseCase.getInstance().prepareRequest(player, LogFileUseCase.Requester.HandleLookup);
             Intent myIntent = new Intent(view.getContext(), LogFileActivity.class);
-            startActivityForResult(myIntent, 0);
+            startActivity(myIntent);
         });
 
         chkFavourites.setOnCheckedChangeListener((buttonView, isChecked) -> {

@@ -2,18 +2,19 @@ package za.co.sagoclubs;
 
 import static za.co.sagoclubs.PlayerUseCase.playersForFavorites;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class SelectFavouritePlayersActivity extends Activity {
+public class SelectFavouritePlayersActivity extends AppCompatActivity {
     private ListView lsvSelectFavouritePlayers;
 
     @Override
