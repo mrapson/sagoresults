@@ -29,6 +29,8 @@ public class RankApplication extends Application {
         if (!userData.isGuestUser()) {
             authentication.startupLogin();
         }
+
+        PlayerRatingsUseCase.getInstance().updatePlayerRatingsData();
     }
 
     public static RankApplication getApp() { return instance; }

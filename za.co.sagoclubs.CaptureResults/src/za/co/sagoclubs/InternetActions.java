@@ -28,21 +28,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class InternetActions {
-    private static List<PlayerRating> playerRatingData = null;
-
-    public static PlayerRating[] getPlayerRatingsArray(PlayerSortOrder order)
-            throws IOException, JSONException {
-        if (playerRatingData == null) {
-            playerRatingData = getPlayerRatingsList();
-        }
-
-        return playerRatingData.stream()
-                .sorted(PlayerSortOrder.SORT_BY_NAME == order
-                        ? new PlayerSortByName()
-                        : new PlayerSortByRating())
-                .toArray(PlayerRating[]::new);
-    }
-
     public static String getRatingsPlayerLog(String id) throws IOException {
         String url = SHOWLOG + id + ".html";
         Log.d(TAG, "getPlayerLog: url=" + url);
@@ -210,7 +195,7 @@ public class InternetActions {
         return new Player(id, name, international);
     }
 
-    private static List<PlayerRating> getPlayerRatingsList() throws IOException, JSONException {
+    public static List<PlayerRating> getPlayerRatingsList() throws IOException, JSONException {
         List<PlayerRating> list = new ArrayList<>();
         try {
             Connection connection = Jsoup.connect(Constants.PLAYER_RATINGS);
