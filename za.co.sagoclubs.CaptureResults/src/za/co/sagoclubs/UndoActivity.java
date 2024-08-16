@@ -1,5 +1,8 @@
 package za.co.sagoclubs;
 
+import static za.co.sagoclubs.InternetActions.getRefreshPage;
+import static za.co.sagoclubs.InternetActions.undoResult;
+
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -14,6 +17,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+
+import java.io.IOException;
 
 public class UndoActivity extends Activity {
 
@@ -94,7 +99,13 @@ public class UndoActivity extends Activity {
         protected String doInBackground(Void... v) {
             setProgressBarIndeterminateVisibility(true);
 
-            return InternetActions.undoResult(Result.constructUndoUriOptions());
+            try {
+                undoResult(Result.constructUndoUriOptions());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            return getRefreshPage();
         }
 
         protected void onPostExecute(String result) {

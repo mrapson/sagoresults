@@ -4,7 +4,6 @@ import static za.co.sagoclubs.Constants.SHOWLOG;
 import static za.co.sagoclubs.Constants.SHOW_LOG_DIRECT;
 import static za.co.sagoclubs.Constants.TAG;
 
-import android.app.AlertDialog;
 import android.util.Log;
 
 import com.amazonaws.mobileconnectors.cognitoidentityprovider.tokens.CognitoIdToken;
@@ -16,13 +15,8 @@ import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -78,43 +72,38 @@ public class InternetActions {
         connection.header("Authorization", idToken.getJWTToken());
     }
 
-    public static String openPage(String url) {
-        HttpURLConnection c = openApiGatewayConnection(url);
-        BufferedReader reader = null;
-        StringBuilder result = new StringBuilder();
+    public static void sendResult(String confirmOptions) throws IOException {
+        String url = Constants.LOGGAME_CGI + "?" + confirmOptions;
         try {
-            reader = new BufferedReader(new InputStreamReader(c.getInputStream(), StandardCharsets.UTF_8), 8192);
-            for (String line; (line = reader.readLine()) != null; ) {
-                result.append(line).append("\n");
+            Connection connection = Jsoup.connect(url);
+            setAuthorization(connection);
+            connection.get();
+        } catch (HttpStatusException e) {
+            switch (e.getStatusCode()) {
+                case HttpURLConnection.HTTP_BAD_REQUEST ->
+                        throw new InvalidRequestException();
+                case HttpURLConnection.HTTP_UNAUTHORIZED ->
+                        throw new AuthorizationException("unauthorized response");
+                default -> throw new IOException(e);
             }
-        } catch (FileNotFoundException fnfe) {
-            AlertDialog.Builder dlgAlert = new AlertDialog.Builder(null);
-
-            dlgAlert.setMessage("Unable to open connection to server. Please check the user name and password configured in Settings.");
-            dlgAlert.setTitle("Connection Failure");
-            dlgAlert.setPositiveButton("Ok", (dialog, id) -> {
-                // User clicked OK button
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (reader != null) try {
-                reader.close();
-            } catch (IOException ignored) {
-            }
-            c.disconnect();
         }
-        return result.toString();
     }
 
-    public static String confirmResult(String confirmOptions) {
-        openPage(Constants.LOGGAME_CGI + "?" + confirmOptions);
-        return getRefreshPage();
-    }
-
-    public static String undoResult(String undoOptions) {
-        openPage(Constants.UNDO_CGI + "?" + undoOptions);
-        return getRefreshPage();
+    public static void undoResult(String undoOptions) throws IOException {
+        String url = Constants.UNDO_CGI + "?" + undoOptions;
+        try {
+            Connection connection = Jsoup.connect(url);
+            setAuthorization(connection);
+            connection.get();
+        } catch (HttpStatusException e) {
+            switch (e.getStatusCode()) {
+                case HttpURLConnection.HTTP_BAD_REQUEST ->
+                        throw new InvalidRequestException();
+                case HttpURLConnection.HTTP_UNAUTHORIZED ->
+                        throw new AuthorizationException("unauthorized response");
+                default -> throw new IOException(e);
+            }
+        }
     }
 
     public static String getRefreshPage() {
@@ -127,26 +116,6 @@ public class InternetActions {
             Log.d(TAG, "getRefreshPage IOException: " + e);
             return "Network exception while loading refresh.";
         }
-    }
-
-    public static HttpURLConnection openApiGatewayConnection(String url) {
-        CognitoIdToken idToken = UserData.getInstance().getIdToken();
-        // TODO handle idToken null
-        HttpURLConnection c = null;
-        try {
-            URL u = new URL(url);
-            c = (HttpURLConnection) u.openConnection();
-            Log.d(TAG, "openConnection: url=" + url);
-            if (idToken != null) {
-                Log.d(TAG, "idToken expiry=" + idToken.getExpiration());
-                String bearerAuth = "Bearer " + UserData.getInstance().getIdToken().getJWTToken();
-                c.setRequestProperty("Authorization", bearerAuth);
-            }
-            c.connect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return c;
     }
 
     public static List<Player> getPlayerList() throws IOException, JSONException {
@@ -258,6 +227,12 @@ public class InternetActions {
     public static class AuthorizationException extends IOException {
         public AuthorizationException(String message) {
             super("Authorization exception: " + message);
+        }
+    }
+
+    public static class InvalidRequestException extends IOException {
+        public InvalidRequestException() {
+            super("Request rejected by server");
         }
     }
 }

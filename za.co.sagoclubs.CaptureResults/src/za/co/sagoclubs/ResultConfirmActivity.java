@@ -1,6 +1,8 @@
 package za.co.sagoclubs;
 
 import static za.co.sagoclubs.Constants.TAG;
+import static za.co.sagoclubs.InternetActions.getRefreshPage;
+import static za.co.sagoclubs.InternetActions.sendResult;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -18,6 +20,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+
+import java.io.IOException;
 
 public class ResultConfirmActivity extends Activity {
     private TextView txtOutput;
@@ -109,8 +113,13 @@ public class ResultConfirmActivity extends Activity {
     private class SaveResultTask extends AsyncTask<Void, Void, String> {
         protected String doInBackground(Void... v) {
             setProgressBarIndeterminateVisibility(true);
+            try {
+                sendResult(Result.constructConfirmUriOptions());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
 
-            return InternetActions.confirmResult(Result.constructConfirmUriOptions());
+            return getRefreshPage();
         }
 
         protected void onPostExecute(String result) {
