@@ -30,7 +30,7 @@ public class SelectBlackPlayerActivity extends AppCompatActivity {
 
         lsvSelectBlackPlayer.setOnItemClickListener((parent, view, position, id) -> {
             Player player = (Player) lsvSelectBlackPlayer.getItemAtPosition(position);
-            Result.setBlack(player);
+            ResultUseCase.getInstance().setBlack(player);
             Intent myIntent = new Intent(view.getContext(), CaptureDetailActivity.class);
             startActivity(myIntent);
         });

@@ -20,6 +20,8 @@ import androidx.annotation.NonNull;
 
 import java.io.IOException;
 
+import za.co.sagoclubs.ResultUseCase.Status;
+
 public class UndoActivity extends Activity {
 
     private TextView txtOutput;
@@ -43,7 +45,7 @@ public class UndoActivity extends Activity {
         btnReturnToStart = findViewById(R.id.btnReturnToStart);
         btnNewResult = findViewById(R.id.btnNewResult);
 
-        if (Result.resultState == ResultState.Confirm) {
+        if (ResultUseCase.getInstance().getStatus() == Status.Enter) {
             btnNewResult.setVisibility(View.INVISIBLE);
             btnReturnToStart.setVisibility(View.INVISIBLE);
             dialog.setMessage("Sending undo to server...");
@@ -54,7 +56,7 @@ public class UndoActivity extends Activity {
         }
 
         btnNewResult.setOnClickListener(v -> {
-            Result.setResultState(ResultState.Enter);
+            ResultUseCase.getInstance().setStatus(Status.Enter);
             Intent myIntent = new Intent(v.getContext(), SelectWhitePlayerActivity.class);
             myIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivityForResult(myIntent, 0);
@@ -100,7 +102,7 @@ public class UndoActivity extends Activity {
             setProgressBarIndeterminateVisibility(true);
 
             try {
-                undoResult(Result.constructUndoUriOptions());
+                undoResult(ResultUseCase.getInstance().constructUndoUriOptions());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -116,7 +118,7 @@ public class UndoActivity extends Activity {
             txtOutput.setText(result);
             scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
 
-            Result.setResultState(ResultState.Complete);
+            ResultUseCase.getInstance().setStatus(ResultUseCase.Status.Complete);
             btnNewResult.setVisibility(View.VISIBLE);
             btnReturnToStart.setVisibility(View.VISIBLE);
         }

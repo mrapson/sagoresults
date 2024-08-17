@@ -22,6 +22,10 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
+import za.co.sagoclubs.ResultUseCase.GameDetails;
+import za.co.sagoclubs.ResultUseCase.Weight;
+import za.co.sagoclubs.ResultUseCase.Winner;
+
 public class CaptureDetailActivity extends FragmentActivity
         implements DatePickerDialog.OnDateSetListener {
     private EditText txtDate;
@@ -58,13 +62,14 @@ public class CaptureDetailActivity extends FragmentActivity
 
         txtKomi.setText("6.5");
 
-        radioWhite.setText(getString(R.string.white_radio, Result.getWhite().getName()));
-        radioBlack.setText(getString(R.string.black_radio, Result.getBlack().getName()));
+        ResultUseCase resultUseCase = ResultUseCase.getInstance();
+        radioWhite.setText(getString(R.string.white_radio, resultUseCase.getWhite().getName()));
+        radioBlack.setText(getString(R.string.black_radio, resultUseCase.getBlack().getName()));
 
-        spinnerWeight.setSelection(2);
+        spinnerWeight.setSelection(Weight.club.ordinal());
 
         final LocalDate date = LocalDate.now();
-        Result.setDate(date);
+        ResultUseCase.getInstance().setDate(date);
         txtDate.setText(date.format(dateTimeFormatter));
     }
 
@@ -111,35 +116,24 @@ public class CaptureDetailActivity extends FragmentActivity
     }
 
     private void saveResult() {
-        if (radioWhite.isChecked()) {
-            Result.setWinner("W");
-        } else {
-            Result.setWinner("B");
-        }
-
-        Result.setKomi(txtKomi.getText().toString().strip());
-
-        Result.setWeight(
-                switch (spinnerWeight.getSelectedItemPosition()) {
-                    case 0 -> "0";
-                    case 1 -> "0.5";
-                    default -> "1.0";
-                    case 3 -> "1.5";
-                });
-
-        Result.setHandicap(spinnerHandicap.getSelectedItemPosition());
-
-        Result.setNotes(txtNotes.getText().toString());
-        if (Result.getNotes().length() > 0) {
+        String notes = txtNotes.getText().toString();
+        if (notes.length() > 0) {
             getSharedPreferences("SETTINGS", MODE_PRIVATE).edit()
-                    .putString("notes", Result.getNotes())
+                    .putString("notes", notes)
                     .apply();
         }
+        GameDetails gameDetails = new GameDetails(
+                radioWhite.isChecked() ? Winner.white : Winner.black,
+                Weight.get(spinnerWeight.getSelectedItemPosition()),
+                txtKomi.getText().toString(),
+                spinnerHandicap.getSelectedItemPosition(),
+                notes);
+        ResultUseCase.getInstance().setGameDetails(gameDetails);
     }
 
     public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {
         LocalDate date = LocalDate.of(selectedYear, selectedMonth + 1, selectedDay);
-        Result.setDate(date);
+        ResultUseCase.getInstance().setDate(date);
         txtDate.setText(date.format(dateTimeFormatter));
     }
 
@@ -149,7 +143,7 @@ public class CaptureDetailActivity extends FragmentActivity
         @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            LocalDate date = Result.getDate();
+            LocalDate date = ResultUseCase.getInstance().getDate();
             return new DatePickerDialog(requireContext(), dateListener,
                     date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
         }

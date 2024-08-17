@@ -30,7 +30,7 @@ public class SelectWhitePlayerActivity extends AppCompatActivity {
 
         lsvSelectWhitePlayer.setOnItemClickListener((parent, view, position, id) -> {
             Player player = (Player) lsvSelectWhitePlayer.getItemAtPosition(position);
-            Result.setWhite(player);
+            ResultUseCase.getInstance().setWhite(player);
             Intent myIntent = new Intent(view.getContext(), SelectBlackPlayerActivity.class);
             startActivity(myIntent);
         });

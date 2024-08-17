@@ -23,6 +23,8 @@ import androidx.annotation.NonNull;
 
 import java.io.IOException;
 
+import za.co.sagoclubs.ResultUseCase.Status;
+
 public class ResultConfirmActivity extends Activity {
     private TextView txtOutput;
     private ScrollView scrollView;
@@ -51,7 +53,8 @@ public class ResultConfirmActivity extends Activity {
         btnNewResult = findViewById(R.id.btnNewResult);
         btnReturnToStart = findViewById(R.id.btnReturnToStart);
 
-        if (Result.resultState == ResultState.Enter) {
+
+        if (ResultUseCase.getInstance().getStatus() == Status.Enter) {
             btnUndo.setVisibility(View.INVISIBLE);
             btnNewResult.setVisibility(View.INVISIBLE);
             btnReturnToStart.setVisibility(View.INVISIBLE);
@@ -63,12 +66,13 @@ public class ResultConfirmActivity extends Activity {
         }
 
         btnUndo.setOnClickListener(v -> {
+            ResultUseCase.getInstance().setStatus(Status.Enter);
             Intent myIntent = new Intent(v.getContext(), UndoActivity.class);
             startActivityForResult(myIntent, 0);
         });
 
         btnNewResult.setOnClickListener(v -> {
-            Result.setResultState(ResultState.Enter);
+            ResultUseCase.getInstance().setStatus(Status.Enter);
             Intent myIntent = new Intent(v.getContext(), SelectWhitePlayerActivity.class);
             myIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivityForResult(myIntent, 0);
@@ -114,7 +118,7 @@ public class ResultConfirmActivity extends Activity {
         protected String doInBackground(Void... v) {
             setProgressBarIndeterminateVisibility(true);
             try {
-                sendResult(Result.constructConfirmUriOptions());
+                sendResult(ResultUseCase.getInstance().constructConfirmUriOptions());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -130,7 +134,7 @@ public class ResultConfirmActivity extends Activity {
             txtOutput.setText(result);
             scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
 
-            Result.setResultState(ResultState.Confirm);
+            ResultUseCase.getInstance().setStatus(ResultUseCase.Status.Complete);
             btnUndo.setVisibility(View.VISIBLE);
             btnNewResult.setVisibility(View.VISIBLE);
             btnReturnToStart.setVisibility(View.VISIBLE);

@@ -9,6 +9,8 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.content.res.AppCompatResources;
 
+import za.co.sagoclubs.ResultUseCase.Status;
+
 public class MainActivity extends AppCompatActivity {
     private final UserData userData = UserData.getInstance();
 
@@ -29,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.main);
 
-        Result.setResultState(ResultState.Complete);
+        ResultUseCase.getInstance().setStatus(Status.Complete);
 
         Button btnPlayerRatings = findViewById(R.id.btnPlayerRatings);
         btnPlayerRatings.setEnabled(true);
@@ -50,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
                             btnCaptureResult,
                             AppCompatResources.getDrawable(this, R.drawable.green_button),
                             v -> {
-                                Result.setResultState(ResultState.Enter);
+                                ResultUseCase.getInstance().setStatus(Status.Enter);
                                 Intent myIntent = new Intent(v.getContext(),
                                         SelectWhitePlayerActivity.class);
                                 startActivity(myIntent);
