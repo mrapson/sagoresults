@@ -40,6 +40,11 @@ public class UndoActivity extends Activity {
         txtOutput = findViewById(R.id.txtOutput);
         txtOutput.setEnabled(false);
 
+        TextView txtWhitePlayer = findViewById(R.id.txtWhitePlayer);
+        txtWhitePlayer.setText(ResultUseCase.getInstance().getWhite().getName());
+        TextView txtBlackPlayer = findViewById(R.id.txtBlackPlayer);
+        txtBlackPlayer.setText(ResultUseCase.getInstance().getBlack().getName());
+
         scrollView = findViewById(R.id.scrollerUndo);
 
         btnReturnToStart = findViewById(R.id.btnReturnToStart);

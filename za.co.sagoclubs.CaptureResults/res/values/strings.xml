@@ -19,6 +19,7 @@
     <string name="password">Password</string>
     <string name="show_password">Show Password</string>
     <string name="undo">Undo</string>
+    <string name="vs">&#160;vs&#160;</string>
     <string name="capture_another">Capture another?</string>
     <string name="result_confirmed">Confirm Result</string>
     <string name="undo_confirmed">Confirm Undo</string>
