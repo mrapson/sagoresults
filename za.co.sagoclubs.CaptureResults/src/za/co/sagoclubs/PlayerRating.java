@@ -3,14 +3,12 @@ package za.co.sagoclubs;
 public class PlayerRating extends Player {
     private final String rank;
     private final String index;
-    private final String lastPlayedDate;
 
 
-    public PlayerRating(String id, String name, String rank, String index, String lastPlayedDate) {
+    public PlayerRating(String id, String name, String rank, String index) {
         super(id, name);
         this.rank = rank.strip();
         this.index = index;
-        this.lastPlayedDate = lastPlayedDate;
     }
 
     public String getRank() {
@@ -23,10 +21,6 @@ public class PlayerRating extends Player {
 
     public String getRatingString() {
         return rank + " (" + index + ")";
-    }
-
-    public String getLastPlayedDate() {
-        return lastPlayedDate;
     }
 
     public static int getRankValue(PlayerRating player) {

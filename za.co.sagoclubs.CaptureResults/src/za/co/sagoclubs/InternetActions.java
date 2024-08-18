@@ -222,7 +222,7 @@ public class InternetActions {
             throw new IOException("Id does not match expected pattern");
         }
 
-        return new PlayerRating(id, name, rank, index, lastPlayedDate);
+        return new PlayerRating(id, name, rank, index);
     }
 
     public static class AuthorizationException extends IOException {
