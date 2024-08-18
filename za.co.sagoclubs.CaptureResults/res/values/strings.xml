@@ -44,7 +44,6 @@
     <string name="player_error_message">Player not found error!</string>
     <string name="network_error_message">Network error!</string>
     <string name="authorization_error_message">Authorization error!</string>
-    <string name="site_error_message">Site internal error!</string>
     <string name="sending_message">Sending request…</string>
     <string name="partial_message">Request succeeded, fetching result…</string>
     <string name="send_client_error_message">Request rejected!</string>

@@ -11,7 +11,6 @@
 
 
         <TextView
-            android:id="@+id/txtGameDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/SteelBlue"
@@ -28,12 +27,10 @@
 
 
         <TableRow
-            android:id="@+id/tableRowWinner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/TextViewWinner"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -44,7 +41,6 @@
                 android:textStyle="bold" />
 
             <RadioGroup
-                android:id="@+id/radioGroupWinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="visible">
@@ -72,12 +68,10 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRowHandicap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/TextViewHandicap"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -100,12 +94,10 @@
 
 
         <TableRow
-            android:id="@+id/tableRowKomi"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/TextViewKomi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -129,12 +121,10 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRowWeight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/TextViewWeight"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -157,12 +147,10 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRowNotes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
 
             <TextView
-                android:id="@+id/TextViewNotes"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
@@ -194,12 +182,10 @@
         </TableRow>
 
         <TableRow
-            android:id="@+id/tableRowDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" >
 
             <TextView
-                android:id="@+id/TextViewDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"

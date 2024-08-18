@@ -10,7 +10,6 @@
         android:background="@color/SteelBlue">
 
         <TextView
-            android:id="@+id/txtUndoConfirmed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/SteelBlue"
@@ -48,7 +47,6 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/txtVs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/vs"
