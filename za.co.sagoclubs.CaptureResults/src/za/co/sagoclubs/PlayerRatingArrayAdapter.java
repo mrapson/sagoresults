@@ -16,9 +16,9 @@ import androidx.annotation.NonNull;
 
 public class PlayerRatingArrayAdapter extends ArrayAdapter<PlayerRating> {
 
-    Context context;
-    int layoutResourceId;
-    PlayerRating[] data;
+    private final Context context;
+    private final int layoutResourceId;
+    private final PlayerRating[] data;
 
     public PlayerRatingArrayAdapter(Context context, int layoutResourceId, PlayerRating[] data) {
         super(context, layoutResourceId, data);

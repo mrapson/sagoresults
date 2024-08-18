@@ -8,15 +8,8 @@ public class PlayerArrayAdapter extends ArrayAdapter<Player> implements SectionI
 
     private final String mSections = "#ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    Context context;
-    int layoutResourceId;
-    Player[] data;
-
     public PlayerArrayAdapter(Context context, int layoutResourceId, Player[] data) {
         super(context, layoutResourceId, data);
-        this.layoutResourceId = layoutResourceId;
-        this.context = context;
-        this.data = data;
     }
 
     @Override

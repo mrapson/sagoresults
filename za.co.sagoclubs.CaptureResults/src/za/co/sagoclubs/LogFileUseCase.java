@@ -44,10 +44,6 @@ public final class LogFileUseCase {
         logRecord.postValue(new LogRecord(player, "", Status.Prepared));
     }
 
-    public Player getPlayer() {
-        return player;
-    }
-
     public void fetchLogFile() {
         String id = player.getId();
         Player requestPlayer = player;
