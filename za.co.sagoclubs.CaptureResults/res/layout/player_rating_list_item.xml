@@ -36,8 +36,9 @@
         android:layout_weight="1" />
 
     <ImageView
-        android:layout_width="5dip"
-        android:layout_height="10dip"
+        android:layout_width="16sp"
+        android:layout_height="16sp"
+        android:scaleType="fitCenter"
         android:src="@drawable/arrow"
         android:layout_gravity="center"
         android:contentDescription="@string/display_log_file" />
