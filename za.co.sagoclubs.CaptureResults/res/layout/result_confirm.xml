@@ -95,16 +95,6 @@
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/btnReturnToStart"
-        style="@style/ButtonText"
-        android:background="@drawable/blue_button"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:text="@string/return_to_start"
-        android:textStyle="bold" />
-
-    <Button
         android:id="@+id/btnNewResult"
         style="@style/ButtonText"
         android:background="@drawable/green_button"
@@ -112,6 +102,16 @@
         android:layout_height="wrap_content"
         android:minHeight="48dp"
         android:text="@string/capture_result"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btnReturnToStart"
+        style="@style/ButtonText"
+        android:background="@drawable/blue_button"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:text="@string/return_to_start"
         android:textStyle="bold" />
 
 </LinearLayout>

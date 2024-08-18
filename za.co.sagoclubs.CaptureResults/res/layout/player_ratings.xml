@@ -30,7 +30,7 @@
         <Button
             android:id="@+id/btnSortByName"
             style="@style/ButtonText"
-            android:background="@drawable/magenta_button"
+            android:background="@drawable/green_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/sort_by_name"
@@ -40,7 +40,7 @@
         <Button
             android:id="@+id/btnSortByRank"
             style="@style/ButtonText"
-            android:background="@drawable/magenta_button"
+            android:background="@drawable/red_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:minHeight="48dp"

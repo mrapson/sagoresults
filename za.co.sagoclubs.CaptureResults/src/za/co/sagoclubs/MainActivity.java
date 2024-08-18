@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
                     );
                     setupButton(
                             btnDisplayLogFile,
-                            AppCompatResources.getDrawable(this, R.drawable.purple_button),
+                            AppCompatResources.getDrawable(this, R.drawable.blue_button),
                             v -> {
                                 Intent myIntent = new Intent(v.getContext(),
                                         SelectLogPlayerActivity.class);
