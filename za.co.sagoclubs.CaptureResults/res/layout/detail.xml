@@ -7,15 +7,15 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#336699">
+        android:background="@color/SteelBlue">
 
 
         <TextView
             android:id="@+id/txtGameDetails"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#336699"
-            android:textColor="#ffffff"
+            android:background="@color/SteelBlue"
+            android:textColor="@color/White"
             android:text="@string/game_details"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold" />
@@ -40,7 +40,7 @@
                 android:focusable="false"
                 android:text="@string/winner_text_label"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#000000"
+                android:textColor="@color/Black"
                 android:textStyle="bold" />
 
             <RadioGroup
@@ -56,7 +56,7 @@
                     android:layout_height="wrap_content"
                     android:checked="true"
                     android:minWidth="48dp"
-                    android:textColor="#000000"
+                    android:textColor="@color/Black"
                     android:textStyle="bold" />
 
 
@@ -65,7 +65,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:minWidth="48dp"
-                    android:textColor="#000000"
+                    android:textColor="@color/Black"
                     android:textStyle="bold" />
 
             </RadioGroup>
@@ -83,7 +83,7 @@
                 android:layout_gravity="center_vertical"
                 android:text="@string/handicap_text_label"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#000000"
+                android:textColor="@color/Black"
                 android:textStyle="bold" />
 
 
@@ -113,7 +113,7 @@
                 android:labelFor="@id/txtKomi"
                 android:text="@string/komi_text_label"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#000000"
+                android:textColor="@color/Black"
                 android:textStyle="bold" />
 
 
@@ -141,7 +141,7 @@
                 android:drawingCacheQuality="high"
                 android:text="@string/weight_text_label"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#000000"
+                android:textColor="@color/Black"
                 android:textStyle="bold" />
 
 
@@ -170,7 +170,7 @@
                 android:labelFor="@id/txtNotes"
                 android:text="@string/notes_text_label"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#000000"
+                android:textColor="@color/Black"
                 android:textStyle="bold" />
 
             <EditText
@@ -207,7 +207,7 @@
                 android:labelFor="@id/txtDate"
                 android:text="@string/date_text_label"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#000000"
+                android:textColor="@color/Black"
                 android:textStyle="bold" />
 
 

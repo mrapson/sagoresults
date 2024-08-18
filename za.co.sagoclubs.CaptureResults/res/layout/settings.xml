@@ -7,14 +7,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#336699">
+        android:background="@color/SteelBlue">
 
         <TextView
             android:id="@+id/txtSettings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#336699"
-            android:textColor="#ffffff"
+            android:background="@color/SteelBlue"
+            android:textColor="@color/White"
             android:text="@string/settings"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold" />
@@ -37,7 +37,7 @@
                 android:labelFor="@id/txtUsername"
                 android:text="@string/user_name"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#000000"
+                android:textColor="@color/Black"
                 android:textStyle="bold" />
 
             <EditText
@@ -65,7 +65,7 @@
                 android:labelFor="@+id/txtPassword"
                 android:text="@string/password"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#000000"
+                android:textColor="@color/Black"
                 android:textStyle="bold" />
 
             <EditText
@@ -94,7 +94,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/show_password"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="#000000" />
+                android:textColor="@color/Black" />
 
         </TableRow>
 
@@ -106,7 +106,7 @@
         android:layout_height="wrap_content"
         android:text="@string/password_change_message"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="#000000" />
+        android:textColor="@color/Black" />
 
     <Button
         android:id="@+id/btnSelectFavouritePlayers"

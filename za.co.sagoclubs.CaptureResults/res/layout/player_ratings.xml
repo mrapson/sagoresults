@@ -7,7 +7,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#336699">
+        android:background="@color/SteelBlue">
 
         <Space
             android:layout_width="1dp"
@@ -17,8 +17,8 @@
             android:id="@+id/txtPlayerRatings"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#336699"
-            android:textColor="#ffffff"
+            android:background="@color/SteelBlue"
+            android:textColor="@color/White"
             android:text="@string/player_ratings"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold" />
@@ -54,12 +54,12 @@
         android:id="@+id/txtLoadingStatus"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="#ffffff"
+        android:background="@color/White"
         android:paddingLeft="1dp"
         android:paddingRight="1dp"
         android:text="@string/loading_message"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="#000000"
+        android:textColor="@color/Black"
         android:textStyle="italic"
         android:visibility="gone" />
 

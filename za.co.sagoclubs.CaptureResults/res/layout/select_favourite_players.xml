@@ -7,14 +7,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#336699">
+        android:background="@color/SteelBlue">
 
         <TextView
             android:id="@+id/txtSelectFavouritePlayers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="#336699"
-            android:textColor="#ffffff"
+            android:background="@color/SteelBlue"
+            android:textColor="@color/White"
             android:text="@string/select_favourite_players"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textStyle="bold" />

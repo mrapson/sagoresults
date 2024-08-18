@@ -12,7 +12,7 @@
         android:id="@+id/txtName"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:textColor="#000000"
+        android:textColor="@color/Black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -26,7 +26,7 @@
     <TextView
         android:id="@+id/txtRank"
         android:textSize="14sp"
-        android:textColor="#000000"
+        android:textColor="@color/Black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
