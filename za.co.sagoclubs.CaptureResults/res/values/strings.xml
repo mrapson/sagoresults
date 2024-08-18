@@ -47,6 +47,13 @@
     <string name="network_error_message">Network error!</string>
     <string name="authorization_error_message">Authorization error!</string>
     <string name="site_error_message">Site internal error!</string>
+    <string name="sending_message">Sending request…</string>
+    <string name="partial_message">Request succeeded, fetching result…</string>
+    <string name="send_client_error_message">Request rejected!</string>
+    <string name="send_network_error_message">Network error sending request!</string>
+    <string name="send_authorization_error_message">Authorisation error sending request!</string>
+    <string name="fetch_network_error_message">Network error fetching result!</string>
+    <string name="fetch_authorization_error_message">Authorisation error fetching result!</string>
 
 
     <string-array name="game_weight_list">

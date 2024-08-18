@@ -1,12 +1,23 @@
 package za.co.sagoclubs;
 
+import static za.co.sagoclubs.InternetActions.getRefreshPage;
+import static za.co.sagoclubs.InternetActions.sendResult;
+import static za.co.sagoclubs.InternetActions.undoResult;
+
+import androidx.lifecycle.MutableLiveData;
+
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.concurrent.ExecutorService;
+
+import za.co.sagoclubs.InternetActions.AuthorizationException;
+import za.co.sagoclubs.InternetActions.InvalidRequestException;
 
 public class ResultUseCase {
     enum Status {
-        Enter, Sending, Sent,
+        Enter, Ready, Sending, Sent,
         SendingAuthorizationError,
         SendingNetworkError,
         SendingClientError,
@@ -45,11 +56,15 @@ public class ResultUseCase {
         }
     }
 
-    private Status status = Status.Complete;
     private Player white;
     private Player black;
     private LocalDate date;
     private GameDetails gameDetails;
+    private final MutableLiveData<ResultState> submitState =
+            new MutableLiveData<>(new ResultState(Status.Complete, ""));
+    private final MutableLiveData<ResultState> undoState =
+            new MutableLiveData<>(new ResultState(Status.Complete, ""));
+
 
     private static volatile ResultUseCase INSTANCE = null;
 
@@ -65,14 +80,6 @@ public class ResultUseCase {
             }
         }
         return INSTANCE;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
-    public Status getStatus() {
-        return status;
     }
 
     public void setWhite(Player white) {
@@ -99,9 +106,93 @@ public class ResultUseCase {
         return date;
     }
 
-    public void setGameDetails(GameDetails gameDetails) {
-        this.gameDetails = gameDetails;
+    public MutableLiveData<ResultState> getSubmitState() {
+        return submitState;
     }
+
+    public MutableLiveData<ResultState> getUndoState() {
+        return undoState;
+    }
+
+    public void readyForPlayers() {
+        submitState.setValue(new ResultState(Status.Enter, ""));
+    }
+
+    public void prepareGame(GameDetails gameDetails) {
+        this.gameDetails = gameDetails;
+        submitState.setValue(new ResultState(Status.Ready, ""));
+    }
+
+    public void submitGame() {
+        submitState.setValue(new ResultState(Status.Sending, ""));
+        ExecutorService executorService = RankApplication.getApp().getExecutorService();
+        executorService.execute(() -> {
+            try {
+                sendResult(constructConfirmUriOptions());
+                submitState.postValue(new ResultState(Status.Sent, ""));
+            } catch (InvalidRequestException e) {
+                submitState.postValue(new ResultState(Status.SendingClientError, ""));
+                return;
+            } catch (AuthorizationException e) {
+                submitState.postValue(new ResultState(Status.SendingAuthorizationError, ""));
+                return;
+            } catch (IOException e) {
+                submitState.postValue(new ResultState(Status.SendingNetworkError, ""));
+                return;
+            }
+
+            submitState.postValue(new ResultState(Status.Fetching, ""));
+            try {
+                String output = getRefreshPage();
+                submitState.postValue(new ResultState(Status.Complete, output));
+            } catch (AuthorizationException e) {
+                submitState.postValue(new ResultState(Status.FetchingAuthorizationError, ""));
+            } catch (IOException e) {
+                submitState.postValue(new ResultState(Status.FetchingNetworkError, ""));
+            }
+        });
+    }
+
+    public void prepareUndo() {
+        undoState.setValue(new ResultState(Status.Ready, ""));
+    }
+
+    public void undoGame() {
+        undoState.setValue(new ResultState(Status.Sending, ""));
+        ExecutorService executorService = RankApplication.getApp().getExecutorService();
+        executorService.execute(() -> {
+            try {
+                undoResult(constructUndoUriOptions());
+                undoState.postValue(new ResultState(Status.Sent, ""));
+            } catch (InvalidRequestException e) {
+                undoState.postValue(new ResultState(Status.SendingClientError, ""));
+                return;
+            } catch (AuthorizationException e) {
+                undoState.postValue(new ResultState(Status.SendingAuthorizationError, ""));
+                return;
+            } catch (IOException e) {
+                undoState.postValue(new ResultState(Status.SendingNetworkError, ""));
+                return;
+            }
+
+            undoState.postValue(new ResultState(Status.Fetching, ""));
+            try {
+                String output = getRefreshPage();
+                undoState.postValue(new ResultState(Status.Complete, output));
+            } catch (AuthorizationException e) {
+                undoState.postValue(new ResultState(Status.FetchingAuthorizationError, ""));
+            } catch (IOException e) {
+                undoState.postValue(new ResultState(Status.FetchingNetworkError, ""));
+            }
+        });
+    }
+
+    public void completeAll() {
+        ResultState complete = new ResultState(Status.Complete, "");
+        submitState.setValue(complete);
+        undoState.setValue(complete);
+    }
+
 
     public String constructConfirmUriOptions() {
         return "whitename=" + white.getId()
@@ -147,4 +238,6 @@ public class ResultUseCase {
             this.notes = notes.strip().replaceAll("[^a-zA-Z0-9_.?-]", "");
         }
     }
+
+    public record ResultState(Status status, String output) {}
 }

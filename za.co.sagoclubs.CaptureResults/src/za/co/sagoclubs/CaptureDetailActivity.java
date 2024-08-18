@@ -128,7 +128,7 @@ public class CaptureDetailActivity extends FragmentActivity
                 txtKomi.getText().toString(),
                 spinnerHandicap.getSelectedItemPosition(),
                 notes);
-        ResultUseCase.getInstance().setGameDetails(gameDetails);
+        ResultUseCase.getInstance().prepareGame(gameDetails);
     }
 
     public void onDateSet(DatePicker view, int selectedYear, int selectedMonth, int selectedDay) {

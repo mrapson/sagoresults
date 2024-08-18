@@ -106,15 +106,16 @@ public class InternetActions {
         }
     }
 
-    public static String getRefreshPage() {
+    public static String getRefreshPage() throws IOException {
         try {
             Connection connection = Jsoup.connect(Constants.REFRESH_HTML);
             setAuthorization(connection);
             return connection.get().body().text();
-        } catch (IOException e) {
-            // TODO handle refresh exceptions better
-            Log.d(TAG, "getRefreshPage IOException: " + e);
-            return "Network exception while loading refresh.";
+        } catch (HttpStatusException e) {
+            if (e.getStatusCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                throw new AuthorizationException("unauthorized response");
+            }
+            throw new IOException(e);
         }
     }
 
