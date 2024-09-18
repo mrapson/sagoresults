@@ -70,6 +70,7 @@ public class InternetActions {
         }
 
         connection.header("Authorization", idToken.getJWTToken());
+        connection.cookie("accessToken", idToken.getJWTToken());
     }
 
     public static void sendResult(String confirmOptions) throws IOException {
