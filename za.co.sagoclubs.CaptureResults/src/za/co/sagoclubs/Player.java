@@ -10,17 +10,21 @@ public class Player {
     private final String name;
     @Nullable
     private final Boolean international;
+    @Nullable
+    private final Boolean active;
 
     public Player(@NonNull String id, @NonNull String name) {
         this.id = id;
         this.name = name;
         this.international = null;
+        this.active = null;
     }
 
-    public Player(@NonNull String id, @NonNull String name, boolean international) {
+    public Player(@NonNull String id, @NonNull String name, boolean international, boolean active) {
         this.id = id;
         this.name = name;
         this.international = international;
+        this.active = active;
     }
 
     @NonNull
@@ -35,6 +39,10 @@ public class Player {
 
     public Boolean isInternational() {
         return international;
+    }
+
+    public Boolean isActive() {
+        return active;
     }
 
     @NonNull

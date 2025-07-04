@@ -133,7 +133,9 @@ public class InternetActions {
                 JSONArray playerArray = json.getJSONArray("players");
                 for (int i = 0; i < playerArray.length(); i++) {
                     Player player = getPlayerFromJsonRow(playerArray.getJSONObject(i));
-                    list.add(player);
+                    if (player.isActive()) {
+                        list.add(player);
+                    }
                 }
             }
         } catch (IOException e) {
@@ -156,14 +158,15 @@ public class InternetActions {
         }
 
         String name = row.getString("name");
-        Pattern namePattern = Pattern.compile("[^A-Za-z- ]");
+        Pattern namePattern = Pattern.compile("[^()?A-Za-z- ]");
         if (namePattern.matcher(name).find()) {
             throw new IOException("Name does not match expected pattern");
         }
 
         boolean international = row.getBoolean("international");
+        boolean active = row.getBoolean("active");
 
-        return new Player(id, name, international);
+        return new Player(id, name, international, active);
     }
 
     public static List<PlayerRating> getPlayerRatingsList() throws IOException, JSONException {
