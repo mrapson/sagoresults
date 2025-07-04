@@ -3,8 +3,8 @@ package za.co.sagoclubs;
 public class Constants {
 
     // Override SAGA_WP_SITE with local IP address when testing locally
-    private static final String SAGA_WP_SITE = "https://sagoclubs.co.za/";
-    private static final String RANK_SITE = "https://rank-test.sagoclubs.co.za/";
+    private static final String SAGA_WP_SITE = "https://duxkl10tlcfxh.cloudfront.net/";
+    private static final String RANK_SITE = "https://xyz4k6tkm2.execute-api.us-east-2.amazonaws.com/";
     public static final String TAG = "SAGO";
     public static final String REFRESH_HTML = RANK_SITE + "refresh.html";
     public static final String LOGGAME_CGI = RANK_SITE + "loggame";
