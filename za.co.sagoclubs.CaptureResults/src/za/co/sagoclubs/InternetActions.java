@@ -170,7 +170,6 @@ public class InternetActions {
         List<PlayerRating> list = new ArrayList<>();
         try {
             Connection connection = Jsoup.connect(Constants.PLAYER_RATINGS);
-            setAuthorization(connection);
             connection.ignoreContentType(true);
             String bodyText = connection.get().body().text();
 
