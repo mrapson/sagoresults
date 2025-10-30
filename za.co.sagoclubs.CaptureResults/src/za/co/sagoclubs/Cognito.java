@@ -22,12 +22,11 @@ public class Cognito {
 
     public Cognito(Context context) {
         appContext = context;
-        String poolID = "us-east-2_lQ07vxzvD";
-        String clientID = "6pqaqv2diseq4dq1pt3o72mcn6";
-        Regions awsRegion = Regions.US_EAST_2;
-        String clientSecret = null;
-
-        userPool = new CognitoUserPool(context, poolID, clientID, clientSecret, awsRegion);
+        userPool = new CognitoUserPool(context,
+                BuildConfig.COGNITO_POOL_ID,
+                BuildConfig.COGNITO_CLIENT_ID,
+                BuildConfig.COGNITO_CLIENT_SECRET,
+                Regions.fromName(BuildConfig.COGNITO_AWS_REGION));
         userData = UserData.getInstance();
     }
 
