@@ -14,11 +14,13 @@ import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class InternetActions {
@@ -73,12 +75,31 @@ public class InternetActions {
         connection.cookie("accessToken", idToken.getJWTToken());
     }
 
-    public static void sendResult(String confirmOptions) throws IOException {
+
+    public static String extractRequest(Element body) throws IOException {
+        Element metaRefresh = body.selectFirst("meta[http-equiv=refresh]");
+        if (metaRefresh == null) {
+            throw new IOException("Unexpected result redirect");
+        }
+        String content = metaRefresh.attr("content");
+        Pattern refreshPattern = Pattern.compile("url=/([^\\s;\"']+.html)");
+        Matcher matcher = refreshPattern.matcher(content);
+        if (matcher.find() && matcher.group(1) != null) {
+            String refreshUrl = matcher.group(1);
+            if (refreshUrl != null) {
+                return refreshUrl.trim();
+            }
+        }
+        // We haven't found a redirect url, so throw
+        throw new IOException("Unexpected result redirect");
+    }
+
+    public static String sendResult(String confirmOptions) throws IOException {
         String url = Constants.LOGGAME_CGI + "?" + confirmOptions;
         try {
             Connection connection = Jsoup.connect(url);
             setAuthorization(connection);
-            connection.get();
+            return extractRequest(connection.get().body());
         } catch (HttpStatusException e) {
             switch (e.getStatusCode()) {
                 case HttpURLConnection.HTTP_BAD_REQUEST ->
@@ -90,12 +111,12 @@ public class InternetActions {
         }
     }
 
-    public static void undoResult(String undoOptions) throws IOException {
+    public static String undoResult(String undoOptions) throws IOException {
         String url = Constants.UNDO_CGI + "?" + undoOptions;
         try {
             Connection connection = Jsoup.connect(url);
             setAuthorization(connection);
-            connection.get();
+            return extractRequest(connection.get().body());
         } catch (HttpStatusException e) {
             switch (e.getStatusCode()) {
                 case HttpURLConnection.HTTP_BAD_REQUEST ->
@@ -107,9 +128,9 @@ public class InternetActions {
         }
     }
 
-    public static String getRefreshPage() throws IOException {
+    public static String getRefreshPage(String request) throws IOException {
         try {
-            Connection connection = Jsoup.connect(Constants.REFRESH_HTML);
+            Connection connection = Jsoup.connect(Constants.REFRESH_PATH + request);
             setAuthorization(connection);
             return connection.get().body().text();
         } catch (HttpStatusException e) {

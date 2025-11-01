@@ -127,8 +127,9 @@ public class ResultUseCase {
         submitState.setValue(new ResultState(Status.Sending, ""));
         ExecutorService executorService = RankApplication.getApp().getExecutorService();
         executorService.execute(() -> {
+            String request;
             try {
-                sendResult(constructConfirmUriOptions());
+                request = sendResult(constructConfirmUriOptions());
                 submitState.postValue(new ResultState(Status.Sent, ""));
             } catch (InvalidRequestException e) {
                 submitState.postValue(new ResultState(Status.SendingClientError, ""));
@@ -143,7 +144,7 @@ public class ResultUseCase {
 
             submitState.postValue(new ResultState(Status.Fetching, ""));
             try {
-                String output = getRefreshPage();
+                String output = getRefreshPage(request);
                 submitState.postValue(new ResultState(Status.Complete, output));
             } catch (AuthorizationException e) {
                 submitState.postValue(new ResultState(Status.FetchingAuthorizationError, ""));
@@ -161,8 +162,9 @@ public class ResultUseCase {
         undoState.setValue(new ResultState(Status.Sending, ""));
         ExecutorService executorService = RankApplication.getApp().getExecutorService();
         executorService.execute(() -> {
+            String request;
             try {
-                undoResult(constructUndoUriOptions());
+                request = undoResult(constructUndoUriOptions());
                 undoState.postValue(new ResultState(Status.Sent, ""));
             } catch (InvalidRequestException e) {
                 undoState.postValue(new ResultState(Status.SendingClientError, ""));
@@ -177,7 +179,7 @@ public class ResultUseCase {
 
             undoState.postValue(new ResultState(Status.Fetching, ""));
             try {
-                String output = getRefreshPage();
+                String output = getRefreshPage(request);
                 undoState.postValue(new ResultState(Status.Complete, output));
             } catch (AuthorizationException e) {
                 undoState.postValue(new ResultState(Status.FetchingAuthorizationError, ""));
