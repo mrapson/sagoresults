@@ -53,8 +53,6 @@ public class UndoActivity extends AppCompatActivity {
                 }
                 case Sending -> showWaitingStatus(resultState,
                         getString(R.string.sending_message));
-                case Sent, Fetching -> showPartialStatus(resultState,
-                        getString(R.string.partial_message));
                 case Complete -> showSuccessStatus(resultState);
                 case SendingClientError -> showSendErrorStatus(resultState,
                         getString(R.string.send_client_error_message));
@@ -62,10 +60,6 @@ public class UndoActivity extends AppCompatActivity {
                         getString(R.string.send_authorization_error_message));
                 case SendingNetworkError -> showSendErrorStatus(resultState,
                         getString(R.string.send_network_error_message));
-                case FetchingNetworkError -> showPartialStatus(resultState,
-                        getString(R.string.fetch_network_error_message));
-                case FetchingAuthorizationError -> showPartialStatus(resultState,
-                        getString(R.string.fetch_authorization_error_message));
             }
         });
 
@@ -96,12 +90,6 @@ public class UndoActivity extends AppCompatActivity {
         showMessage(message);
         txtOutput.setText(state.output());
         disableContinue();
-    }
-
-    private void showPartialStatus(ResultState state, String message) {
-        showMessage(message);
-        txtOutput.setText(state.output());
-        enableContinue();
     }
 
     private void showSuccessStatus(ResultState state) {

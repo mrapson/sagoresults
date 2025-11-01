@@ -1,6 +1,5 @@
 package za.co.sagoclubs;
 
-import static za.co.sagoclubs.InternetActions.getRefreshPage;
 import static za.co.sagoclubs.InternetActions.sendResult;
 import static za.co.sagoclubs.InternetActions.undoResult;
 
@@ -17,13 +16,13 @@ import za.co.sagoclubs.InternetActions.InvalidRequestException;
 
 public class ResultUseCase {
     enum Status {
-        Enter, Ready, Sending, Sent,
+        Enter,
+        Ready,
+        Sending,
         SendingAuthorizationError,
         SendingNetworkError,
         SendingClientError,
-        Fetching, Complete,
-        FetchingAuthorizationError,
-        FetchingNetworkError
+        Complete
     }
 
     enum Winner {
@@ -127,29 +126,15 @@ public class ResultUseCase {
         submitState.setValue(new ResultState(Status.Sending, ""));
         ExecutorService executorService = RankApplication.getApp().getExecutorService();
         executorService.execute(() -> {
-            String request;
             try {
-                request = sendResult(constructConfirmUriOptions());
-                submitState.postValue(new ResultState(Status.Sent, ""));
+                String output = sendResult(constructConfirmUriOptions());
+                submitState.postValue(new ResultState(Status.Complete, output));
             } catch (InvalidRequestException e) {
                 submitState.postValue(new ResultState(Status.SendingClientError, ""));
-                return;
             } catch (AuthorizationException e) {
                 submitState.postValue(new ResultState(Status.SendingAuthorizationError, ""));
-                return;
             } catch (IOException e) {
                 submitState.postValue(new ResultState(Status.SendingNetworkError, ""));
-                return;
-            }
-
-            submitState.postValue(new ResultState(Status.Fetching, ""));
-            try {
-                String output = getRefreshPage(request);
-                submitState.postValue(new ResultState(Status.Complete, output));
-            } catch (AuthorizationException e) {
-                submitState.postValue(new ResultState(Status.FetchingAuthorizationError, ""));
-            } catch (IOException e) {
-                submitState.postValue(new ResultState(Status.FetchingNetworkError, ""));
             }
         });
     }
@@ -162,29 +147,15 @@ public class ResultUseCase {
         undoState.setValue(new ResultState(Status.Sending, ""));
         ExecutorService executorService = RankApplication.getApp().getExecutorService();
         executorService.execute(() -> {
-            String request;
             try {
-                request = undoResult(constructUndoUriOptions());
-                undoState.postValue(new ResultState(Status.Sent, ""));
+                String output = undoResult(constructUndoUriOptions());
+                undoState.postValue(new ResultState(Status.Complete, output));
             } catch (InvalidRequestException e) {
                 undoState.postValue(new ResultState(Status.SendingClientError, ""));
-                return;
             } catch (AuthorizationException e) {
                 undoState.postValue(new ResultState(Status.SendingAuthorizationError, ""));
-                return;
             } catch (IOException e) {
                 undoState.postValue(new ResultState(Status.SendingNetworkError, ""));
-                return;
-            }
-
-            undoState.postValue(new ResultState(Status.Fetching, ""));
-            try {
-                String output = getRefreshPage(request);
-                undoState.postValue(new ResultState(Status.Complete, output));
-            } catch (AuthorizationException e) {
-                undoState.postValue(new ResultState(Status.FetchingAuthorizationError, ""));
-            } catch (IOException e) {
-                undoState.postValue(new ResultState(Status.FetchingNetworkError, ""));
             }
         });
     }

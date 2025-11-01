@@ -6,7 +6,6 @@ public class Constants {
     // Add secret.properties to .gitignore
 
     public static final String TAG = "SAGO";
-    public static final String REFRESH_PATH = BuildConfig.RANK_SITE;
     public static final String LOGGAME_CGI = BuildConfig.RANK_SITE + "loggame.cgi";
     public static final String SHOW_HANDLES = BuildConfig.RANK_SITE + "showhandles.cgi";
     public static final String PLAYER_RATINGS = BuildConfig.SAGA_WP_SITE + "ranks/ranks.json";

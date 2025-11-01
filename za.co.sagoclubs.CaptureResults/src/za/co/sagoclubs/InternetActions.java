@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class InternetActions {
@@ -75,23 +74,12 @@ public class InternetActions {
         connection.cookie("accessToken", idToken.getJWTToken());
     }
 
-
-    public static String extractRequest(Element body) throws IOException {
-        Element metaRefresh = body.selectFirst("meta[http-equiv=refresh]");
-        if (metaRefresh == null) {
-            throw new IOException("Unexpected result redirect");
+    public static String extractPreBlock(Element body) throws IOException {
+        Element preBlock = body.selectFirst("pre");
+        if (preBlock == null) {
+            throw new IOException("No pre-block result found");
         }
-        String content = metaRefresh.attr("content");
-        Pattern refreshPattern = Pattern.compile("url=/([^\\s;\"']+.html)");
-        Matcher matcher = refreshPattern.matcher(content);
-        if (matcher.find() && matcher.group(1) != null) {
-            String refreshUrl = matcher.group(1);
-            if (refreshUrl != null) {
-                return refreshUrl.trim();
-            }
-        }
-        // We haven't found a redirect url, so throw
-        throw new IOException("Unexpected result redirect");
+        return preBlock.text();
     }
 
     public static String sendResult(String confirmOptions) throws IOException {
@@ -99,7 +87,7 @@ public class InternetActions {
         try {
             Connection connection = Jsoup.connect(url);
             setAuthorization(connection);
-            return extractRequest(connection.get().body());
+            return extractPreBlock(connection.get().body());
         } catch (HttpStatusException e) {
             switch (e.getStatusCode()) {
                 case HttpURLConnection.HTTP_BAD_REQUEST ->
@@ -116,7 +104,7 @@ public class InternetActions {
         try {
             Connection connection = Jsoup.connect(url);
             setAuthorization(connection);
-            return extractRequest(connection.get().body());
+            return extractPreBlock(connection.get().body());
         } catch (HttpStatusException e) {
             switch (e.getStatusCode()) {
                 case HttpURLConnection.HTTP_BAD_REQUEST ->
@@ -125,19 +113,6 @@ public class InternetActions {
                         throw new AuthorizationException("unauthorized response");
                 default -> throw new IOException(e);
             }
-        }
-    }
-
-    public static String getRefreshPage(String request) throws IOException {
-        try {
-            Connection connection = Jsoup.connect(Constants.REFRESH_PATH + request);
-            setAuthorization(connection);
-            return connection.get().body().text();
-        } catch (HttpStatusException e) {
-            if (e.getStatusCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                throw new AuthorizationException("unauthorized response");
-            }
-            throw new IOException(e);
         }
     }
 
