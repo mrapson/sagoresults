@@ -214,7 +214,7 @@ public class ResultUseCase {
     }
 
     public String constructUndoUriOptions() {
-        return "a=" + white.getId() + "&b=" + black.getId();
+        return "white=" + white.getId() + "&black=" + black.getId();
     }
 
     public record GameDetails(Winner winner,
