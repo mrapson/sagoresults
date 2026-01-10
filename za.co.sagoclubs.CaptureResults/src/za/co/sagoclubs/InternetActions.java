@@ -1,6 +1,6 @@
 package za.co.sagoclubs;
 
-import static za.co.sagoclubs.Constants.SHOWLOG;
+import static za.co.sagoclubs.Constants.SHOW_LOG;
 import static za.co.sagoclubs.Constants.SHOW_LOG_DIRECT;
 import static za.co.sagoclubs.Constants.TAG;
 
@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 public class InternetActions {
     public static String getRatingsPlayerLog(String id) throws IOException {
-        String url = SHOWLOG + id + ".html";
+        String url = SHOW_LOG + id + ".html";
         Log.d(TAG, "getPlayerLog: url=" + url);
         try {
             Connection connection = Jsoup.connect(url);
@@ -83,7 +83,7 @@ public class InternetActions {
     }
 
     public static String sendResult(String confirmOptions) throws IOException {
-        String url = Constants.LOGGAME_CGI + "?" + confirmOptions;
+        String url = Constants.LOG_GAME + "?" + confirmOptions;
         try {
             Connection connection = Jsoup.connect(url);
             setAuthorization(connection);
@@ -100,7 +100,7 @@ public class InternetActions {
     }
 
     public static String undoResult(String undoOptions) throws IOException {
-        String url = Constants.UNDO_CGI + "?" + undoOptions;
+        String url = Constants.UNDO_LATEST + "?" + undoOptions;
         try {
             Connection connection = Jsoup.connect(url);
             setAuthorization(connection);
