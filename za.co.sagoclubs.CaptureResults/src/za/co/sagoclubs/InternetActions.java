@@ -14,7 +14,6 @@ import org.json.JSONObject;
 import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -43,13 +42,24 @@ public class InternetActions {
         try {
             Connection connection = Jsoup.connect(url);
             setAuthorization(connection);
-            return connection.get().body().text();
+            connection.ignoreContentType(true);
+            String bodyText = connection.get().body().text();
+
+            JSONObject json = new JSONObject(bodyText);
+            JSONObject data = json.getJSONObject("data");
+            if (!id.equals(data.getString("handle"))) {
+                throw new IOException("player handle mismatch!");
+            }
+            return data.getString("player_log");
         } catch (HttpStatusException e) {
             switch (e.getStatusCode()) {
                 case HttpURLConnection.HTTP_NOT_FOUND -> throw new LogFileUseCase.PlayerNotFoundException(id);
                 case HttpURLConnection.HTTP_UNAUTHORIZED -> throw new AuthorizationException("unauthorized response");
                 default -> throw new IOException(e);
             }
+        } catch (JSONException e) {
+            Log.d(TAG, "getPlayerLog JSONException: " + e);
+            throw new IOException(e);
         }
     }
 
@@ -74,12 +84,18 @@ public class InternetActions {
         connection.cookie("accessToken", idToken.getJWTToken());
     }
 
-    public static String extractPreBlock(Element body) throws IOException {
-        Element preBlock = body.selectFirst("pre");
-        if (preBlock == null) {
-            throw new IOException("No pre-block result found");
-        }
-        return preBlock.text();
+    private static String formatGameResult(JSONObject json) throws JSONException {
+        JSONObject data = json.getJSONObject("data");
+        String black_handle = data.getString("black_handle");
+        String black_record = data.getString("black_record");
+        String white_handle = data.getString("white_handle");
+        String white_record = data.getString("white_record");
+
+        return String.format("Recent games for white: %s\n", white_handle) +
+                String.format("%s\n", white_record) +
+                "\n" +
+                String.format("Recent games for black: %s\n", black_handle) +
+                String.format("%s\n", black_record);
     }
 
     public static String sendResult(String confirmOptions) throws IOException {
@@ -87,7 +103,11 @@ public class InternetActions {
         try {
             Connection connection = Jsoup.connect(url);
             setAuthorization(connection);
-            return extractPreBlock(connection.get().body());
+            connection.ignoreContentType(true);
+            String bodyText = connection.get().body().text();
+
+            JSONObject json = new JSONObject(bodyText);
+            return formatGameResult(json);
         } catch (HttpStatusException e) {
             switch (e.getStatusCode()) {
                 case HttpURLConnection.HTTP_BAD_REQUEST ->
@@ -96,6 +116,8 @@ public class InternetActions {
                         throw new AuthorizationException("unauthorized response");
                 default -> throw new IOException(e);
             }
+        } catch (JSONException e) {
+            throw new IOException(e);
         }
     }
 
@@ -104,7 +126,11 @@ public class InternetActions {
         try {
             Connection connection = Jsoup.connect(url);
             setAuthorization(connection);
-            return extractPreBlock(connection.get().body());
+            connection.ignoreContentType(true);
+            String bodyText = connection.get().body().text();
+
+            JSONObject json = new JSONObject(bodyText);
+            return formatGameResult(json);
         } catch (HttpStatusException e) {
             switch (e.getStatusCode()) {
                 case HttpURLConnection.HTTP_BAD_REQUEST ->
@@ -113,6 +139,8 @@ public class InternetActions {
                         throw new AuthorizationException("unauthorized response");
                 default -> throw new IOException(e);
             }
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -125,13 +153,13 @@ public class InternetActions {
             String bodyText = connection.get().body().text();
 
             JSONObject json = new JSONObject(bodyText);
-            if (json.has("players")) {
-                JSONArray playerArray = json.getJSONArray("players");
-                for (int i = 0; i < playerArray.length(); i++) {
-                    Player player = getPlayerFromJsonRow(playerArray.getJSONObject(i));
-                    if (player.isActive()) {
-                        list.add(player);
-                    }
+            JSONArray playerArray = json.getJSONObject("data")
+                    .getJSONObject("handles")
+                    .getJSONArray("players");
+            for (int i = 0; i < playerArray.length(); i++) {
+                Player player = getPlayerFromJsonRow(playerArray.getJSONObject(i));
+                if (player.isActive()) {
+                    list.add(player);
                 }
             }
         } catch (IOException e) {
