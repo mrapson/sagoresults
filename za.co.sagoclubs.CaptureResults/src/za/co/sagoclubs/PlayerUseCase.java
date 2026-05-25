@@ -50,7 +50,10 @@ public final class PlayerUseCase {
                 playerData.postValue(NO_DATA);
             }
         });
+    }
 
+    public void clearPlayerData() {
+        playerData.postValue(NO_DATA);
     }
 
     public MutableLiveData<PlayerData> getPlayerData() {

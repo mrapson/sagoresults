@@ -7,11 +7,11 @@ public class Constants {
 
     public static final String TAG = "SAGO";
     public static final String API = "/api/";
-    public static final String LOG_GAME = BuildConfig.RANK_SITE + API + "loggame";
-    public static final String SHOW_HANDLES = BuildConfig.RANK_SITE + API + "showhandles";
-    public static final String PLAYER_RATINGS = BuildConfig.SAGA_WP_SITE + "/ranks/ranks.json";
-    public static final String UNDO_LATEST = BuildConfig.RANK_SITE + API + "undolatest";
+    public static final String LOG_GAME = "loggame";
+    public static final String SHOW_HANDLES = "showhandles";
+    public static final String PLAYER_RATINGS = "/ranks/ranks.json";
+    public static final String UNDO_LATEST = "undolatest";
     // Complete show log path with "handle.html"
-    public static final String SHOW_LOG = BuildConfig.SAGA_WP_SITE + "/ranks/player_files/";
-    public static final String SHOW_LOG_DIRECT = BuildConfig.RANK_SITE + API + "showlog";
+    public static final String SHOW_LOG = "/ranks/player_files/";
+    public static final String SHOW_LOG_DIRECT = "showlog";
 }

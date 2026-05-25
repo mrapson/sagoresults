@@ -13,6 +13,7 @@ public class UserData {
 
     private static String username = "";
     private static String password = "";
+    private static boolean testSiteUser = false;
     private static CognitoIdToken idToken = null;
     private static Date tokenExpiration = null;
 
@@ -51,9 +52,13 @@ public class UserData {
             UserData.idToken = userSession.getIdToken();
             UserData.tokenExpiration = userSession.getAccessToken().getExpiration();
         } else {
-            UserData.idToken = null;
-            UserData.tokenExpiration = null;
+            clearAuthorization();
         }
+    }
+
+    public void clearAuthorization() {
+        UserData.idToken = null;
+        UserData.tokenExpiration = null;
     }
 
     public boolean isAuthorized() {
@@ -72,5 +77,12 @@ public class UserData {
 
     public boolean isGuestUser() {
         return GUEST_USER.equals(username);
+    }
+
+    public void setTestSiteUser(boolean value) {
+        UserData.testSiteUser = value;
+    }
+    public boolean isTestSiteUser() {
+        return UserData.testSiteUser;
     }
 }

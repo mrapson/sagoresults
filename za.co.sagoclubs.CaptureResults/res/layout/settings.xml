@@ -80,12 +80,32 @@
             <CheckBox
                 android:id="@+id/chkShowPassword"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/show_password" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/show_password"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/Black" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <CheckBox
+                android:id="@+id/chkUseTestSite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/use_test_site" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/use_test_site"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:textColor="@color/Black" />
 

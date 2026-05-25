@@ -18,6 +18,8 @@
     <string name="user_name">User Name</string>
     <string name="password">Password</string>
     <string name="show_password">Show Password</string>
+    <string name="use_test_site">Use Test Site</string>
+    <string name="test_site">Using Test Site</string>
     <string name="undo">Undo</string>
     <string name="vs">&#160;vs&#160;</string>
     <string name="result_confirmed">Confirm Result</string>

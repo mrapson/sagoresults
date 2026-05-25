@@ -21,12 +21,18 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "SAGA_WP_SITE", secretProperties['SAGA_WP_SITE'])
-        buildConfigField("String", "RANK_SITE", secretProperties['RANK_SITE'])
-        buildConfigField("String", "COGNITO_POOL_ID", secretProperties['COGNITO_POOL_ID'])
-        buildConfigField("String", "COGNITO_CLIENT_ID", secretProperties['COGNITO_CLIENT_ID'])
-        buildConfigField("String", "COGNITO_CLIENT_SECRET", secretProperties['COGNITO_CLIENT_SECRET'])
-        buildConfigField("String", "COGNITO_AWS_REGION", secretProperties['COGNITO_AWS_REGION'])
+        buildConfigField("String", "PROD_RATINGS_SITE", secretProperties['PROD_RATINGS_SITE'])
+        buildConfigField("String", "PROD_RANK_SITE", secretProperties['PROD_RANK_SITE'])
+        buildConfigField("String", "PROD_COGNITO_POOL_ID", secretProperties['PROD_COGNITO_POOL_ID'])
+        buildConfigField("String", "PROD_COGNITO_CLIENT_ID", secretProperties['PROD_COGNITO_CLIENT_ID'])
+        buildConfigField("String", "PROD_COGNITO_CLIENT_SECRET", secretProperties['PROD_COGNITO_CLIENT_SECRET'])
+        buildConfigField("String", "PROD_COGNITO_AWS_REGION", secretProperties['PROD_COGNITO_AWS_REGION'])
+        buildConfigField("String", "TEST_RATINGS_SITE", secretProperties['TEST_RATINGS_SITE'])
+        buildConfigField("String", "TEST_RANK_SITE", secretProperties['TEST_RANK_SITE'])
+        buildConfigField("String", "TEST_COGNITO_POOL_ID", secretProperties['TEST_COGNITO_POOL_ID'])
+        buildConfigField("String", "TEST_COGNITO_CLIENT_ID", secretProperties['TEST_COGNITO_CLIENT_ID'])
+        buildConfigField("String", "TEST_COGNITO_CLIENT_SECRET", secretProperties['TEST_COGNITO_CLIENT_SECRET'])
+        buildConfigField("String", "TEST_COGNITO_AWS_REGION", secretProperties['TEST_COGNITO_AWS_REGION'])
     }
 
     buildTypes {

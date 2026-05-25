@@ -15,34 +15,43 @@ import com.amazonaws.mobileconnectors.cognitoidentityprovider.handlers.Authentic
 import com.amazonaws.regions.Regions;
 
 public class Cognito {
-    private final CognitoUserPool userPool;
+    private final CognitoUserPool prodUserPool;
+    private final CognitoUserPool testUserPool;
     private final Context appContext;
 
     private final UserData userData;
 
     public Cognito(Context context) {
         appContext = context;
-        userPool = new CognitoUserPool(context,
-                BuildConfig.COGNITO_POOL_ID,
-                BuildConfig.COGNITO_CLIENT_ID,
-                BuildConfig.COGNITO_CLIENT_SECRET,
-                Regions.fromName(BuildConfig.COGNITO_AWS_REGION));
+        prodUserPool = new CognitoUserPool(context,
+                BuildConfig.PROD_COGNITO_POOL_ID,
+                BuildConfig.PROD_COGNITO_CLIENT_ID,
+                BuildConfig.PROD_COGNITO_CLIENT_SECRET,
+                Regions.fromName(BuildConfig.PROD_COGNITO_AWS_REGION));
+        testUserPool = new CognitoUserPool(context,
+                BuildConfig.TEST_COGNITO_POOL_ID,
+                BuildConfig.TEST_COGNITO_CLIENT_ID,
+                BuildConfig.TEST_COGNITO_CLIENT_SECRET,
+                Regions.fromName(BuildConfig.TEST_COGNITO_AWS_REGION));
         userData = UserData.getInstance();
     }
 
+    private CognitoUser getCognitoUser() {
+        return userData.isTestSiteUser()
+                ? testUserPool.getUser(userData.getUsername())
+                : prodUserPool.getUser(userData.getUsername());
+    }
+
     public void settingsLogin() {
-        CognitoUser cognitoUser = userPool.getUser(userData.getUsername());
-        cognitoUser.getSessionInBackground(new SettingsAuthenticationHandler());
+        getCognitoUser().getSessionInBackground(new SettingsAuthenticationHandler());
     }
 
     public void startupLogin() {
-        CognitoUser cognitoUser = userPool.getUser(userData.getUsername());
-        cognitoUser.getSessionInBackground(new StartupAuthenticationHandler());
+        getCognitoUser().getSessionInBackground(new SettingsAuthenticationHandler());
     }
 
     public void actionLogin() {
-        CognitoUser cognitoUser = userPool.getUser(userData.getUsername());
-        cognitoUser.getSession(new QuietAuthenticationHandler());
+        getCognitoUser().getSession(new QuietAuthenticationHandler());
     }
 
     class QuietAuthenticationHandler implements AuthenticationHandler {

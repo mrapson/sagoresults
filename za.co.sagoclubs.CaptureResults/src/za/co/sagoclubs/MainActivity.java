@@ -22,6 +22,9 @@ public class MainActivity extends AppCompatActivity {
         int visibility = userData.isGuestUser() ? View.INVISIBLE : View.VISIBLE;
         findViewById(R.id.btnDisplayLogFile).setVisibility(visibility);
         findViewById(R.id.btnCaptureResult).setVisibility(visibility);
+
+        findViewById(R.id.txtTestSiteUser).setVisibility(
+                userData.isTestSiteUser() ? View.VISIBLE : View.GONE);
     }
 
     @Override

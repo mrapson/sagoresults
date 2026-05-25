@@ -23,6 +23,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private TextView txtUsername;
     private TextView txtPassword;
+    private CheckBox chkUseTestSite;
     private Button btnSelectFavouritePlayers;
     private boolean changed = false;
     private final UserData userData = UserData.getInstance();
@@ -34,6 +35,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         txtUsername = findViewById(R.id.txtUsername);
         txtPassword = findViewById(R.id.txtPassword);
+        chkUseTestSite = findViewById(R.id.chkUseTestSite);
 
         loadSettings();
 
@@ -58,6 +60,13 @@ public class SettingsActivity extends AppCompatActivity {
             txtPassword.refreshDrawableState();
         });
 
+        chkUseTestSite.setOnCheckedChangeListener((arg0, arg1) -> {
+            clearPreviousUser();
+            changed = true;
+            saveSettings();
+            changed = false;
+        });
+
         Button doneButton = findViewById(R.id.DoneButton);
         doneButton.setOnClickListener(arg0 -> {
             changed = true;
@@ -77,6 +86,11 @@ public class SettingsActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    private void clearPreviousUser() {
+        userData.clearAuthorization();
+        PlayerUseCase.getInstance().clearPlayerData();
+    }
+
     @SuppressLint("ApplySharedPref")
     private void saveSettings() {
         if (changed) {
@@ -84,9 +98,11 @@ public class SettingsActivity extends AppCompatActivity {
             Editor editor = preferences.edit();
             editor.putString("username", txtUsername.getText().toString().trim());
             editor.putString("password", txtPassword.getText().toString().trim());
+            editor.putString("use_test", String.valueOf(chkUseTestSite.isChecked()));
             editor.commit();
             userData.setUsername(preferences.getString("username", UserData.GUEST_USER));
             userData.setPassword(preferences.getString("password", UserData.GUEST_PASS));
+            userData.setTestSiteUser(parseUseTest(preferences));
 
             if (!userData.isGuestUser()) {
                 RankApplication.getApp()
@@ -102,6 +118,12 @@ public class SettingsActivity extends AppCompatActivity {
         SharedPreferences preferences = getSharedPreferences("SETTINGS", MODE_PRIVATE);
         txtUsername.setText(preferences.getString("username", UserData.GUEST_USER));
         txtPassword.setText(preferences.getString("password", UserData.GUEST_PASS));
+        chkUseTestSite.setChecked(parseUseTest(preferences));
+    }
+
+    private boolean parseUseTest(SharedPreferences preferences) {
+        String useTest = preferences.getString("use_test", String.valueOf(false));
+        return Boolean.parseBoolean(useTest);
     }
 
     private void setupSelectFavouritesButton(@Nullable PlayerUseCase.PlayerData playerData) {

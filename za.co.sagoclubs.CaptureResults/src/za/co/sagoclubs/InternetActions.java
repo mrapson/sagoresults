@@ -22,8 +22,23 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class InternetActions {
+    private static String fromRatingsSite(String path) {
+        String site = UserData.getInstance().isTestSiteUser()
+                ? BuildConfig.TEST_RATINGS_SITE
+                : BuildConfig.PROD_RATINGS_SITE;
+        return site + path;
+    }
+
+    private static String fromRankSite(String path) {
+        String site = UserData.getInstance().isTestSiteUser()
+                ? BuildConfig.TEST_RANK_SITE
+                : BuildConfig.PROD_RANK_SITE;
+        return site + Constants.API + path;
+    }
+
+
     public static String getRatingsPlayerLog(String id) throws IOException {
-        String url = SHOW_LOG + id + ".html";
+        String url = fromRatingsSite(SHOW_LOG) + id + ".html";
         Log.d(TAG, "getPlayerLog: url=" + url);
         try {
             Connection connection = Jsoup.connect(url);
@@ -37,7 +52,7 @@ public class InternetActions {
     }
 
     public static String getPlayerLog(String id) throws IOException {
-        String url = SHOW_LOG_DIRECT + "?name=" + id;
+        String url = fromRankSite(SHOW_LOG_DIRECT) + "?name=" + id;
         Log.d(TAG, "getPlayerLog: url=" + url);
         try {
             Connection connection = Jsoup.connect(url);
@@ -99,7 +114,7 @@ public class InternetActions {
     }
 
     public static String sendResult(String confirmOptions) throws IOException {
-        String url = Constants.LOG_GAME + "?" + confirmOptions;
+        String url = fromRankSite(Constants.LOG_GAME) + "?" + confirmOptions;
         try {
             Connection connection = Jsoup.connect(url);
             setAuthorization(connection);
@@ -122,7 +137,7 @@ public class InternetActions {
     }
 
     public static String undoResult(String undoOptions) throws IOException {
-        String url = Constants.UNDO_LATEST + "?" + undoOptions;
+        String url = fromRankSite(Constants.UNDO_LATEST) + "?" + undoOptions;
         try {
             Connection connection = Jsoup.connect(url);
             setAuthorization(connection);
@@ -147,7 +162,7 @@ public class InternetActions {
     public static List<Player> getPlayerList() throws IOException, JSONException {
         List<Player> list = new ArrayList<>();
         try {
-            Connection connection = Jsoup.connect(Constants.SHOW_HANDLES);
+            Connection connection = Jsoup.connect(fromRankSite(Constants.SHOW_HANDLES));
             setAuthorization(connection);
             connection.ignoreContentType(true);
             String bodyText = connection.get().body().text();
@@ -196,7 +211,7 @@ public class InternetActions {
     public static List<PlayerRating> getPlayerRatingsList() throws IOException, JSONException {
         List<PlayerRating> list = new ArrayList<>();
         try {
-            Connection connection = Jsoup.connect(Constants.PLAYER_RATINGS);
+            Connection connection = Jsoup.connect(fromRatingsSite(Constants.PLAYER_RATINGS));
             connection.ignoreContentType(true);
             String bodyText = connection.get().body().text();
 

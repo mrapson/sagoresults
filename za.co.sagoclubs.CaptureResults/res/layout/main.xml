@@ -20,6 +20,19 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/txtTestSiteUser"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/White"
+        android:paddingLeft="1dp"
+        android:paddingRight="1dp"
+        android:text="@string/test_site"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/Orange"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
     <Button
         android:id="@+id/btnPlayerRatings"
         style="@style/ButtonText"
