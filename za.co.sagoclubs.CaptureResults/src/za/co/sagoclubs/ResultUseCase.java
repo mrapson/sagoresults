@@ -208,7 +208,7 @@ public class ResultUseCase {
                 handicap = 9;
             }
             this.handicap = handicap;
-            this.notes = notes.strip().replaceAll("[^a-zA-Z0-9_.?-]", "");
+            this.notes = notes.strip().replaceAll("[^a-zA-Z0-9 _.?-]", "");
         }
     }
 
